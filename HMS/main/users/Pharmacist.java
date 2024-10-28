@@ -1,4 +1,4 @@
-package users;
+package HMS.main.users;
 
 public class Pharmacist 
 {

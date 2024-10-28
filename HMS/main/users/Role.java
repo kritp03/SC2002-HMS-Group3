@@ -1,4 +1,4 @@
-package users;
+package HMS.main.users;
 
 public enum Role {
     PATIENT,

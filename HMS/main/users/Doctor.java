@@ -1,4 +1,6 @@
-package users;
+package HMS.main.users;
+
+import HMS.main.appointment.Appointment;
 
 import java.util.ArrayList;
 import java.util.List;

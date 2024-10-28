@@ -1,4 +1,4 @@
-package users;
+package HMS.main.users;
 
 import java.util.UUID;
 

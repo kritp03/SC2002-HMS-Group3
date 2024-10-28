@@ -1,4 +1,4 @@
-package krit;
+package users;
 
 public enum Role {
     PATIENT,

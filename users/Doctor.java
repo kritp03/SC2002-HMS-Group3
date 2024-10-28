@@ -8,7 +8,6 @@ import java.util.Map;
 public class Doctor {
     private String doctorID;
     private List<Appointment> appointments;
-    private MedicalRecord medicalRecord;
     private Map<String, MedicalRecord>  MedicalRecord;
     private List<Appointment> availability;
 
@@ -16,7 +15,7 @@ public class Doctor {
     // Constructors
     public Doctor(String doctorID){
         this.doctorID = doctorID;
-        this.appointments = new ArrayList<>();
+        this.appointments = new ArrayList<Appointment>();
         this.medicalRecord = new MedicalRecord();
         this.outcomeRecord = new HashMap<>();
         this.availability = new ArrayList<>();

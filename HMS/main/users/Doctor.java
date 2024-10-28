@@ -1,6 +1,7 @@
 package HMS.main.users;
 
-import HMS.main.appointment.Appointment;
+import HMS.main.appointment.*;
+import HMS.main.misc_classes.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +18,13 @@ public class Doctor {
     // Constructors
     public Doctor(String doctorID){
         this.doctorID = doctorID;
-        this.appointments = new ArrayList<Appointment>();
+        this.appointments = new ArrayList<>();
         this.medicalRecord = new MedicalRecord();
         this.outcomeRecord = new HashMap<>();
         this.availability = new ArrayList<>();
         
     }
-    public MedicalRecords viewPatientMedicalRecords(String patientID){
+    public MedicalRecord viewPatientMedicalRecords(String patientID){
         return MedicalRecord.get(patientID, new MedicalRecord());
     }
 
@@ -48,7 +49,7 @@ public class Doctor {
 
     }
     
-    public boolean recordAppointmentOutcome (int appointmentID, OutcomeRecord outcome){
+    public boolean recordAppointmentOutcome (int appointmentID, AppointmentOutcome outcome){
 
     }
     

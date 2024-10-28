@@ -1,5 +1,8 @@
 package HMS.main.users;
 
+import HMS.main.appointment.*;
+import HMS.main.misc_classes.*;
+
 public class Pharmacist 
 {
     private String pharmacistId;
@@ -10,12 +13,12 @@ public class Pharmacist
 
     }
 
-    public OutcomeRecord viewAppointmentOutcomeRecord(String appointmentId)
+    public AppointmentOutcomeRecord viewAppointmentOutcomeRecord(String appointmentId)
     {
         
     }
 
-    public boolean updateStatusofPresecription(String appointmentId,Status status)
+    public boolean updateStatusofPresecription(String appointmentId,AppointmentStatus status)
     {
         return true;
     }

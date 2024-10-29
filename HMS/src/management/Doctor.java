@@ -11,9 +11,8 @@ import java.util.Map;
 public class Doctor {
     private String doctorID;
     private List<Appointment> appointments;
-    private Map<String, MedicalRecord>  MedicalRecord;
+    private Map<String, MedicalRecord>  medicalRecord;
     private List<Appointment> availability;
-
 
     // Constructors
     public Doctor(String doctorID){

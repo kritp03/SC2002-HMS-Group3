@@ -1,5 +1,8 @@
 package HMS.src.management;
 
+import HMS.src.MedicalRecord.*;
+import HMS.src.appointment.*;
+import HMS.src.misc_classes.*;
 import java.time.LocalDate;
 import java.util.List;
 

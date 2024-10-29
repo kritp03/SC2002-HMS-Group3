@@ -23,11 +23,12 @@ public class Doctor {
         this.availability = new ArrayList<>();
         
     }
+    // show prescription, diagnosis and treatment
     public MedicalRecord viewPatientMedicalRecords(String patientID){
         return MedicalRecord.get(patientID, new MedicalRecord());
     }
 
-    public boolean updatePatientsMedicalRecords (int patientID, MedicalRecord record){
+    public boolean updatePatientsMedicalRecord (int patientID, MedicalRecord record){
 
     } 
     

@@ -1,6 +1,8 @@
 package HMS.src.appointment;
 
+import HMS.src.pharmacy.*;
 import java.util.List;
+
 
 public class AppointmentOutcome 
 {

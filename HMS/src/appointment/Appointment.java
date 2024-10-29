@@ -1,6 +1,6 @@
-package HMS-new.src
+package HMS.src.appointment;
 
-import HMS.main.users.*;
+import HMS.src.users.*;
 import java.time.*;
 
 public class Appointment

@@ -1,4 +1,4 @@
-package HMS-new.src.pharmacy;
+package HMS.src.pharmacy;
 
 public class Prescription {
     private String prescriptionID;

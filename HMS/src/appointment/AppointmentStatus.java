@@ -1,4 +1,4 @@
-package HMS.main.appointment;
+package HMS.src.appointment;
 
 public enum AppointmentStatus {
     SCHEDULED,

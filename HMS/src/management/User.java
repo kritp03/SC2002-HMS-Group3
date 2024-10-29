@@ -1,4 +1,4 @@
-package HMS-new.src.management;
+package HMS.src.management;
 
 public class User {
     protected String userID;

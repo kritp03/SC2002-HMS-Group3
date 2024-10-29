@@ -1,4 +1,4 @@
-package HMS.main.misc_classes;
+package HMS.src.misc_classes;
 
 public enum Gender
 {

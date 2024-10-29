@@ -1,4 +1,4 @@
-package HMS.main.appointment;
+package HMS.src.appointment;
 // package HMS-new.src.appointment;
 
 // import pharmacy.Prescription;

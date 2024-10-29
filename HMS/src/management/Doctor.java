@@ -1,7 +1,6 @@
-package HMS.main.users;
+package HMS.src.management;
+import HMS.src.appointment.*;
 
-import HMS.main.appointment.*;
-import HMS.main.misc_classes.*;
 
 import java.util.ArrayList;
 import java.util.List;

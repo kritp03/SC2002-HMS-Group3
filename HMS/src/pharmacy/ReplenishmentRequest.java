@@ -1,4 +1,4 @@
-package HMS-new.src.pharmacy;
+package HMS.src.pharmacy;
 
 import java.time.LocalDate;
 

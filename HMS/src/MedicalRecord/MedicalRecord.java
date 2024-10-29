@@ -1,11 +1,7 @@
 package HMS.src.MedicalRecord;
 
 import HMS.src.pharmacy.*;
-import HMS.src.pharmacy.*;
-
 import java.util.List;
-import java.util.ArrayList;
-
 
 
 //needs to include diagnosis, treatment and prescription
@@ -15,11 +11,11 @@ public class MedicalRecord {
     private List<Prescription> prescription;
 
 //constructor
-    public MedicalRecord ()
+    public MedicalRecord (Diagnosis diagnosis, Treatment treatment, Prescription  prescription)
     {
-        this.diagnosis= new diagnosis;
-        this.treatment = new treatment;
-        this.prescription = new prescripion;
+        this.diagnosis = (List<Diagnosis>) diagnosis;
+        this.treatment = (List<Treatment>)treatment;
+        this.prescription = (List<Prescription>)prescription;
     }
 
 }

@@ -1,6 +1,7 @@
 package HMS.src.management;
-import HMS.src.appointment.*;
 
+import HMS.src.appointment.*;
+import HMS.src.MedicalRecord.*;
 
 import java.util.ArrayList;
 import java.util.List;

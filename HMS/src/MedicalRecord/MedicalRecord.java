@@ -1,19 +1,11 @@
 package HMS.src.MedicalRecord;
 
-<<<<<<< Updated upstream
 import HMS.src.pharmacy.*;
 import HMS.src.pharmacy.*;
 
 import java.util.List;
 import java.util.ArrayList;
 
-=======
-
-import HMS.src.pharmacy.*;
-
-import java.util.List;
-import java.util.ArrayList;
->>>>>>> Stashed changes
 
 
 //needs to include diagnosis, treatment and prescription

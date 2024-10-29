@@ -1,17 +1,13 @@
-// package HMS-new.src.appointment;
+package HMS.main.appointment;
 
-// import pharmacy.Prescription;
-// import java.util.List;
+import java.util.List;
 
-// public class AppointmentOutcome {
-//     private String appointmentID;
-//     private List<Prescription> prescriptions;
-//     private String consultationsNotes;
+public class AppointmentOutcome 
+{
+    private String appointmentId;
+    private ServiceType service;
+    private String diagnosis;
+    private List<Prescription> prescription;
+    private String consultationNotes;
 
-//     public AppointmentOutcome(String appointmentID, List<Prescription> prescriptions, String consultationsNotes) {
-//         this.appointmentID = appointmentID;
-//         this.prescriptions = prescriptions;
-//         this.consultationsNotes = consultationsNotes;
-//     }
-
-// }
+}

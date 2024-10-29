@@ -16,7 +16,7 @@ public class ReplenishmentRequest {
         this.quantity = quantity;
         this.date = date;
         this.status = ReplenishmentRequestStatus.PENDING;  
-        this.approvedBy = 'someone';  
+        this.approvedBy = "someone";  
     }
 
     public String getRequestID() {

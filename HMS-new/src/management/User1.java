@@ -2,7 +2,7 @@ package HMS.main.users;
 
 import java.util.UUID;
 
-public class User
+public class User1
 {
     private final UUID userId;
     private final String name;
@@ -11,7 +11,7 @@ public class User
     private String emailId;
 
 
-    public User(String name, Role role,String emailId)
+    public User1(String name, Role role,String emailId)
     {
         if(emailId.contains("@"))
         {

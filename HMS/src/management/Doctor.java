@@ -5,21 +5,21 @@ import HMS.src.MedicalRecord.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
-public class Doctor {
+public class Doctor extends User{
     private String doctorID;
     private List<Appointment> appointments;
-    private Map<String, MedicalRecord>  medicalRecord;
     private List<Appointment> availability;
+    private List<MedicalRecord> patientRecords;
+    
 
     // Constructors
-    public Doctor(String doctorID){
+    public Doctor(String doctorID, String name, String emailId ){
+        super(doctorID, name, Role.DOCTOR, "kritpyy@gmail.com" );
         this.doctorID = doctorID;
         this.appointments = new ArrayList<>();
-        this.medicalRecord = new MedicalRecord();
-        this.outcomeRecord = new HashMap<>();
+        this.patientRecords = new ArrayList<>();
         this.availability = new ArrayList<>();
         
     }

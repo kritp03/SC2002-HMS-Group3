@@ -44,17 +44,34 @@ public class Doctor extends User{
         return false;
     }
         
-    public List<Appointment> viewPersonalSchedule(){
+    public List<Appointment> viewAvailableAppointments() {
         return new ArrayList<>(appointments);
-
     }
         
-    public boolean acceptAppointmentRequest (int appointmentID){
-
-    }
+    public boolean acceptAppointmentRequest(String appointmentID) {
+        for (Appointment appointment : appointments) {
+            if (appointment.getAppointmentID().equals(appointmentID)) {
+                Slot slot = appointment.getSlot();
+                if (slot.isIsAvailable()){
+                appointment.setStatus(AppointmentStatus.CONFIRMED); 
+                slot.book();
+                return true;
+                }
+            }
+        }
+        return false;
+    }        
     
-    public boolean declineAppointmentRequest (int appointmentID){
-
+    public boolean declineAppointmentRequest (String appointmentID){
+        for (Appointment appointment : appointments) {
+            if (appointment.getAppointmentID().equals(appointmentID)) {
+                if(appointment.getStatus() != AppointmentStatus.DECLINED){
+                    appointment.setStatus(AppointmentStatus.DECLINED); 
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     public List<Appointment> setAvailability (List<Appointment> slots){

@@ -1,4 +1,5 @@
 package HMS.src.appointment;
+
 import HMS.src.management.*;
 import java.time.*;
 
@@ -11,15 +12,20 @@ public class Appointment
     private LocalTime time;
     private AppointmentStatus status;
     private AppointmentOutcome outcome;
+    private Slot slot;
 
     // Constructor
     public Appointment(String appointmentID, Patient patient, Doctor doctor, LocalDate date, Slot slot) {
-        this.appointmentID = appointmentID;
-        this.patient = patient;
-        this.doctor = doctor;
-        this.date = date;
-        this.slot = slot; 
-        this.status = AppointmentStatus.PENDING; //default set to pending
+        if (slot.isAvailable()){
+            this.appointmentID = appointmentID;
+            this.patient = patient;
+            this.doctor = doctor;
+            this.date = date;
+            this.slot = slot; 
+            this.status = AppointmentStatus.PENDING; //default set to pending
+        } else{
+            throw new IllegalStateException("The selected slot is not available...");
+        }
     }
 
     public String getAppointmentID() {
@@ -36,5 +42,11 @@ public class Appointment
 
     public Slot getSlot(){
         return slot;
+    }
+
+    // if scheduled appt is cancelled, need to update status of both appt and slot
+    public void cancel(){
+        this.status = AppointmentStatus.CANCELLED;
+        slot.cancel();
     }
 }

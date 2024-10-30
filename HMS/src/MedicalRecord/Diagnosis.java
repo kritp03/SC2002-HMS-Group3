@@ -1,13 +1,15 @@
 package HMS.src.MedicalRecord;
 
-<<<<<<< Updated upstream
 public class Diagnosis 
 {
-    
-}
-=======
-public class Diagnosis
-{
+    private String diagnosis;
+
+    public Diagnosis(String diagnosis){
+        this.diagnosis = diagnosis;
+    }
+
+    public String getDiagnosis(){
+        return diagnosis;
+    }
 
 }
->>>>>>> Stashed changes

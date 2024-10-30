@@ -1,4 +1,10 @@
 package HMS.src.appointment;
+
+import HMS.src.MedicalRecord.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 // package HMS-new.src.appointment;
 
 // import pharmacy.Prescription;

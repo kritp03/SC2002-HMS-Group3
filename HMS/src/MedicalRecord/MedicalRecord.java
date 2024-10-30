@@ -1,6 +1,6 @@
 package HMS.src.MedicalRecord;
 
-import HMS.src.pharmacy.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,19 +15,42 @@ public class MedicalRecord {
     public MedicalRecord(String patientID)
     {
         this.patientID = patientID;
-        this.diagnosis = (List<Diagnosis>) diagnosis;
-        this.treatment = (List<Treatment>)treatment;
-        this.prescription = (List<Prescription>)prescription;
+        this.diagnosis = new ArrayList<>();
+        this.treatment = new ArrayList<>();
+        this.prescription = new ArrayList<>();
+        // this.diagnosis = (List<Diagnosis>) diagnosis;
+        // this.treatment = (List<Treatment>)treatment;
+        // this.prescription = (List<Prescription>)prescription;
     }
 
-
-    public String getPatientID(String patientID){
+    //getters
+    public String getPatientID() {
         return patientID;
     }
 
-
-    public MedicalRecord() {
-        //TODO Auto-generated constructor stub
+    public List<Diagnosis> getDiagnosis() {
+        return diagnosis;
     }
+
+    public List<Treatment> getTreatment() {
+        return treatment;
+    }
+
+    public List<Prescription> getPrescription() {
+        return prescription;
+    }
+
+    public void addDiagnosis(Diagnosis diagnosis){
+        this.diagnosis.add(diagnosis);
+    }
+
+    public void addTreatment(Treatment treatment){
+        this.treatment.add(treatment);
+    }
+
+    public void addPrescription(Prescription prescription){
+        this.prescription.add(prescription);
+    }
+
 
 }

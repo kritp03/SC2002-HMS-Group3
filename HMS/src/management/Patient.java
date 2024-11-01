@@ -8,15 +8,16 @@ import HMS.src.pharmacy.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Patient extends User
 {
-    private String name;
-    private String patientId;
+    private final String name;
+    private final String patientId;
     private LocalDate dateOfBirth;
     private Gender gender;
     private ContactInformation contactinfo;
-    private String bloodType;
+    private final String bloodType;
     private List<MedicalRecord> medicalRecord;
     private List<Appointment> appointment;
 
@@ -65,6 +66,9 @@ public class Patient extends User
 
     public List<Appointment> viewAvailableAppointment(String doctorName)
     {
+        List <Appointment> availableAppointments = new ArrayList<>();
+
+        
 
     }
 

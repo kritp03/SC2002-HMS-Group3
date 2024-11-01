@@ -9,15 +9,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Patient extends User
 {
-    private String name;
-    private String patientId;
+    private final String name;
+    private final String patientId;
     private LocalDate dateOfBirth;
     private Gender gender;
     private ContactInformation contactinfo;
-    private String bloodType;
+    private final String bloodType;
     private List<MedicalRecord> medicalRecord;
     private List<Appointment> appointment;
 
@@ -66,6 +67,7 @@ public class Patient extends User
 
     public List<Slot> viewAvailableAppointment(String doctorName)
     {
+<<<<<<< HEAD
          // Find the doctor by name
         for (Doctor doctor : allDoctors) {
             if (doctor.getName().equalsIgnoreCase(doctorName)) {
@@ -78,6 +80,12 @@ public class Patient extends User
         System.out.println("Doctor with name " + doctorName + " not found.");
         return new ArrayList<>();
     
+=======
+        List <Appointment> availableAppointments = new ArrayList<>();
+
+        
+
+>>>>>>> b1a88a4567b4dbcdc12fa4f73c4e8d890eb00e1b
     }
 
     public List<Appointment> scheduleAppointment(Doctor doctor, LocalDate apptDate,LocalTime apptTime)

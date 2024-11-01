@@ -34,14 +34,15 @@ public class Doctor extends User{
     }
 
     public List<Slot> viewAvailableSlots() {
-        List<Slot> availability = new ArrayList<>();
-        for (Slot slot : availability){
-            if(slot.isAvailable()){
-                availability.add(slot);
+        List<Slot> availableSlots = new ArrayList<>();
+        for (Slot slot : this.availability) {
+            if (slot.isAvailable()) {
+                availableSlots.add(slot);
             }
         }
-        return availability;
+        return availableSlots;
     }
+    
 
 
     public boolean updatePatientRecords (String patientID, Diagnosis diagnosis, Treatment treatment, Prescription prescription){

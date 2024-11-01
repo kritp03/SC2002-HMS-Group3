@@ -7,6 +7,7 @@ import HMS.src.pharmacy.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Patient extends User
@@ -63,9 +64,20 @@ public class Patient extends User
         contactinfo.changeNextOfKinPhoneNumber(newPhoneNumber);
     }
 
-    public List<Appointment> viewAvailableAppointment(String doctorName)
+    public List<Slot> viewAvailableAppointment(String doctorName)
     {
-
+         // Find the doctor by name
+        for (Doctor doctor : allDoctors) {
+            if (doctor.getName().equalsIgnoreCase(doctorName)) {
+                // Return the available slots if the doctor is found
+                return doctor.viewAvailableSlots();
+            }
+        }
+        
+        // If no doctor with the specified name is found, return an empty list
+        System.out.println("Doctor with name " + doctorName + " not found.");
+        return new ArrayList<>();
+    
     }
 
     public List<Appointment> scheduleAppointment(Doctor doctor, LocalDate apptDate,LocalTime apptTime)

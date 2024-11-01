@@ -67,25 +67,10 @@ public class Patient extends User
 
     public List<Slot> viewAvailableAppointment(String doctorName)
     {
-<<<<<<< HEAD
-         // Find the doctor by name
-        for (Doctor doctor : allDoctors) {
-            if (doctor.getName().equalsIgnoreCase(doctorName)) {
-                // Return the available slots if the doctor is found
-                return doctor.viewAvailableSlots();
-            }
-        }
-        
-        // If no doctor with the specified name is found, return an empty list
-        System.out.println("Doctor with name " + doctorName + " not found.");
-        return new ArrayList<>();
-    
-=======
         List <Appointment> availableAppointments = new ArrayList<>();
 
         
 
->>>>>>> b1a88a4567b4dbcdc12fa4f73c4e8d890eb00e1b
     }
 
     public List<Appointment> scheduleAppointment(Doctor doctor, LocalDate apptDate,LocalTime apptTime)

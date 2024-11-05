@@ -13,10 +13,16 @@ public class Slot {
     //constructors
     public Slot(LocalTime startTime, LocalTime endTime){
         if (startTime.isBefore(endTime)){
-            this.startTime = startTime;
-            this.endTime = endTime;
-            this.isAvailable = true;
-            this.appointments = new ArrayList<>();
+            if(endTime.compareTo(startTime) == 60)
+            {
+                this.startTime = startTime;
+                this.endTime = endTime;
+                this.isAvailable = true;
+                this.appointments = new ArrayList<>();
+            }
+            else{
+                throw new IllegalArgumentException("Slot must be only an hour long");
+            }
     }   else {
             throw new IllegalArgumentException("End time must be after start time.");
         }

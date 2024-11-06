@@ -54,9 +54,9 @@ public class Patient extends User
         contactinfo.changeAddress(newAdress);
     }
 
-    public void changeNextOfKinName(String newNextOfKinName)
+    public void changeNextOfKinname(String newNextOfKinname)
     {
-        contactinfo.changeNextOfKinName(newNextOfKinName);
+        contactinfo.changeNextOfKinname(newNextOfKinname);
     }
 
     public void changeNextOfKinPhoneNumber(String newPhoneNumber)
@@ -72,7 +72,7 @@ public class Patient extends User
         return Period.between(dateOfBirth, today).getYears();
     }
 
-    public List<Slot> viewAvailableAppointment(String doctorName)
+    public List<Slot> viewAvailableAppointment(String doctorname)
     {
         List <Appointment> availableAppointments = new ArrayList<>();
 

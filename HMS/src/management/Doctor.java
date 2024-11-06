@@ -2,6 +2,7 @@ package HMS.src.management;
 
 import HMS.src.MedicalRecord.*;
 import HMS.src.appointment.*;
+import HMS.src.misc_classes.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,8 @@ public class Doctor extends User{
     
 
     // Constructors
-    public Doctor(String doctorID, String name, String emailId ){
-        super(doctorID, name, Role.DOCTOR, "kritpyy@gmail" );
+    public Doctor(String doctorID, String name, String emailId, int age, Gender gender){
+        super(doctorID, name, Role.DOCTOR, "kritpyy@gmail", age, gender);
         this.doctorID = doctorID;
         this.appointments = new ArrayList<>();
         this.patientRecords = new ArrayList<>();

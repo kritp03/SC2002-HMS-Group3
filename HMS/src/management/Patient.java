@@ -7,16 +7,16 @@ import HMS.src.pharmacy.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
+
 
 public class Patient extends User
 {
     private final String name;
     private final String patientId;
     private LocalDate dateOfBirth;
-    private Gender gender;
     private ContactInformation contactinfo;
     private final String bloodType;
     private List<MedicalRecord> medicalRecord;
@@ -24,11 +24,10 @@ public class Patient extends User
 
     public Patient(String name, String patientId, LocalDate dateOfBirth, Gender gender, ContactInformation contactInfo, String bloodType, List<MedicalRecord> medicalRecord, List<Appointment> appointment)
     {
-        super(patientId,name,Role.PATIENT,contactInfo.getEmailId());
+        super(patientId,name,Role.PATIENT,contactInfo.getEmailId(),calculateAge(dateOfBirth), gender);
         this.name = name;
         this.patientId = patientId;
         this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
         this.contactinfo = contactInfo;
         this.bloodType = bloodType;
         this.medicalRecord = medicalRecord;
@@ -63,6 +62,14 @@ public class Patient extends User
     public void changeNextOfKinPhoneNumber(String newPhoneNumber)
     {
         contactinfo.changeNextOfKinPhoneNumber(newPhoneNumber);
+    }
+
+    private static int calculateAge(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            return 0; 
+        }
+        LocalDate today = LocalDate.now();
+        return Period.between(dateOfBirth, today).getYears();
     }
 
     public List<Slot> viewAvailableAppointment(String doctorName)

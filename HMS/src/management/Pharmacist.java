@@ -1,16 +1,20 @@
-// package HMS-new.src.management;
+package HMS.src.management;
 
-// import java.util.List;
+import HMS.src.misc_classes.*;
 
-// public class Pharmacist extends User {
-//     private List<Prescription> prescriptions;
+import java.util.List;
 
-//     public Pharmacist(String userID, String name, Role role) {
-//         super(userID, name, role);
-//     }
+public class Pharmacist extends User {
+    private List<Prescription> prescriptions;
 
-//     public void dispenseMedication(Prescription prescription) {
-//         prescription.updateStatus(PrescriptionStatus.DISPENSED);
-//         System.out.println("Medication dispensed: " + prescription.getName());
-//     }
-// }
+    private int age;
+
+    public Pharmacist(String userID, String name, String emailId, int age, Gender gender) {
+        super(userID, name, Role.PHARMACIST, emailId, age, gender);
+    }
+
+    public void dispenseMedication(Prescription prescription) {
+        prescription.updateStatus(PrescriptionStatus.DISPENSED);
+        System.out.println("Medication dispensed: " + prescription.getName());
+    }
+}

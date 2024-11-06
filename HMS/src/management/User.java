@@ -1,18 +1,22 @@
 package HMS.src.management;
 
+import HMS.src.misc_classes.Gender;
 import java.util.UUID;
 
 public class User {
     protected UUID userID;
     protected String name;
     protected Role role;
+    private Gender gender;
     protected String emailId;
     private String password;
+    private int age;
 
-    public User(String userID, String name, Role role, String emailId) {
+    public User(String userID, String name, Role role, String emailId, int age, Gender gender) {
         this.userID = UUID.fromString(userID);
         this.name = name;
         this.role = role;
+        this.gender = gender;
         if(emailId.contains("@"))
         {
             this.emailId = emailId;
@@ -22,7 +26,7 @@ public class User {
         {
             this.emailId = "hms@hms.com";
         }
-
+        this.age = age;
         this.password = "password";
     }
 
@@ -82,9 +86,3 @@ public class User {
 
 }
 
-enum Role {
-    PATIENT,
-    DOCTOR,
-    PHARMACIST,
-    ADMINISTRATOR
-}

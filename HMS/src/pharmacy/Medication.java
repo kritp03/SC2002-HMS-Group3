@@ -1,7 +1,7 @@
 package HMS.src.pharmacy;
 
 public class Medication {
-    private String medicationID;
+    // private String medicationID;
     private String name;
     private DosageForm dosageForm;
     private int concentrationMg;
@@ -16,7 +16,7 @@ public class Medication {
     }
 
     public Medication(String medicationID, String name, DosageForm dosageForm, int concentrationMg, int inventoryStock, int lowThreshold) {
-        this.medicationID = medicationID;
+        // this.medicationID = medicationID;
         this.name = name;
         this.dosageForm = dosageForm;
         this.concentrationMg = concentrationMg;

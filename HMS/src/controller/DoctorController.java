@@ -9,4 +9,5 @@ public class DoctorController
     public static void addDoctor(String doctorID, User doctor){
         User.registerNewUser(doctorID);
     }
+    
 }

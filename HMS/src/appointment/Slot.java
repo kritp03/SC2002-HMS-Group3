@@ -3,7 +3,7 @@ package HMS.src.appointment;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-// hello
+
 public class Slot {
     private LocalTime startTime;
     private LocalTime endTime;

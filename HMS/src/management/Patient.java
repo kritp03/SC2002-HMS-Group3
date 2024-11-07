@@ -4,6 +4,7 @@ import HMS.src.MedicalRecord.*;
 import HMS.src.appointment.*;
 import HMS.src.misc_classes.*;
 import HMS.src.pharmacy.*;
+import HMS.src.slots.Slot;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

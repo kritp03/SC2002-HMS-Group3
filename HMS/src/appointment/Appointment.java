@@ -1,37 +1,27 @@
 package HMS.src.appointment;
 
 import HMS.src.management.*;
-import java.time.*;
+import HMS.src.slots.Slot;
 
-public class Appointment
-{
-    private String appointmentID;
-    private Patient patient;
-    private Doctor doctor;
-    private LocalDate date;
-    private LocalTime time;
+public class Appointment {
+    private final Patient patientID;  // Full Patient object
+    private final Doctor doctorID;    // Full Doctor object
+    private final Slot slot;        // Associated Slot
     private AppointmentStatus status;
-    private AppointmentOutcome outcome;
-    private Slot slot;
+
+    public enum AppointmentStatus {
+        PENDING, CONFIRMED, DECLINED
+    }
 
     // Constructor
-    public Appointment(String appointmentID, Patient patient, Doctor doctor, LocalDate date, Slot slot) {
-        if (slot.isAvailable()){
-            this.appointmentID = appointmentID;
-            this.patient = patient;
-            this.doctor = doctor;
-            this.date = date;
-            this.slot = slot; 
-            this.status = AppointmentStatus.PENDING; //default set to pending
-        } else{
-            throw new IllegalStateException("The selected slot is not available...");
-        }
+    public Appointment(Patient patientID, Doctor doctorID, Slot slot) {
+        this.patientID = patientID;
+        this.doctorID = doctorID;
+        this.slot = slot;
+        this.status = AppointmentStatus.PENDING;  // Default status is PENDING
     }
 
-    public String getAppointmentID() {
-        return appointmentID;
-    }
-
+    // Getters and Setters
     public AppointmentStatus getStatus() {
         return status;
     }
@@ -40,13 +30,21 @@ public class Appointment
         this.status = status;
     }
 
-    public Slot getSlot(){
+    public Slot getSlot() {
         return slot;
     }
 
-    // if scheduled appt is cancelled, need to update status of both appt and slot
-    public void cancel(){
-        this.status = AppointmentStatus.CANCELLED;
-        slot.cancel();
+    public Patient getPatient() {
+        return patientID;
+    }
+
+    public Doctor getDoctor() {
+        return doctorID;
+    }
+
+    @Override
+    public String toString() {
+        return ", Patient: " + patientID + ", Doctor: " + doctorID +
+               ", Status: " + status + ", Slot: " + slot;
     }
 }

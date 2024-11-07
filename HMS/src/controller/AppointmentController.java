@@ -1,6 +1,7 @@
 package HMS.src.controller;
 
 import HMS.src.appointment.*;
+import HMS.src.slots.Slot;
 
 public class AppointmentController 
 {

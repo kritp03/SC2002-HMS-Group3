@@ -1,10 +1,9 @@
 package HMS.src.appointment;
 
 public enum AppointmentStatus {
-    SCHEDULED,
-    CONFIRMED,
+    PENDING,   // default
+    CONFIRMED, 
     CANCELLED,
-    COMPLETED,
-    PENDING,//default
-    DECLINED
+    DECLINED,
+    COMPLETED  
 }

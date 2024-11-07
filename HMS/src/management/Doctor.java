@@ -3,15 +3,17 @@ package HMS.src.management;
 import HMS.src.MedicalRecord.*;
 import HMS.src.appointment.*;
 import HMS.src.misc_classes.*;
+import HMS.src.slots.Slot;
+import HMS.src.slots.SlotManager;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Doctor extends User{
-    private String doctorID;
-    private List<Appointment> appointments;
+    private final String doctorID;
     private List<Slot> availability;
-    private List<MedicalRecord> patientRecords;
+    private final List<Appointment> appointments;
+    private final List<MedicalRecord> patientRecords;
     
 
     // Constructors
@@ -23,100 +25,33 @@ public class Doctor extends User{
         this.availability = new ArrayList<>();
         
     }
-    // to show prescription, diagnosis and treatment
-    public MedicalRecord viewPatientMedicalRecords(String patientID) {
-        for (MedicalRecord record : patientRecords) {
-            //correct id
-            if (record.getPatientID().equals(patientID)) {
-                return record;
-            }
-        }
-        return null; 
-    }
-
-    public List<Slot> viewAvailableSlots() {
-        List<Slot> availableSlots = new ArrayList<>();
-        for (Slot slot : this.availability) {
-            if (slot.isAvailable()) {
-                availableSlots.add(slot);
-            }
-        }
-        return availableSlots;
-    }
     
+    public void viewAvailableSlots() {
+        for (Slot slot : availability) {
+            System.out.println(slot);
+        }
+    }
 
+    public void setAvailability(SlotManager slotManager) {
+        this.availability = slotManager.getSlots(); // Copy the list of available slots
+    }
 
-    public boolean updatePatientRecords (String patientID, Diagnosis diagnosis, Treatment treatment, Prescription prescription){
-        MedicalRecord record = viewPatientMedicalRecords(patientID);
-        if(record != null){
-            record.addDiagnosis(diagnosis);
-            record.addTreatment(treatment);
-            record.addPrescription(prescription);
+    // Accept appointment request
+    public boolean acceptAppointmentRequest(Appointment appointment) {
+        if (appointment.getSlot().isAvailable()) {
+            appointment.setStatus(Appointment.AppointmentStatus.CONFIRMED);
+            appointment.getSlot().setAvailability(false); // Mark the slot as unavailable
+            appointments.add(appointment);
             return true;
         }
-        return false;
+        return false; // Slot already taken or unavailable
     }
-    
-        
-    public boolean acceptAppointmentRequest(String appointmentID) {
-        for (Appointment appointment : appointments) {
-            // check if appointment ID is the same
-            if (appointment.getAppointmentID().equals(appointmentID)) {
-                Slot slot = appointment.getSlot();
-                // check if the slot is available
-                // if yes, update both appt & slot status
-                if (slot.isAvailable()){
-                    appointment.setStatus(AppointmentStatus.CONFIRMED); 
-                    slot.book(appointment);
-                    return true;
-                }
-            }
-        }
-        //else, if apptID not even found
-        System.out.println("No appointmentID found with the ID: " + appointmentID);
-        return false;
-    }        
-    
-    public boolean declineAppointmentRequest (String appointmentID){
-        for (Appointment appointment : appointments) {
-            if (appointment.getAppointmentID().equals(appointmentID)) {
-                if (appointment.getStatus() != AppointmentStatus.DECLINED) {
-                    appointment.setStatus(AppointmentStatus.DECLINED); 
-                    Slot slot = appointment.getSlot();
-                    // slot becomes unavailable as well
-                    slot.cancel();
-                    return true;
-                }else{
-                    System.out.println("Appointment ID " + appointmentID + " has already been declined.");
-                    return false;
-            }
-        }
-    }
-        System.out.println("No appointmentID found with the ID: " + appointmentID);
-        return false;
-    }
-    
-    public List<Slot> setAvailability(List<Slot> slots){
-        for (Slot newSlot: slots){
-            for (Slot existingSlot:this.availability){
-                if(newSlot.overlaps(existingSlot)){
-                    throw new IllegalArgumentException("New slot overlaps with existing slot: " + existingSlot);
-                }
-            }
-        }
-        this.availability = new ArrayList<>(slots);
-        return this.availability;
-    } 
 
-    public boolean updateSlotAvailability(Slot slot, boolean availability){
-        for (Slot s : this.availability){
-            if (s.getStartTime().equals(slot.getStartTime()) && s.getEndTime().equals(slot.getEndTime())) {
-                s.setAvailability(availability);
-                return true;
-            }
-        }
-        System.out.println("Slot " + slot.getStartTime() + " to " + slot.getEndTime() + " is not found");
-        return false;
+    // Decline appointment request
+    public void declineAppointmentRequest(Appointment appointment) {
+        appointment.setStatus(Appointment.AppointmentStatus.DECLINED);
     }
+    
+
 }
 

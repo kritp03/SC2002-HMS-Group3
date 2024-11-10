@@ -1,57 +1,67 @@
 package HMS.src.management;
 
-import HMS.src.MedicalRecord.*;
-import HMS.src.appointment.*;
+import HMS.src.medicalrecordsPDT.MedicalRecord;
+import HMS.src.medicalrecordsPDT.MedicalRecordManager;
 import HMS.src.misc_classes.*;
-import HMS.src.slots.Slot;
-import HMS.src.slots.SlotManager;
-import java.util.ArrayList;
-import java.util.List;
+import HMS.src.slots.*;
+import java.time.LocalTime;
 
 
 public class Doctor extends User{
     private final String doctorID;
-    private List<Slot> availability;
-    private final List<Appointment> appointments;
-    private final List<MedicalRecord> patientRecords;
-    
+    private final SlotManager slotManager;
+
+
 
     // Constructors
     public Doctor(String doctorID, String name, String emailId, int age, Gender gender){
         super(doctorID, name, Role.DOCTOR, "kritpyy@gmail", age, gender);
         this.doctorID = doctorID;
-        this.appointments = new ArrayList<>();
-        this.patientRecords = new ArrayList<>();
-        this.availability = new ArrayList<>();
+        this.slotManager = new SlotManager();  // Each doctor gets their own SlotManager
         
     }
     
     public void viewAvailableSlots() {
-        for (Slot slot : availability) {
-            System.out.println(slot);
-        }
-    }
-
-    public void setAvailability(SlotManager slotManager) {
-        this.availability = slotManager.getSlots(); // Copy the list of available slots
-    }
-
-    // Accept appointment request
-    public boolean acceptAppointmentRequest(Appointment appointment) {
-        if (appointment.getSlot().isAvailable()) {
-            appointment.setStatus(Appointment.AppointmentStatus.CONFIRMED);
-            appointment.getSlot().setAvailability(false); // Mark the slot as unavailable
-            appointments.add(appointment);
-            return true;
-        }
-        return false; // Slot already taken or unavailable
-    }
-
-    // Decline appointment request
-    public void declineAppointmentRequest(Appointment appointment) {
-        appointment.setStatus(Appointment.AppointmentStatus.DECLINED);
+        System.out.println("Available slots for Dr. " + doctorID + ":");
+        slotManager.printSlots();
     }
     
 
+    // Method to mark a slot as unavailable but default slots should all be available 
+    public void setUnavailable(LocalTime startTime) {
+        slotManager.setAvailability(startTime, false);
+    }
+
+
+    //MEDICAL RECORD
+
+    public void addDiagnosis(String patientID, String diagnosis) {
+        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+        if (record != null) {
+            record.addDiagnosis(diagnosis);
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
+        }
+    }
+        
+    public void addTreatment(String patientID, String treatment) {
+        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+        if (record != null) {
+            record.addTreatment(treatment);
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
+        }
+    }
+
+    
+    public void addPrescription(String patientID, String prescription) {
+        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+        if (record != null) {
+            record.addPrescription(prescription);
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
+        }
+    }
+    
 }
 

@@ -29,7 +29,7 @@ public class SlotManager {
                 return;
             }
         }
-        System.out.println("Slot " + startTime + " not found.");
+        System.out.println("Slot " + startTime + " is unavailable.");
     }
 
     // Print all slots (useful for displaying available slots)

@@ -1,19 +1,24 @@
 package HMS.src.medicalrecordsPDT;
 
+import HMS.src.appointment.ServiceType;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MedicalRecord {
     private final String patientID;
+    private ServiceType serviceType; 
+    private LocalDate appointmentDate;
     private final List<String> diagnoses = new ArrayList<>();
     private final List<String> treatments = new ArrayList<>();
     private final List<String> prescriptions = new ArrayList<>();
 
     // Constructor
-    public MedicalRecord(String patientID) {
+    public MedicalRecord(String patientID, LocalDate date) {
         this.patientID = patientID;
+        this.appointmentDate = date;
     }
-
 
     //adders
     public void addDiagnosis(String diagnosis) {
@@ -29,6 +34,10 @@ public class MedicalRecord {
     }
 
     // getters
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
+
     public String getPatientID() {
         return patientID;
     }
@@ -45,14 +54,24 @@ public class MedicalRecord {
         return prescriptions;
     }
 
-    // Method to display the medical record (toString)
+    public void setServiceType (ServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    // Getter for appointment type
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
+
+
     @Override
     public String toString() {
         return "Medical Record for " + patientID + ":\n" +
+                "Service Type: " + (serviceType != null ? serviceType : "Not set") + "\n" +
+                "Appointment Date: " + (appointmentDate != null ? appointmentDate : "Not set") + "\n" +
                 "Diagnoses: " + diagnoses + "\n" +
                 "Treatments: " + treatments + "\n" +
                 "Prescriptions: " + prescriptions;
     }
-
 
 }

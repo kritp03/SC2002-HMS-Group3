@@ -30,14 +30,16 @@ public class MedicationManager {
             System.out.println("No data found in CSV file.");
             return;
         }
-
-        System.out.format("%-20s %-20s %-20s %n", "Medicine Name", "Initial Stock", "Low Stock Level Alert");
-        for (int i = 1; i < data.size(); i++) {
+        System.out.println("+--------------------+--------------------+----------------------+");
+        System.out.format("| %-18s | %-18s | %-20s|\n", "Medicine Name", "Initial Stock", "Low Stock Level Alert");
+        System.out.println("+--------------------+--------------------+----------------------+");
+        for (int i = 1; i < data.size(); i++) { 
             String[] row = data.get(i);
-            if (row.length >= 3) {
-                System.out.format("%-20s %-20s %-20s %n", row[0], row[1], row[2]);
+            if (row.length >= 3) { 
+                System.out.format("| %-18s | %-18s | %-20s |\n", row[0], row[1], row[2]);
             }
         }
+        System.out.println("+--------------------+--------------------+----------------------+\n");
     }
 
     private String promptForMedicineName(Set<String> allMedicines) {
@@ -106,10 +108,7 @@ public class MedicationManager {
 
     public static void main(String[] args) {
         MedicationManager manager = new MedicationManager();
-        String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv"; // Replace
-                                                                                                                                                                                                                    // with
-                                                                                                                                                                                                                    // actual
-                                                                                                                                                                                                                    // path
+        String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv"; 
         manager.submitReplenishmentRequest(filePath);
     }
 }

@@ -1,9 +1,10 @@
 package HMS.src.management;
 
-import HMS.src.medicalrecordsPDT.MedicalRecord;
-import HMS.src.medicalrecordsPDT.MedicalRecordManager;
+import HMS.src.appointment.ServiceType;
+import HMS.src.medicalrecordsPDT.*;
 import HMS.src.misc_classes.*;
 import HMS.src.slots.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -53,7 +54,6 @@ public class Doctor extends User{
         }
     }
 
-    
     public void addPrescription(String patientID, String prescription) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
@@ -62,6 +62,30 @@ public class Doctor extends User{
             System.out.println("No medical record found for patient ID: " + patientID);
         }
     }
+
+    // service type
+    public void setServiceType(String patientID, ServiceType serviceType) {
+        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+        if (record != null) {
+            record.setServiceType(serviceType);
+            System.out.println("Appointment type " + serviceType + " set for patient ID: " + patientID);
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
+        }
+    }
     
+    public void addAppointmentOutcome(String patientID, ServiceType serviceType, LocalDate date, 
+                                      String diagnosis, String treatment, String prescription) {
+        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+        if (record != null) {
+            record.setServiceType(serviceType);  // Set appointment type and date
+            record.addDiagnosis(diagnosis);
+            record.addTreatment(treatment);
+            record.addPrescription(prescription);
+            System.out.println("Appointment outcome added for patient ID: " + patientID);
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
+        }
+    }
 }
 

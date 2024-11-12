@@ -1,4 +1,4 @@
-package HMS.exceptions;
+package HMS.src.exceptions;
 
 public class InvalidValueException extends Exception {
     public InvalidValueException(String message) {

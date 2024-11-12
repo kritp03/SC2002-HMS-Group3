@@ -1,0 +1,16 @@
+{
+    "cSpell.words": [
+        "XSSF"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Applications/poi-bin-5.2.3/poi-ooxml-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-javadoc-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-ooxml-lite-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-scratchpad-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-excelant-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-examples-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-ooxml-full-5.2.3.jar"
+    ]
+}

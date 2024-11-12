@@ -1,7 +1,8 @@
 package HMS.src.misc_classes;
 
 import HMS.src.management.*;
-import HMS.src.pharmacy.*;
+import HMS.src.medication.*;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;

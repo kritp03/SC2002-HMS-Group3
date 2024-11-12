@@ -1,4 +1,4 @@
-package HMS.src.pharmacy;
+package HMS.src.medication;
 
 public class Medication {
     // private String medicationID;
@@ -70,6 +70,11 @@ public class Medication {
 
     public void setLowThreshold(int lowThreshold) {
         this.lowThreshold = lowThreshold;
+    }
+
+    public String[] toStringArray() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toStringArray'");
     }
 }
 

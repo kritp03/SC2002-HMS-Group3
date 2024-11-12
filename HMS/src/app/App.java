@@ -42,7 +42,6 @@ public class App
                         System.out.println("Invalid choice. Please try again.");
                         break;
                 }
-
             } catch (InputMismatchException e){
                 System.out.println("Only integers are accepted! Please try again.");
                 sc.nextLine();

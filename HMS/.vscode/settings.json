@@ -1,7 +1,16 @@
 {
-    "java.project.sourcePaths": ["src"],
-    "java.project.outputPath": "bin",
+    // "java.project.sourcePaths": ["src"],
+    // "java.project.outputPath": "bin",
+    // "java.project.referencedLibraries": [
+    //     "lib/**/*.jar"
+    // ]
+
+    "cSpell.words": [
+        "XSSF"
+    ],
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "lib/**/*.jar",
+        "/Applications/poi-bin-5.2.3/poi-ooxml-5.2.3.jar",
+        "/Applications/poi-bin-5.2.3/poi-5.2.3.jar"
     ]
 }

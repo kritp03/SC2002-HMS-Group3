@@ -1,8 +1,9 @@
 package HMS.src.database;
 
 import HMS.src.management.*;
+import HMS.src.medication.*;
 import HMS.src.misc_classes.FileIO;
-import HMS.src.pharmacy.*;
+
 import java.util.HashMap;
 
 public class Database 

@@ -1,8 +1,9 @@
 package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.medication.MedicationManager;
 
-public class PharmacistActions {
+public class PharmacistUI{
 
     public static void displayOptions(){
         System.out.println("=====================================");

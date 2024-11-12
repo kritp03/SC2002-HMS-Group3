@@ -2,7 +2,7 @@ package HMS.src.app;
 
 import java.util.InputMismatchException;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
-import HMS.src.ui.PharmacistActions;
+import HMS.src.ui.PharmacistUI;
 import HMS.src.utils.InputScanner;
 
 // import ui.PharmacistActions;
@@ -30,7 +30,7 @@ public class App
                         System.out.println("Logging in as Patient...");
                         break;
                     case 3:
-                        PharmacistActions.displayOptions();
+                        PharmacistUI.displayOptions();
                         break;
                     case 4:
                         System.out.println("Logging in as Admin...");

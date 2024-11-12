@@ -64,7 +64,7 @@ public class MedicalRecord {
         return treatments;
     }
 
-    public List<String> getPrescriptions() {
+    public Map<String, String> getPrescriptions() {
         return prescriptions;
     }
 

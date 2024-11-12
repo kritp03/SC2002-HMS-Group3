@@ -36,7 +36,7 @@ public class PharmacistUI {
                     medicationManager.submitReplenishmentRequest(medFilePath);
                     break;
                 case 5:
-                    System.out.println("Logging out...");
+                System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
                     break;
                 default:

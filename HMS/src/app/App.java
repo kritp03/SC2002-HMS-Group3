@@ -2,7 +2,12 @@ package HMS.src.app;
 
 import java.util.InputMismatchException;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+
+import HMS.src.management.Doctor;
 import HMS.src.ui.PharmacistUI;
+import HMS.src.ui.AdminUI;
+import HMS.src.ui.DoctorUI;
+import HMS.src.ui.PatientUI;
 import HMS.src.utils.InputScanner;
 
 // import ui.PharmacistActions;
@@ -24,16 +29,16 @@ public class App
 
                 switch (choice) {
                     case 1:
-                        System.out.println("Logging in as Doctor...");
+                        DoctorUI.displayOptions();
                         break;
                     case 2:
-                        System.out.println("Logging in as Patient...");
+                        PatientUI.displayOptions();
                         break;
                     case 3:
                         PharmacistUI.displayOptions();
                         break;
                     case 4:
-                        System.out.println("Logging in as Admin...");
+                        AdminUI.displayOptions();
                         break;
                     case 5:
                         System.out.println("Exiting...");

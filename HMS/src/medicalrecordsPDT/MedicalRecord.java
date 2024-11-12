@@ -3,16 +3,18 @@ package HMS.src.medicalrecordsPDT;
 import HMS.src.appointment.ServiceType;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MedicalRecord {
     private final String patientID;
     private ServiceType serviceType; 
-    private LocalDate appointmentDate;
+    private final LocalDate appointmentDate;
     private final List<String> diagnoses = new ArrayList<>();
     private final List<String> treatments = new ArrayList<>();
-    private final List<String> prescriptions = new ArrayList<>();
+    private final Map<String, String> prescriptions = new HashMap<>();
 
     // Constructor
     public MedicalRecord(String patientID, LocalDate date) {
@@ -29,9 +31,21 @@ public class MedicalRecord {
         treatments.add(treatment);
     }
 
-    public void addPrescription(String prescription) {
-        prescriptions.add(prescription);
+    // for doctor to prescribed medications, initially set to pending 
+    public void addPrescription(String medicationName) {
+        prescriptions.put(medicationName, "PENDING");
     }
+
+    //pharmacist can call this to update the prescription status after dispensing the medication
+    public void updatePrescriptionStatus(String medicationName, String status) {
+        if (prescriptions.containsKey(medicationName)) {
+            prescriptions.put(medicationName, status);
+        } else {
+            System.out.println("Prescription not found: " + medicationName);
+        }
+    }
+
+
 
     // getters
     public LocalDate getAppointmentDate() {

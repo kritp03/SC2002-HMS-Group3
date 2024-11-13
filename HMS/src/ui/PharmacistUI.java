@@ -2,11 +2,13 @@ package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 import HMS.src.medication.MedicationManager;
+import HMS.src.prescription.PrescriptionManager;
 import HMS.src.io_new.MedicationCsvHelper;
 
 public class PharmacistUI {
 
     private static MedicationManager medicationManager = new MedicationManager();
+    private static PrescriptionManager prescriptionManager = new PrescriptionManager();
     private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
     
     public static void displayOptions(){
@@ -27,7 +29,7 @@ public class PharmacistUI {
                     System.out.println("View Appointment Outcome Record");
                     break; //tbd
                 case 2:
-                    System.out.println("Update Prescription Status"); //tbd
+                    prescriptionManager.runPrescriptionUpdateProcess();
                     break;
                 case 3:
                     medicationManager.viewMedicationInventory(medFilePath);
@@ -45,7 +47,7 @@ public class PharmacistUI {
         } while (!quit);
     }
 
-    // public static void main(String[] args) {
-    //     displayOptions();
-    // }
+    public static void main(String[] args) {
+        displayOptions();
+    }
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class MedicationManager {
 
-    private Scanner scanner = new Scanner(System.in);
+    public Scanner scanner = new Scanner(System.in);
     private MedicationCsvHelper medCsvHelper = new MedicationCsvHelper();
 
     public Set<String> getAllMedicineNames(String filePath) {
@@ -78,9 +78,9 @@ public class MedicationManager {
         String confirmation = scanner.nextLine().toLowerCase();
 
         if ("y".equals(confirmation)) {
-            System.out.println("Request submitted!");
+            System.out.println("Request submitted!\n");
         } else {
-            System.out.println("Request cancelled.");
+            System.out.println("Request cancelled.\n");
         }
     }
 
@@ -100,7 +100,6 @@ public class MedicationManager {
 
     public void submitReplenishmentRequest(String filePath) {
         Set<String> allMedicines = getAllMedicineNames(filePath);
-
         String medicineName = promptForMedicineName(allMedicines);
         int replenishAmt = promptForReplenishmentAmount();
         confirmSubmitRequest(medicineName, replenishAmt);

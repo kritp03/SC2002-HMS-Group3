@@ -45,7 +45,7 @@ public class PharmacistUI {
         } while (!quit);
     }
 
-    public static void main(String[] args) {
-        displayOptions();
-    }
+    // public static void main(String[] args) {
+    //     displayOptions();
+    // }
 }

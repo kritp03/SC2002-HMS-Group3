@@ -12,9 +12,10 @@ import java.util.UUID;
 public class MedicationManager {
 
     private Scanner scanner = new Scanner(System.in);
+    private MedicationCsvHelper medCsvHelper = new MedicationCsvHelper();
 
     public Set<String> getAllMedicineNames(String filePath) {
-        List<String[]> data = MedicationCsvHelper.readCSV(filePath);
+        List<String[]> data = medCsvHelper.readCSV();
         Set<String> medicineNames = new HashSet<>();
         for (int i = 1; i < data.size(); i++) {
             if (data.get(i).length > 0) {
@@ -25,7 +26,7 @@ public class MedicationManager {
     }
 
     public void viewMedicationInventory(String filePath) {
-        List<String[]> data = MedicationCsvHelper.readCSV(filePath);
+        List<String[]> data = medCsvHelper.readCSV();
         if (data.isEmpty()) {
             System.out.println("No data found in CSV file.");
             return;
@@ -99,16 +100,15 @@ public class MedicationManager {
 
     public void submitReplenishmentRequest(String filePath) {
         Set<String> allMedicines = getAllMedicineNames(filePath);
-        viewMedicationInventory(filePath);
 
         String medicineName = promptForMedicineName(allMedicines);
         int replenishAmt = promptForReplenishmentAmount();
         confirmSubmitRequest(medicineName, replenishAmt);
     }
 
-    public static void main(String[] args) {
-        MedicationManager manager = new MedicationManager();
-        String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv"; 
-        manager.submitReplenishmentRequest(filePath);
-    }
+    // public static void main(String[] args) {
+    //     MedicationManager manager = new MedicationManager();
+    //     String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv"; 
+    //     manager.viewMedicationInventory(filePath);
+    // }
 }

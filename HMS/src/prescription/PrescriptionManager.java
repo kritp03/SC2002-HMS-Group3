@@ -5,9 +5,13 @@ import java.util.List;
 import HMS.src.io_new.PrescriptionCsvHelper;
 
 public class PrescriptionManager {
-    public static void displayMedicineInventory(String filePath) {
-
-        List<String[]> data = PrescriptionCsvHelper.readCSV(filePath);
+    private PrescriptionCsvHelper prescriptionCsvHelper = new PrescriptionCsvHelper();
+    /**
+     * Displays all prescriptions in the CSV file.
+     * @param filePath The path to the CSV file.
+     */
+    public void showAllPrescriptions(String filePath) {
+        List<String[]> data = prescriptionCsvHelper.readCSV();
         if (data.isEmpty()) {
             System.out.println("No medications found in the file.");
         } else {
@@ -28,7 +32,9 @@ public class PrescriptionManager {
         }
     }
 
-    public static void main(String[] args) {
-        displayMedicineInventory("/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Prescription_List.csv");
-    }
+    
+    // public static void main(String[] args) {
+    //     String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Prescription_List.csv";
+    //     showAllPrescriptions();
+    // }
 }

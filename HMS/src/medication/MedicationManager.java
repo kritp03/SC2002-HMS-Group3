@@ -11,6 +11,13 @@ import java.util.UUID;
 
 public class MedicationManager {
 
+
+    private final String ANSI_RESET = "\u001B[0m";
+    private final String ANSI_RED = "\u001B[31m";
+    private final String ANSI_YELLOW = "\u001B[33m";
+    private final String ANSI_GREEN = "\u001B[32m";
+
+
     public Scanner scanner = new Scanner(System.in);
     private MedicationCsvHelper medCsvHelper = new MedicationCsvHelper();
 
@@ -31,16 +38,28 @@ public class MedicationManager {
             System.out.println("No data found in CSV file.");
             return;
         }
-        System.out.println("+--------------------+--------------------+----------------------+");
-        System.out.format("| %-18s | %-18s | %-20s|\n", "Medicine Name", "Initial Stock", "Low Stock Level Alert");
-        System.out.println("+--------------------+--------------------+----------------------+");
-        for (int i = 1; i < data.size(); i++) { 
+        System.out.println("+----------------------+---------------+-------------+--------------+");
+        System.out.format("| %-20s | %-12s | %-11s | %-12s |\n", "Medicine Name", "Initial Stock", "Stock Left", "Stock Status");
+        System.out.println("+----------------------+---------------+-------------+--------------+");
+        for (int i = 1; i < data.size(); i++) {
             String[] row = data.get(i);
-            if (row.length >= 3) { 
-                System.out.format("| %-18s | %-18s | %-20s |\n", row[0], row[1], row[2]);
+            if (row.length >= 4) {
+                String stockStatus = determineStockStatus(Integer.parseInt(row[1]), Integer.parseInt(row[2]), Integer.parseInt(row[3]));
+                System.out.format("| %-20s | %-13s | %-11s | %-21s |\n", row[0], row[1], row[3], stockStatus);
             }
         }
-        System.out.println("+--------------------+--------------------+----------------------+\n");
+        System.out.println("+----------------------+---------------+-------------+--------------+\n");
+    }
+
+    private String determineStockStatus(int initialStock, int lowStockAlert, int stockLeft) {
+        int highThreshold = (int) (lowStockAlert + 0.2 * initialStock);
+        if (stockLeft > highThreshold) {
+            return ANSI_GREEN + "High" + ANSI_RESET;
+        } else if (stockLeft > lowStockAlert && stockLeft <= highThreshold) {
+            return ANSI_YELLOW + "Moderate" + ANSI_RESET;
+        } else {
+            return ANSI_RED + "Low" + ANSI_RESET;
+        }
     }
 
     private String promptForMedicineName(Set<String> allMedicines) {
@@ -106,8 +125,11 @@ public class MedicationManager {
     }
 
     // public static void main(String[] args) {
-    //     MedicationManager manager = new MedicationManager();
-    //     String filePath = "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year 2/Sem 1/SC2002 Object Oriented Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv"; 
-    //     manager.viewMedicationInventory(filePath);
+    // MedicationManager manager = new MedicationManager();
+    // String filePath =
+    // "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year
+    // 2/Sem 1/SC2002 Object Oriented
+    // Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv";
+    // manager.viewMedicationInventory(filePath);
     // }
 }

@@ -1,6 +1,7 @@
 package HMS.src.prescription;
 
 import HMS.src.io_new.PrescriptionCsvHelper;
+import HMS.src.io_new.MedicationCsvHelper;
 import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -8,12 +9,13 @@ import java.time.LocalDate;
 public class PrescriptionManager {
     private Scanner scanner = new Scanner(System.in);
     private PrescriptionCsvHelper prescriptionCsvHelper = new PrescriptionCsvHelper();
+    private MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
 
     public void runPrescriptionUpdateProcess() {
         List<String[]> prescriptions = showAllPrescriptions();
         String prescriptionId = getPrescriptionId();
         if ("B".equalsIgnoreCase(prescriptionId)) {
-            return; 
+            return;
         }
         processStatusUpdate(prescriptions, prescriptionId);
     }
@@ -57,43 +59,62 @@ public class PrescriptionManager {
             prescription[3] = "DISPENSED";
             prescription[7] = LocalDate.now().toString();
             prescriptionCsvHelper.updatePrescriptionById(prescription[0], prescription);
-            System.out.println("Prescription status updated to DISPENSED with today's date.");
-        } else if ("B".equalsIgnoreCase(newStatus)) {
+            decrementStock(prescription[1]);
+            System.out.println("Prescription has been dispensed!");
+        } else if ("C".equalsIgnoreCase(newStatus)) {
+            prescription[3] = "CANCELLED";
+            prescriptionCsvHelper.updatePrescriptionById(prescription[0], prescription);
+            System.out.println("Prescription has been cancelled.");
+
+        }else if ("B".equalsIgnoreCase(newStatus)) {
             return;
         } else {
             System.out.println("Invalid input. No changes made.");
         }
-        showAllPrescriptions(); // Refresh and display updated prescriptions
+        showAllPrescriptions();
+    }
+
+    private void decrementStock(String medicineName) {
+        List<String[]> allMedicines = medicationCsvHelper.readCSV();
+        boolean isUpdated = false;
+        for (String[] medicine : allMedicines) {
+            if (medicineName.equals(medicine[0])) { // Assuming medicine[0] is the name, medicine[3] is stock left
+                int stockLeft = Integer.parseInt(medicine[3]) - 1;
+                medicine[3] = String.valueOf(stockLeft);
+                isUpdated = true;
+                break;
+            }
+        }
+        if (isUpdated) {
+            medicationCsvHelper.updateMedications(allMedicines);
+        } else {
+            System.out.println("An error occurred while updating the stock.");
+        }
     }
 
     private String getNewStatus() {
-        System.out.print("Enter 'D' for Dispensed or 'B' to go back: ");
+        System.out.print("Enter 'D' to dispense, 'C' to cancel or 'B' to go back: ");
         return scanner.nextLine().trim().toUpperCase();
     }
 
     private void printPrescriptions(List<String[]> data, boolean skipHeader) {
-        System.out.println("+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
-        System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s |\n", 
-                          "Prescription ID", "Medicine Name", "Dosage", "Status", "Patient Name", "Requested By", "Date of Request", "Date of Approval");
-        System.out.println("+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
+        System.out.println(
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
+        System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s |\n",
+                "Prescription ID", "Medicine Name", "Dosage", "Status", "Patient Name", "Requested By",
+                "Date of Request", "Date of Approval");
+        System.out.println(
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
         int startIdx = skipHeader ? 1 : 0;
         for (int i = startIdx; i < data.size(); i++) {
             String[] row = data.get(i);
             String status = row[3].trim().toUpperCase();
             String coloredStatus = PrescriptionStatus.valueOf(status).showStatusByColor();
             System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s |\n",
-                              row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7]);
+                    row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7]);
         }
-        System.out.println("+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
+        System.out.println(
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
     }
 
-    public void closeScanner() {
-        scanner.close();
-    }
-
-    public static void main(String[] args) {
-        PrescriptionManager manager = new PrescriptionManager();
-        manager.runPrescriptionUpdateProcess();
-        manager.closeScanner();
-    }
 }

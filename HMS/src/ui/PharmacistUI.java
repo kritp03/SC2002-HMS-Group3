@@ -1,15 +1,20 @@
 package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+
+import HMS.src.appointment.AppointmentManager;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
+import HMS.src.io_new.ApptCsvHelper;
 import HMS.src.io_new.MedicationCsvHelper;
 
 public class PharmacistUI {
 
     private static MedicationManager medicationManager = new MedicationManager();
     private static PrescriptionManager prescriptionManager = new PrescriptionManager();
+    private static AppointmentManager appointmentManager = new AppointmentManager();
     private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
+    private static ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
     
     public static void displayOptions(){
         System.out.println("=====================================");
@@ -18,6 +23,7 @@ public class PharmacistUI {
         System.out.println("=====================================");
 
         String medFilePath =  medicationCsvHelper.getFilePath();
+        String apptFilePath = apptCsvHelper.getFilePath();
 
         boolean quit = false;
         do {
@@ -26,7 +32,7 @@ public class PharmacistUI {
 
             switch(pharmacistChoice) {
                 case 1:
-                    System.out.println("View Appointment Outcome Record");
+                    appointmentManager.viewApptOutcomeRecord(apptFilePath);
                     break; //tbd
                 case 2:
                     prescriptionManager.runPrescriptionUpdateProcess();

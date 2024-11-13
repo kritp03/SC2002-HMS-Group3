@@ -56,9 +56,9 @@ public class Patient extends User
         contactinfo.changeAddress(newAdress);
     }
 
-    public void changeNextOfKinname(String newNextOfKinname)
+    public void changeNextOfKinname(String newNextOfKinName)
     {
-        contactinfo.changeNextOfKinname(newNextOfKinname);
+        contactinfo.changeNextOfKinName(newNextOfKinName);
     }
 
     public void changeNextOfKinPhoneNumber(String newPhoneNumber)
@@ -74,41 +74,41 @@ public class Patient extends User
         return Period.between(dateOfBirth, today).getYears();
     }
 
-    public List<Slot> viewAvailableAppointment(String doctorname)
-    {
-        List <Appointment> availableAppointments = new ArrayList<>();
+    // public List<Slot> viewAvailableAppointment(String doctorname)
+    // {
+    //     List <Appointment> availableAppointments = new ArrayList<>();
 
         
 
-    }
+    // }
 
-    public List<Appointment> scheduleAppointment(Doctor doctor, LocalDate apptDate,LocalTime apptTime)
-    {
+    // public List<Appointment> scheduleAppointment(Doctor doctor, LocalDate apptDate,LocalTime apptTime)
+    // {
 
-    }
+    // }
 
-    public List<Appointment> rescheduleAppointment(Doctor newDoctor, Doctor oldDoctor, LocalDate oldApptDate, LocalDate newApptDate, LocalTime oldApptTime, LocalTime newApptTime)
-    {
+    // public List<Appointment> rescheduleAppointment(Doctor newDoctor, Doctor oldDoctor, LocalDate oldApptDate, LocalDate newApptDate, LocalTime oldApptTime, LocalTime newApptTime)
+    // {
 
-    }
+    // }
 
-    public List<Appointment> cancelAppointment(Doctor doctor, LocalDate apptDate, LocalTime apptTime)
-    {
+    // public List<Appointment> cancelAppointment(Doctor doctor, LocalDate apptDate, LocalTime apptTime)
+    // {
 
-    }
+    // }
 
-    public List<AppointmentStatus> viewAppointmentStatus()
-    {
+    // public List<AppointmentStatus> viewAppointmentStatus()
+    // {
         
-    }
+    // }
 
-    public List<AppointmentOutcome> viewAppointmentOutcome()
-    {
+    // public List<AppointmentOutcome> viewAppointmentOutcome()
+    // {
 
-    }
+    // }
 
-    public List<Prescription> viewPrescription()
-    {
+    // public List<Prescription> viewPrescription()
+    // {
         
-    }
+    // }
 }

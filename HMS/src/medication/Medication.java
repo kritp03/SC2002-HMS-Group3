@@ -1,7 +1,7 @@
 package HMS.src.medication;
 
 public class Medication {
-    // private String medicationID;
+    private String medicationID;
     private String name;
     private DosageForm dosageForm;
     private int concentrationMg;
@@ -22,6 +22,12 @@ public class Medication {
         this.concentrationMg = concentrationMg;
         this.inventoryStock = inventoryStock;
         this.lowThreshold = lowThreshold;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Medication [Name: %s, Stock: %d, Low Stock Alert: %d]", 
+                             name, inventoryStock, lowThreshold);
     }
 
     public String getMedicationID() {

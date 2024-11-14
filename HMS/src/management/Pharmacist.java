@@ -1,6 +1,8 @@
 package HMS.src.management;
 
 import HMS.src.misc_classes.*;
+import HMS.src.prescription.Prescription;
+import HMS.src.prescription.PrescriptionStatus;
 
 import java.util.List;
 
@@ -14,7 +16,8 @@ public class Pharmacist extends User {
     }
 
     public void dispenseMedication(Prescription prescription) {
-        prescription.updateStatus(PrescriptionStatus.DISPENSED);
+        // prescription.updateStatus(PrescriptionStatus.DISPENSED);
+        prescription.setStatus(PrescriptionStatus.DISPENSED);
         System.out.println("Medication dispensed: " + prescription.getName());
     }
 }

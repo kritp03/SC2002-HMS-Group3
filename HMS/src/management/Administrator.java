@@ -1,6 +1,3 @@
-
-
-
 package HMS.src.management;
 
 import HMS.src.medication.Medication;

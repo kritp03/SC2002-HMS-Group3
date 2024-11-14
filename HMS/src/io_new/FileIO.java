@@ -2,6 +2,7 @@ package HMS.src.io_new;
 
 import HMS.src.management.*;
 import HMS.src.medication.*;
+import HMS.src.patient.Patient;
 
 import java.io.*;
 import java.nio.file.Files;

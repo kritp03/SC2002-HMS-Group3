@@ -9,10 +9,10 @@ import HMS.src.database.Database;
 import HMS.src.management.Administrator;
 import HMS.src.management.Doctor;
 import HMS.src.management.Gender;
-import HMS.src.management.Patient;
 import HMS.src.management.Pharmacist;
 import HMS.src.management.User;
 import HMS.src.medication.ReplenishmentRequest;
+import HMS.src.patient.Patient;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

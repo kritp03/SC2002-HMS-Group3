@@ -1,6 +1,10 @@
-package HMS.src.management;
+package HMS.src.patient;
 
 import HMS.src.appointment.*;
+import HMS.src.management.ContactInformation;
+import HMS.src.management.Gender;
+import HMS.src.management.Role;
+import HMS.src.management.User;
 import HMS.src.medicalrecordsPDT.*;
 import HMS.src.medication.*;
 import HMS.src.misc_classes.*;

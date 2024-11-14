@@ -1,9 +1,15 @@
 package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+
+import HMS.src.patient.PatientManager;
+
+// import static HMS.src.patient.PatientManager;
 // import HMS.src.io_new.MedicationCsvHelper;
 
 public class PatientUI {
+    private static PatientManager patientManager = new PatientManager();
+
 
     // private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
     
@@ -17,15 +23,15 @@ public class PatientUI {
 
         boolean quit = false;
         do {
-            int patientChoice = validateIntRange("Please select option: \n1. View Medical Record\n2. Update Personal Information\n3. View Available Appointment Slots \n4. Schedule an Appointment \n5. Reschedule an Appointment \n6. Cancel an Appointment \n7. View Scheduled Appointments \n8.View Past Appointment Outcome Records \n9. Logout \n", 1, 9);
+            int patientChoice = validateIntRange("Please select option: \n1. View Medical Record\n2. Update Personal Information\n3. View Available Appointment Slots \n4. Schedule an Appointment \n5. Reschedule an Appointment \n6. Cancel an Appointment \n7. View Scheduled Appointments \n8. View Past Appointment Outcome Records \n9. Logout \n", 1, 9);
             System.out.println();
 
             switch(patientChoice) {
                 case 1:
-                    System.out.println("View Medical Record");
-                    break; //tbd
+                    patientManager.showPatientAndRecords();
+                    break; 
                 case 2:
-                    System.out.println("Update Personal Information"); //tbd
+                    patientManager.updatePatientContactInfo();
                     break;
                 case 3:
                     System.out.println("View Available Appointment Slots"); //tbd

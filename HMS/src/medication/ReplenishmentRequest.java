@@ -4,15 +4,15 @@ import java.time.LocalDate;
 
 public class ReplenishmentRequest {
     private String requestID;
-    private String medicationID;
+    private String medicineName;
     private int quantity;
     private LocalDate date;
     private ReplenishmentRequestStatus status;
     private String approvedBy;
 
-    public ReplenishmentRequest(String requestID, String medicationID, int quantity, LocalDate date) {
+    public ReplenishmentRequest(String requestID, String medicineName, int quantity, LocalDate date) {
         this.requestID = requestID;
-        this.medicationID = medicationID;
+        this.medicineName = medicineName;
         this.quantity = quantity;
         this.date = date;
         this.status = ReplenishmentRequestStatus.PENDING;  
@@ -23,8 +23,8 @@ public class ReplenishmentRequest {
         return requestID;
     }
 
-    public String getMedicationID() {
-        return medicationID;
+    public String getmedicineName() {
+        return medicineName;
     }
 
     public int getQuantity() {

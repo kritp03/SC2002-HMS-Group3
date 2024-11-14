@@ -1,8 +1,10 @@
 package HMS.src.medication;
 
 import HMS.src.io_new.MedicationCsvHelper;
+import HMS.src.io_new.ReplReqCsvHelper;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -11,15 +13,14 @@ import java.util.UUID;
 
 public class MedicationManager {
 
-
     private final String ANSI_RESET = "\u001B[0m";
     private final String ANSI_RED = "\u001B[31m";
     private final String ANSI_YELLOW = "\u001B[33m";
     private final String ANSI_GREEN = "\u001B[32m";
 
-
     public Scanner scanner = new Scanner(System.in);
     private MedicationCsvHelper medCsvHelper = new MedicationCsvHelper();
+    ReplReqCsvHelper replReqCsvHelper = new ReplReqCsvHelper();
 
     public Set<String> getAllMedicineNames(String filePath) {
         List<String[]> data = medCsvHelper.readCSV();
@@ -32,6 +33,24 @@ public class MedicationManager {
         return medicineNames;
     }
 
+    /**
+     * Fetches the highest request ID from the CSV and returns the next ID incremented by one.
+     * @return The next request ID in the sequence.
+     */
+    private String getNextRequestId() {
+        List<String[]> entries = replReqCsvHelper.readCSV();
+        int highestId = 0;
+        for (String[] entry : entries) {
+            if (entry[0].startsWith("R")) {
+                int currentId = Integer.parseInt(entry[0].substring(1)); // Assume the ID format is 'R001', 'R002', etc.
+                if (currentId > highestId) {
+                    highestId = currentId;
+                }
+            }
+        }
+        return "R" + String.format("%03d", highestId + 1); // Returns the next ID, formatted as three digits
+    }
+
     public void viewMedicationInventory(String filePath) {
         List<String[]> data = medCsvHelper.readCSV();
         if (data.isEmpty()) {
@@ -39,12 +58,14 @@ public class MedicationManager {
             return;
         }
         System.out.println("+----------------------+---------------+-------------+--------------+");
-        System.out.format("| %-20s | %-12s | %-11s | %-12s |\n", "Medicine Name", "Initial Stock", "Stock Left", "Stock Status");
+        System.out.format("| %-20s | %-12s | %-11s | %-12s |\n", "Medicine Name", "Initial Stock", "Stock Left",
+                "Stock Status");
         System.out.println("+----------------------+---------------+-------------+--------------+");
         for (int i = 1; i < data.size(); i++) {
             String[] row = data.get(i);
             if (row.length >= 4) {
-                String stockStatus = determineStockStatus(Integer.parseInt(row[1]), Integer.parseInt(row[2]), Integer.parseInt(row[3]));
+                String stockStatus = determineStockStatus(Integer.parseInt(row[1]), Integer.parseInt(row[2]),
+                        Integer.parseInt(row[3]));
                 System.out.format("| %-20s | %-13s | %-11s | %-21s |\n", row[0], row[1], row[3], stockStatus);
             }
         }
@@ -87,28 +108,39 @@ public class MedicationManager {
     }
 
     private void confirmSubmitRequest(String medicineName, int amount) {
-        String requestID = UUID.randomUUID().toString();
-        String medicationID = medicineName;
-        ReplenishmentRequest request = new ReplenishmentRequest(requestID, medicationID, amount, LocalDate.now());
-        System.out.println("\nHere is the replenishment request summary:");
-        displayReplReqSummary(request);
+        String requestID = getNextRequestId();
+        String status = "PENDING"; // Default status for new requests
+        String approvedBy = ""; // Default approver status
+
+        displayReplReqSummary(new ReplenishmentRequest(requestID, medicineName, amount, LocalDate.now()));
 
         System.out.println("\nAre you sure you want to replenish this medicine? (y/n)");
         String confirmation = scanner.nextLine().toLowerCase();
 
         if ("y".equals(confirmation)) {
-            System.out.println("Request submitted!\n");
+            String[] replReq = new String[]{
+                requestID,
+                medicineName,
+                Integer.toString(amount),
+                LocalDate.now().toString(),
+                status,
+                approvedBy
+            };
+
+            replReqCsvHelper.addReplReq(replReq); 
+            System.out.println("Request submitted and recorded!\n");
         } else {
             System.out.println("Request cancelled.\n");
         }
     }
+
 
     private void displayReplReqSummary(ReplenishmentRequest request) {
         System.out.println("=================================");
         System.out.println("| Replenishment Request Summary |");
         System.out.println("=================================");
         System.out.println("Request ID: " + request.getRequestID());
-        System.out.println("Medication ID: " + request.getMedicationID());
+        System.out.println("Medication ID: " + request.getmedicineName());
         System.out.println("Quantity: " + request.getQuantity());
         System.out.println("Request Date: " + request.getDate());
         System.out.println("Status: " + request.getStatus().showStatusByColor());

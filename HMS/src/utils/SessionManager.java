@@ -14,8 +14,7 @@ public class SessionManager {
      */
     public static void loginUser(String role, String userID) {
         currentUserRole = role;
-        currentUserID = userID;
-        System.out.println("User " + userID + " logged in as " + role + ".");
+        currentUserID = userID.toUpperCase();
     }
 
     /**

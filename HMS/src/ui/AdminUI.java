@@ -53,6 +53,7 @@
 package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.*;
+import HMS.src.utils.SessionManager;
 
 import HMS.src.medication.Medication;
 import HMS.src.database.Database;
@@ -86,6 +87,7 @@ public class AdminUI {
                 case 5 -> {
                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }

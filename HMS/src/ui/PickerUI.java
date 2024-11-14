@@ -4,8 +4,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+
 import HMS.src.io_new.StaffCsvHelper;
 import HMS.src.io_new.PatientCsvHelper;
+import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 
 public class PickerUI {
@@ -68,29 +70,38 @@ public class PickerUI {
         String password = getUserPassword();
 
         if (authenticateUser(id, password)) {
-            handleLogin(domain);
+            handleLogin(domain, id);
         } else {
             System.out.println("Invalid credentials, please try again.");
             displayLoginOptions();
         }
     }
 
-    private void handleLogin(int choice) {
+    private void handleLogin(int choice, String id) {
+        String role = "";
         switch (choice) {
             case 1:
+                role = "Doctor";
                 System.out.println("\nLogging in as Doctor...");
+                SessionManager.loginUser(role, id);
                 DoctorUI.displayOptions();
                 break;
             case 2:
+                role = "Patient";
                 System.out.println("\nLogging in as Patient...");
+                SessionManager.loginUser(role, id);
                 PatientUI.displayOptions();
                 break;
             case 3:
+                role = "Pharmacist";
                 System.out.println("\nLogging in as Pharmacist...");
+                SessionManager.loginUser(role, id);
                 PharmacistUI.displayOptions();
                 break;
             case 4:
+                role = "Admin";
                 System.out.println("\nLogging in as Admin...");
+                SessionManager.loginUser(role, getUserID());
                 AdminUI.displayOptions();
                 break;
             default:
@@ -98,5 +109,11 @@ public class PickerUI {
                 displayLoginOptions();
                 break;
         }
+        String userID = SessionManager.getCurrentUserID();
+        SessionManager.loginUser(userID, role);
+        System.out.println("Welcome, " + userID + "!");
+        
     }
+
+    
 }

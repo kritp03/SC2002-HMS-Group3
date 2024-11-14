@@ -5,6 +5,7 @@ import static HMS.src.utils.ValidationHelper.validateIntRange;
 import HMS.src.appointment.AppointmentManager;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
+import HMS.src.utils.SessionManager;
 import HMS.src.io_new.ApptCsvHelper;
 import HMS.src.io_new.MedicationCsvHelper;
 
@@ -46,6 +47,7 @@ public class PharmacistUI {
                 case 5:
                 System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

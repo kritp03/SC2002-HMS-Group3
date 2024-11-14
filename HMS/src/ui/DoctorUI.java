@@ -3,6 +3,8 @@ package HMS.src.ui;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 // import HMS.src.io_new.MedicationCsvHelper;
 
+import HMS.src.utils.SessionManager;
+
 public class DoctorUI {
 
     // private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
@@ -45,6 +47,7 @@ public class DoctorUI {
                 case 8:
                 System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

@@ -1,0 +1,4 @@
+﻿recordID,diagnosis,treatmentPlan,prescriptions,patientID
+R001,Chicken Pox,Rest at home,-,P001
+R002,Sore throat,Take meds,-,P002
+R003,Sprain,Sports,-,P001

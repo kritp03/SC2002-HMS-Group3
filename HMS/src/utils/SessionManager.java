@@ -21,7 +21,6 @@ public class SessionManager {
      * Logs out the current user.
      */
     public static void logoutUser() {
-        System.out.println("User " + currentUserID + " logged out.");
         currentUserID = null;
         currentUserRole = null;
     }

@@ -9,9 +9,9 @@ import java.util.List;
 
 
 
-public class MedicationCsvHelper extends BaseCsvHelper{
+public class ApptCsvHelper extends BaseCsvHelper{
 
-    protected String FILE_NAME = "Medicine_List.csv";
+    protected String FILE_NAME = "Appt_Outcome.csv";
 
     @Override
     protected String getFileName() {
@@ -25,14 +25,6 @@ public class MedicationCsvHelper extends BaseCsvHelper{
      */
     public List<String[]> readCSV() {
         return readEntries();
-    }
-
-   /**
-     * Utilizes the base class method to write an entries to the CSV file.
-     * @param medications A List of String arrays where each array represents a prescription entry.
-     */ 
-    public void updateMedications(List<String[]> medications) {
-        writeEntries(medications);
     }
 
     /**

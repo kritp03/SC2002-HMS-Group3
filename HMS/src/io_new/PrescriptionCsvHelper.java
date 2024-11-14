@@ -26,6 +26,7 @@ public class PrescriptionCsvHelper extends BaseCsvHelper{
     public List<String[]> readCSV() {
         return readEntries();
     }
+    
     /**
      * Gets the complete file path for the CSV file managed by this helper.
      * @return String representing the full file path.
@@ -73,7 +74,7 @@ public class PrescriptionCsvHelper extends BaseCsvHelper{
      * @return A String array representing the prescription entry.
      */
     public String[] getPrescriptionById(String prescriptionID) {
-        getEntryById(prescriptionID);
+        return getEntryById(prescriptionID);
     }
 
     /**

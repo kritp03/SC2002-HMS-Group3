@@ -1,2 +1,4 @@
 ﻿PrescriptionID,Medicine Name,Dosage,Status,Patient Name,Requested By,Date of Request,Date of Approval
-1,Ibuprofen,2mg,CANCELLED,Charlie White,John Smith,1-Jun-24,-
+1,Ibuprofen,2mg,DISPENSED,Charlie White,John Smith,2024-11-13,2024-11-13
+2,Amoxillin,3mg,CANCELLED,Charlie White,John Smith,2024-11-13,2024-11-13
+3,Ibuprofen,5mg,CANCELLED,Charlie White,John Smith,2024-11-12,2024-11-14

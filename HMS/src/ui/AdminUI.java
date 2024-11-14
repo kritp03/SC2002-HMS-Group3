@@ -53,15 +53,16 @@
 package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.*;
-import HMS.src.management.Administrator;
-import HMS.src.management.User;
-import HMS.src.management.Doctor;
-import HMS.src.management.Pharmacist;
-import HMS.src.management.Role;
-import HMS.src.misc_classes.Gender;
+
 import HMS.src.medication.Medication;
 import HMS.src.database.Database;
 // import HMS.src.medication.ReplenishmentRequest;
+import HMS.src.management.Administrator;
+import HMS.src.management.Doctor;
+import HMS.src.management.Gender;
+import HMS.src.management.Pharmacist;
+import HMS.src.management.Role;
+import HMS.src.management.User;
 
 public class AdminUI {
     private static Administrator admin = (Administrator) Database.getCurrentUser();

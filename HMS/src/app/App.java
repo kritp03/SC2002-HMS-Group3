@@ -3,8 +3,8 @@ package HMS.src.app;
 import java.util.InputMismatchException;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 
-import HMS.src.management.Doctor;
 import HMS.src.ui.PharmacistUI;
+import HMS.src.management.Doctor;
 import HMS.src.ui.AdminUI;
 import HMS.src.ui.DoctorUI;
 import HMS.src.ui.PatientUI;

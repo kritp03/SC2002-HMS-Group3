@@ -1,4 +1,4 @@
-package HMS.src.misc_classes;
+package HMS.src.io_new;
 
 import HMS.src.management.*;
 import HMS.src.medication.*;

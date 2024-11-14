@@ -58,11 +58,11 @@
 
 package HMS.src.database;
 
-import HMS.src.management.User;
 import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
-import HMS.src.misc_classes.FileIO;
 import HMS.src.appointment.Appointment;
+import HMS.src.io_new.FileIO;
+import HMS.src.management.User;
 
 import java.util.HashMap;
 import java.util.ArrayList;

@@ -1,17 +1,17 @@
 package HMS.src;
 
-import HMS.src.management.Administrator;
-import HMS.src.management.Doctor;
-import HMS.src.management.Patient;
-import HMS.src.management.Pharmacist;
-import HMS.src.management.User;
-import HMS.src.misc_classes.Gender;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
 import HMS.src.appointment.Appointment;
 import HMS.src.appointment.AppointmentStatus;
 import HMS.src.appointment.ServiceType;
 import HMS.src.database.Database;
+import HMS.src.management.Administrator;
+import HMS.src.management.Doctor;
+import HMS.src.management.Gender;
+import HMS.src.management.Patient;
+import HMS.src.management.Pharmacist;
+import HMS.src.management.User;
 import HMS.src.medication.ReplenishmentRequest;
 
 import java.time.LocalDate;

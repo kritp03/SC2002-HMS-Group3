@@ -88,7 +88,6 @@
 
 package HMS.src.management;
 
-import HMS.src.misc_classes.Gender;
 import java.util.UUID;
 
 public class User {

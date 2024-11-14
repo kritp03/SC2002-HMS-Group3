@@ -1,4 +1,4 @@
-package HMS.src.misc_classes;
+package HMS.src.utils;
 
 import java.util.ArrayList;
 import java.util.List;

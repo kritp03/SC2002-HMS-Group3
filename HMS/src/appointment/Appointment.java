@@ -73,10 +73,11 @@
 
 package HMS.src.appointment;
 
-import HMS.src.management.doctor.*;
-import HMS.src.management.patient.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import HMS.src.user.patient.*;
+import HMS.src.user.doctor.*;
 
 public class Appointment {
     private String appointmentID;        // Unique ID for the appointment

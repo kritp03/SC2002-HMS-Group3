@@ -7,8 +7,8 @@ import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
 import HMS.src.utils.SessionManager;
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.io_new.ApptCsvHelper;
-import HMS.src.io_new.MedicationCsvHelper;
+import HMS.src.io.ApptCsvHelper;
+import HMS.src.io.MedicationCsvHelper;
 
 public class PharmacistUI {
 

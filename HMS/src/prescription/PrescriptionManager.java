@@ -1,9 +1,11 @@
 package HMS.src.prescription;
 
-import HMS.src.io_new.PrescriptionCsvHelper;
-import HMS.src.io_new.MedicationCsvHelper;
 import java.util.List;
 import java.util.Scanner;
+
+import HMS.src.io.MedicationCsvHelper;
+import HMS.src.io.PrescriptionCsvHelper;
+
 import java.time.LocalDate;
 
 public class PrescriptionManager {

@@ -52,15 +52,15 @@
 
 package HMS.src.ui;
 
+import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.database.Database;
-import HMS.src.management.Gender;
-import HMS.src.management.Role;
-import HMS.src.management.User;
-import HMS.src.management.administrator.*;
-import HMS.src.management.doctor.*;
-import HMS.src.management.pharmacist.*;
 import HMS.src.medication.Medication;
+import HMS.src.user.Gender;
+import HMS.src.user.Role;
+import HMS.src.user.User;
+import HMS.src.user.administrator.Administrator;
+import HMS.src.user.doctor.Doctor;
+import HMS.src.user.pharmacist.Pharmacist;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 

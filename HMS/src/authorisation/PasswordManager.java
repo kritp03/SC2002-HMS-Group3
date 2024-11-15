@@ -3,8 +3,8 @@ package HMS.src.authorisation;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
-import HMS.src.io_new.PasswordCsvHelper;
 
+import HMS.src.io.PasswordCsvHelper;
 import HMS.src.utils.SessionManager;
 
 public class PasswordManager {

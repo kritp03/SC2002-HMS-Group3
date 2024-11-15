@@ -1,12 +1,11 @@
 package HMS.src.medicalrecordsPDT;
 
+import HMS.src.archive.Database;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import HMS.src.database.Database;
 
 public class MedicalRecordManager {
     private static Map<String, List<MedicalRecord>> records = new HashMap<>();

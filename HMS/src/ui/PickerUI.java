@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import HMS.src.io_new.PasswordCsvHelper;
 import HMS.src.utils.SessionManager;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.io.PasswordCsvHelper;
+
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 
 public class PickerUI {

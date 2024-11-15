@@ -2,10 +2,7 @@ package HMS.src.io;
 
 import HMS.src.medication.*;
 import HMS.src.user.*;
-import HMS.src.user.administrator.*;
-import HMS.src.user.doctor.*;
-import HMS.src.user.patient.*;
-import HMS.src.user.pharmacist.*;
+import HMS.src.user.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;

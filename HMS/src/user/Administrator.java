@@ -1,80 +1,71 @@
-package HMS.src.user.administrator;
+package HMS.src.user;
 
 import HMS.src.appointment.Appointment;
-import HMS.src.archive.Database;
 import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
-import HMS.src.user.*;
 import java.util.List;
 
 public class Administrator extends User {
+    private AdministratorManager manager = new AdministratorManager();
+
     public Administrator(String userID, String name, String emailId, int age, Gender gender) {
         super(userID, name, Role.ADMINISTRATOR, emailId, age, gender);
     }
 
     // Manage Staff
     public void addStaff(User staff) {
-        Database.getUserData().put(staff.getUserID().toString(), staff);
-        System.out.println("Staff member added: " + staff.getName());
+        manager.addStaff(staff);
     }
 
     public void removeStaff(String staffID) {
-        if (Database.getUserData().remove(staffID) != null) {
-            System.out.println("Staff member removed with ID: " + staffID);
-        } else {
-            System.out.println("Staff member not found with ID: " + staffID);
-        }
+        manager.removeStaff(staffID);
+    }
+
+    public void viewStaff() {
+        manager.viewStaff();
     }
 
     // View Appointments
     public void viewAppointments() {
-        Database.getAppointments().forEach(appointment ->
-            System.out.println(appointment)
-        );
+        manager.viewAppointments();
     }
 
     // Manage Medication Inventory
     public void addMedication(Medication medication) {
-        Database.getMedicineData().put(medication.getName(), medication);
-        System.out.println("Medication added: " + medication.getName());
+        manager.addMedication(medication);
     }
 
     public void updateMedicationStock(String medicationName, int newStock) {
-        Medication medication = Database.getMedicineData().get(medicationName);
-        if (medication != null) {
-            medication.setInventoryStock(newStock);
-            System.out.println("Updated stock for " + medicationName + " to " + newStock);
-        } else {
-            System.out.println("Medication not found: " + medicationName);
-        }
+        manager.updateMedicationStock(medicationName, newStock);
     }
 
     public void viewMedicationInventory() {
-        Database.getMedicineData().values().forEach(medication ->
-            System.out.println(medication)
-        );
+        manager.viewMedicationInventory();
     }
 
     // Approve or Reject Replenishment Requests
     public void approveReplenishmentRequest(ReplenishmentRequest request, boolean approve) {
-        if (approve) {
-            request.approveRequest(this.getName());
-            Medication medication = Database.getMedicineData().get(request.getmedicineName());
-            if (medication != null) {
-                medication.setInventoryStock(medication.getInventoryStock() + request.getQuantity());
-                System.out.println("Replenishment approved for " + request.getmedicineName() + ": stock updated.");
-            }
-        } else {
-            request.rejectRequest(this.getName());
-            System.out.println("Replenishment request rejected for " + request.getmedicineName());
-        }
+        manager.approveReplenishmentRequest(request, approve);
     }
 
     // Method to view scheduled appointments
     public void viewScheduledAppointments(List<Appointment> appointments) {
-        System.out.println("Scheduled Appointments:");
-        for (Appointment appointment : appointments) {
-            System.out.println(appointment);
-        }
+        manager.viewScheduledAppointments(appointments);
+    }
+
+    // Method to get pending replenishment requests
+    public List<String[]> getPendingReplenishmentRequests() {
+        return manager.getPendingReplenishmentRequests();
+    }
+
+    // Method to process a replenishment request
+    public void processReplenishmentRequest(String requestID, boolean approve) {
+        manager.processReplenishmentRequest(requestID, approve, this);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Administrator[ID=%s, Name=%s, Email=%s, Age=%d, Gender=%s]",
+            getUserID(), getName(), getEmailId(), getAge(), getGender());
     }
 }

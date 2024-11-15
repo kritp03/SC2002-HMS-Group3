@@ -1,4 +1,6 @@
 Medicine Name,Initial Stock,Low Stock Level Alert,Stock Left,Type
-Paracetamol,100,20,99,TABLET
+Paracetamol,100,20,119,TABLET
 Ibuprofen,50,9,8,TABLET
-Amoxicillin,75,15,34,BOTTLE
+Amoxicillin,75,15,25,BOTTLE
+Aspirin,150,30,150,TABLET
+Cough Syrup,80,15,80,LIQUID

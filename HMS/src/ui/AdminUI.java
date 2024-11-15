@@ -1,71 +1,16 @@
-// package HMS.src.ui;
-
-// import static HMS.src.utils.ValidationHelper.validateIntRange;
-// // import HMS.src.medication.MedicationManager;
-// // import HMS.src.io_new.MedicationCsvHelper;
-
-// public class AdminUI {
-
-//     // private static MedicationManager medicationManager = new MedicationManager();
-//     // private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
-    
-//     public static void displayOptions(){
-//         System.out.println("=====================================");
-//         System.out.println("|                Menu                |");
-//         System.out.println("|            Welcome Admin!          |");    
-//         System.out.println("=====================================");
-
-//         // String medFilePath =  medicationCsvHelper.getFilePath();
-
-//         boolean quit = false;
-//         do {
-//             int adminChoice = validateIntRange("Please select option: \n1. View and Manage Hospital Staff\n2. View Appointments details\n3. View and Manage Medication Inventory \n4. Approve Replenishment Request \n5. Logout \n", 1, 5);
-//             System.out.println();
-
-//             switch(adminChoice) {
-//                 case 1:
-//                     System.out.println("View and Manage Hospital Staff");
-//                     break; //tbd
-//                 case 2:
-//                     System.out.println("View Appointments details"); //tbd
-//                     break;
-//                 case 3:
-//                     System.out.println("View and Manage Medication Inventory"); //tbd
-//                     break;
-//                 case 4:
-//                     System.out.println("Approve Replenishment Request"); //tbd
-//                     break;
-//                 case 5:
-//                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
-//                     quit = true;
-//                     break;
-//                 default:
-//                     System.out.println("Invalid choice. Please try again.");
-//             }
-//         } while (!quit);
-//     }
-
-//     public static void main(String[] args) {
-//         displayOptions();
-//     }
-// }
-
 package HMS.src.ui;
 
-import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.medication.Medication;
-import HMS.src.user.Gender;
-import HMS.src.user.Pharmacist;
-import HMS.src.user.Role;
-import HMS.src.user.User;
-import HMS.src.user.administrator.Administrator;
-import HMS.src.user.doctor.Doctor;
+import HMS.src.medication.DosageForm;
+import HMS.src.user.*;
 import HMS.src.utils.SessionManager;
+import HMS.src.utils.InputScanner;
+import java.util.List;
 import static HMS.src.utils.ValidationHelper.*;
 
 public class AdminUI {
-    private static Administrator admin = (Administrator) Database.getCurrentUser();
+    private static Administrator admin = new Administrator("A001", "Sarah Lee", "admin@hospital.com", 40, Gender.FEMALE);
     private static PasswordManager passwordManager = new PasswordManager();
 
     public static void displayOptions() {
@@ -77,6 +22,7 @@ public class AdminUI {
         boolean quit = false;
         do {
             int adminChoice = validateIntRange("Please select an option: \n1. Manage Hospital Staff\n2. View Appointments\n3. Manage Medication Inventory\n4. Approve Replenishment Requests\n5. Reset Password\n6. Logout\n", 1, 6);
+            InputScanner.getInstance().nextLine(); // Clear the buffer
             System.out.println();
 
             switch (adminChoice) {
@@ -92,20 +38,6 @@ public class AdminUI {
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
-
-            // switch (adminChoice) {
-            //     case 1 -> System.out.println("hi");
-            //     case 2 ->System.out.println("hi");
-            //     case 3 -> System.out.println("hi");
-            //     case 4 -> System.out.println("hi");
-            //     case 5 -> passwordManager.changePassword();
-            //     case 6 -> {
-            //         System.out.println("Logging out...\nRedirecting to Main Menu...\n");
-            //         quit = true;
-            //         SessionManager.logoutUser();
-            //     }
-            //     default -> System.out.println("Invalid choice. Please try again.");
-            // }
         } while (!quit);
     }
 
@@ -114,11 +46,12 @@ public class AdminUI {
         boolean back = false;
         do {
             int staffChoice = validateIntRange("\nStaff Management:\n1. Add Staff\n2. Remove Staff\n3. View All Staff\n4. Back to Main Menu\n", 1, 4);
+            InputScanner.getInstance().nextLine(); // Clear the buffer
 
             switch (staffChoice) {
                 case 1 -> addStaff();
                 case 2 -> removeStaff();
-                case 3 -> viewAllStaff();
+                case 3 -> admin.viewStaff();
                 case 4 -> back = true;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -129,10 +62,10 @@ public class AdminUI {
     private static void addStaff() {
         System.out.println("\nAdding a New Staff Member");
         
-        String staffID = validateString("Enter Staff ID: ");
         String name = validateString("Enter Name: ");
         String email = validateString("Enter Email: ");
         int age = validateInt("Enter Age: ");
+        InputScanner.getInstance().nextLine(); // Clear the buffer after int input
         
         Gender gender = null;
         while (gender == null) {
@@ -152,13 +85,14 @@ public class AdminUI {
             }
         }
 
+        // Create staff with empty ID - it will be generated by the manager
         User staff;
         if (role == Role.DOCTOR) {
-            staff = new Doctor(staffID, name, email, age, gender);
+            staff = new Doctor("", name, email, age, gender);
         } else if (role == Role.PHARMACIST) {
-            staff = new Pharmacist(staffID, name, email, age, gender);
+            staff = new Pharmacist("", name, email, age, gender);
         } else {
-            staff = new Administrator(staffID, name, email, age, gender);
+            staff = new Administrator("", name, email, age, gender);
         }
 
         admin.addStaff(staff);
@@ -167,15 +101,8 @@ public class AdminUI {
     // Method to remove a staff member
     private static void removeStaff() {
         System.out.println("\nRemoving a Staff Member");
-        
         String staffID = validateString("Enter the ID of the Staff Member to remove: ");
         admin.removeStaff(staffID);
-    }
-
-    // Method to view all staff members
-    private static void viewAllStaff() {
-        System.out.println("\nAll Staff Members:");
-        Database.getUserData().values().forEach(System.out::println);
     }
 
     // Method to manage medication inventory (add, update, or view)
@@ -183,6 +110,7 @@ public class AdminUI {
         boolean back = false;
         do {
             int inventoryChoice = validateIntRange("\nMedication Inventory:\n1. Add Medication\n2. Update Medication Stock\n3. View Inventory\n4. Back to Main Menu\n", 1, 4);
+            InputScanner.getInstance().nextLine(); // Clear the buffer
 
             switch (inventoryChoice) {
                 case 1 -> addMedication();
@@ -199,10 +127,27 @@ public class AdminUI {
         System.out.println("\nAdding a New Medication");
 
         String name = validateString("Enter Medication Name: ");
-        int initialStock = validateInt("Enter Initial Stock: ");
-        int lowStockThreshold = validateInt("Enter Low Stock Threshold: ");
         
-        Medication medication = new Medication(name, initialStock, lowStockThreshold);
+        DosageForm dosageForm = null;
+        while (dosageForm == null) {
+            try {
+                dosageForm = DosageForm.valueOf(validateString("Enter Dosage Form (TABLET, CAPSULE, LIQUID, INJECTION, CREAM, INHALER, SUPPOSITORY): ").toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid dosage form. Please try again.");
+            }
+        }
+
+        int concentration = validateInt("Enter Concentration (mg): ");
+        InputScanner.getInstance().nextLine(); // Clear the buffer
+        
+        int initialStock = validateInt("Enter Initial Stock: ");
+        InputScanner.getInstance().nextLine(); // Clear the buffer
+        
+        int lowStockThreshold = validateInt("Enter Low Stock Threshold: ");
+        InputScanner.getInstance().nextLine(); // Clear the buffer
+        
+        // Create medication with empty ID - it will be generated by the manager
+        Medication medication = new Medication("", name, dosageForm, concentration, initialStock, lowStockThreshold);
         admin.addMedication(medication);
     }
 
@@ -212,6 +157,7 @@ public class AdminUI {
 
         String name = validateString("Enter Medication Name to Update: ");
         int newStock = validateInt("Enter New Stock Level: ");
+        InputScanner.getInstance().nextLine(); // Clear the buffer
         
         admin.updateMedicationStock(name, newStock);
     }
@@ -219,16 +165,35 @@ public class AdminUI {
     // Method to approve or reject replenishment requests
     private static void approveReplenishmentRequests() {
         System.out.println("\nProcessing Replenishment Requests");
+        List<String[]> requests = admin.getPendingReplenishmentRequests();
+        
+        if (requests.isEmpty()) {
+            System.out.println("No pending replenishment requests.");
+            return;
+        }
 
-        Database.getReplenishmentRequests().forEach(request -> {
-            System.out.println("\nReplenishment Request:");
-            System.out.println("Request ID: " + request.getRequestID());
-            System.out.println("Quantity: " + request.getQuantity());
-            System.out.println("Request Date: " + request.getDate());
-            System.out.println("Status: " + request.getStatus());
+        System.out.println("\nPending Replenishment Requests:");
+        String line = "+----------+------------------+----------+------------------+";
+        System.out.println(line);
+        System.out.format("| %-8s | %-16s | %-8s | %-16s |%n", 
+            "Request ID", "Medicine Name", "Amount", "Date Requested");
+        System.out.println(line);
 
-            boolean approve = validateBoolean("Approve this request? (y/n): ");
-            admin.approveReplenishmentRequest(request, approve);
-        });
+        for (String[] request : requests) {
+            System.out.format("| %-8s | %-16s | %-8s | %-16s |%n",
+                request[0], request[1], request[2], request[3]);
+        }
+        System.out.println(line);
+
+        String requestID = validateString("\nEnter Request ID to process (or press Enter to skip): ");
+        if (!requestID.trim().isEmpty()) {
+            String choice = validateString("Approve or Reject? (A/R): ").toUpperCase();
+            boolean approve = choice.equals("A");
+            admin.processReplenishmentRequest(requestID, approve);
+        }
+    }
+
+    public static void main(String[] args) {
+        displayOptions();
     }
 }

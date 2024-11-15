@@ -2,8 +2,8 @@ package HMS.src.ui;
 
 import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.user.doctor.DoctorManager;
-import HMS.src.user.patient.Patient;
+import HMS.src.user.DoctorManager;
+import HMS.src.user.Patient;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;

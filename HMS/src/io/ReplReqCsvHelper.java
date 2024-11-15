@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+/**
+ * 
+ */
 public class ReplReqCsvHelper extends BaseCsvHelper{
 
     protected String FILE_NAME = "Replenishment_Request.csv";
@@ -37,12 +38,30 @@ public class ReplReqCsvHelper extends BaseCsvHelper{
     }
 
     /**
-     * Utilizes the base class method to write an entries to the CSV file.
-     * @param replReq A List of String arrays where each array represents a replenishment request entry.
+     * Updates a replenishment request in the CSV file.
+     * @param requestID The ID of the request to update
+     * @param status The new status (APPROVED/REJECTED)
+     * @param approverName The name of the approver
+     * @param approvalDate The date of approval/rejection
+     */
+    public void updateRequest(String requestID, String status, String approverName, String approvalDate) {
+        List<String[]> requests = readCSV();
+        for (String[] request : requests) {
+            if (request[0].equals(requestID)) {
+                request[4] = status;
+                request[5] = approverName;
+                request[6] = approvalDate;
+                updateEntry(requestID, request);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Adds a new replenishment request to the CSV file.
+     * @param replReq A string array representing the replenishment request entry.
      */
     public void addReplReq(String[] replReq) {
         addEntry(replReq);
     }
-    
-
 }

@@ -1,10 +1,6 @@
 package HMS.src.io;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,6 +40,9 @@ public class MedicalRecordCsvHelper extends BaseCsvHelper{
         return new File(basePath, FILE_NAME).getAbsolutePath();
     }
 
-    
+    public void updateMedicalRecords(List<String[]> records) 
+    {
+        writeEntries(records);
+    }
 
 }

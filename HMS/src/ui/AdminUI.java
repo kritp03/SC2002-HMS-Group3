@@ -52,20 +52,17 @@
 
 package HMS.src.ui;
 
-import static HMS.src.utils.ValidationHelper.*;
-
 import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.utils.SessionManager;
-
 import HMS.src.medication.Medication;
-import HMS.src.user.Administrator;
-import HMS.src.user.Doctor;
 import HMS.src.user.Gender;
-import HMS.src.user.Pharmacist;
 import HMS.src.user.Role;
 import HMS.src.user.User;
-import HMS.src.authorisation.PasswordManager;
+import HMS.src.user.administrator.Administrator;
+import HMS.src.user.doctor.Doctor;
+import HMS.src.user.pharmacist.Pharmacist;
+import HMS.src.utils.SessionManager;
+import static HMS.src.utils.ValidationHelper.*;
 
 public class AdminUI {
     private static Administrator admin = (Administrator) Database.getCurrentUser();
@@ -226,7 +223,6 @@ public class AdminUI {
         Database.getReplenishmentRequests().forEach(request -> {
             System.out.println("\nReplenishment Request:");
             System.out.println("Request ID: " + request.getRequestID());
-            System.out.println("Medication ID: " + request.getMedicationID());
             System.out.println("Quantity: " + request.getQuantity());
             System.out.println("Request Date: " + request.getDate());
             System.out.println("Status: " + request.getStatus());

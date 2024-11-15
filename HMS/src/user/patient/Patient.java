@@ -1,21 +1,15 @@
-package HMS.src.user;
+package HMS.src.user.patient;
 
 import HMS.src.appointment.*;
 import HMS.src.medicalrecordsPDT.*;
-import HMS.src.medication.*;
-import HMS.src.misc_classes.*;
-import HMS.src.prescription.Prescription;
-
+import HMS.src.user.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.Period;
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class Patient extends User
 {
-    private final String name;
     private final String patientId;
     private LocalDate dateOfBirth;
     private ContactInformation contactinfo;
@@ -26,13 +20,19 @@ public class Patient extends User
     public Patient(String name, String patientId, LocalDate dateOfBirth, Gender gender, ContactInformation contactInfo, String bloodType, List<MedicalRecord> medicalRecord, List<Appointment> appointment)
     {
         super(patientId,name,Role.PATIENT,contactInfo.getEmailId(),calculateAge(dateOfBirth), gender);
-        this.name = name;
         this.patientId = patientId;
         this.dateOfBirth = dateOfBirth;
         this.contactinfo = contactInfo;
         this.bloodType = bloodType;
         this.medicalRecord = medicalRecord;
         this.appointment = appointment;
+    }
+
+    public Patient(String patientID, String name, LocalDate dateOfBirth, Gender gender, String bloodType, ContactInformation contactEmail)
+    {
+        super(patientID, name, Role.PATIENT,contactEmail.getEmailId(),calculateAge(dateOfBirth), gender);
+        this.bloodType = bloodType;
+        this.patientId = patientID;
     }
 
     public List<MedicalRecord> viewMedicalRecords()

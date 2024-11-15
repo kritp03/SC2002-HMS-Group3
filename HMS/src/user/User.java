@@ -88,7 +88,6 @@
 
 package HMS.src.user;
 
-import java.util.UUID;
 
 public class User {
     protected String userID;

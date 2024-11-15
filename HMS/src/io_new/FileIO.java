@@ -1,9 +1,11 @@
 package HMS.src.io_new;
 
 import HMS.src.management.*;
+import HMS.src.management.administrator.Administrator;
+import HMS.src.management.doctor.Doctor;
+import HMS.src.management.patient.Patient;
+import HMS.src.management.pharmacist.Pharmacist;
 import HMS.src.medication.*;
-import HMS.src.patient.Patient;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;

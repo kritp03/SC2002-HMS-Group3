@@ -1,4 +1,4 @@
-package HMS.src.patient;
+package HMS.src.management.patient;
 
 import java.util.List;
 import java.util.Scanner;

@@ -1,11 +1,8 @@
-package HMS.src.management;
+package HMS.src.management.doctor;
 
-import HMS.src.appointment.Appointment;
-import HMS.src.appointment.AppointmentOutcome;
-import HMS.src.appointment.AppointmentStatus;
-import HMS.src.appointment.ServiceType;
+import HMS.src.appointment.*;
+import HMS.src.management.*;
 import HMS.src.medicalrecordsPDT.*;
-import HMS.src.misc_classes.*;
 import HMS.src.prescription.Prescription;
 import HMS.src.slots.*;
 import java.time.LocalDate;
@@ -19,16 +16,24 @@ public class Doctor extends User{
 
 
 
+    public String getDoctorID() {
+        return doctorID;
+    }
+
+    public SlotManager getSlotManager() {
+        return slotManager;
+    }
+
     // Constructors
     public Doctor(String doctorID, String name, String emailId, int age, Gender gender){
-        super(doctorID, name, Role.DOCTOR, "kritpyy@gmail", age, gender);
+        super(doctorID, name, Role.DOCTOR, emailId, age, gender);
         this.doctorID = doctorID;
         this.slotManager = new SlotManager();  // Each doctor gets their own SlotManager
         
     }
     
     public void viewAvailableSlots() {
-        System.out.println("Available slots for Dr. " + doctorID + ":");
+        System.out.println("Available slots for Dr. " + name + " , " + doctorID + " :");
         slotManager.printSlots();
     }
     
@@ -44,7 +49,7 @@ public class Doctor extends User{
     public void addDiagnosis(String patientID, String diagnosis) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addDiagnosis(diagnosis);
+            record.addDiagnosis(patientID, diagnosis);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
@@ -53,7 +58,7 @@ public class Doctor extends User{
     public void addTreatment(String patientID, String treatment) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addTreatment(treatment);
+            record.addTreatment(patientID,treatment);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
@@ -62,7 +67,7 @@ public class Doctor extends User{
     public void addPrescription(String patientID, String prescription) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addPrescription(prescription);
+            record.addPrescription(patientID, prescription);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
@@ -84,9 +89,9 @@ public class Doctor extends User{
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
             record.setServiceType(serviceType);  // Set appointment type and date
-            record.addDiagnosis(diagnosis);
-            record.addTreatment(treatment);
-            record.addPrescription(prescription);
+            record.addDiagnosis(patientID, diagnosis);
+            record.addTreatment(patientID,treatment);
+            record.addPrescription(patientID,prescription);
             System.out.println("Appointment outcome added for patient ID: " + patientID);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);

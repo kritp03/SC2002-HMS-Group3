@@ -62,9 +62,14 @@ import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
 import HMS.src.appointment.Appointment;
 import HMS.src.io_new.FileIO;
+import HMS.src.io_new.PatientCsvHelper;
+import HMS.src.management.ContactInformation;
+import HMS.src.management.Gender;
 import HMS.src.management.User;
+import HMS.src.management.patient.Patient;
 
 import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,9 +112,11 @@ public class Database {
             USER_DATA = (HashMap<String, User>) FileIO.deserializeObject(USERS_FILE);
             // Load medication data
             MEDICINE_DATA = (HashMap<String, Medication>) FileIO.deserializeObject(MEDICINE_FILE);
+            loadPatients();
         } catch (Exception e) {
             // Load default data if files do not exist or an error occurs
             FileIO.loadDefaultUserData(USER_DATA, MEDICINE_DATA);
+        
         }
     }
 
@@ -147,5 +154,25 @@ public class Database {
     // Getter for currentUser (used in AdminUI and other UIs)
     public static User getCurrentUser() {
         return currentUser;
+    }
+
+    private void loadPatients() {
+        PatientCsvHelper patientHelper = new PatientCsvHelper();
+        List<String[]> patientData = patientHelper.readCSV();
+
+        for (String[] data : patientData) {
+            String patientID = data[0];
+            String name = data[1];
+            LocalDate dob = LocalDate.parse(data[2].trim());
+            Gender gender = Gender.valueOf(data[3].trim().toUpperCase());
+            String bloodType = data[4];
+            String contactEmail = data[5];
+
+             ContactInformation patientContactInfo = new ContactInformation();
+                        patientContactInfo.changeEmailId(contactEmail);  // Email set here
+            // Create Patient object and add to PATIENT_DATA
+            Patient patient = new Patient(patientID, name, dob, gender,bloodType, patientContactInfo);
+            PATIENT_DATA.put(patientID, patient);
+        }
     }
 }

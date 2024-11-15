@@ -64,4 +64,8 @@ public class ReplenishmentRequest {
     public void fulfillRequest() {
         setStatus(ReplenishmentRequestStatus.FULFILLED);
     }
+
+    public String getMedicineName() {
+        return medicineName;
+    }
 }

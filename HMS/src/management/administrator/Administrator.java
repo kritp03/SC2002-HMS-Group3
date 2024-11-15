@@ -1,20 +1,15 @@
-package HMS.src.management;
 
+
+
+package HMS.src.management.administrator;
+
+import HMS.src.appointment.Appointment;
+import HMS.src.database.Database;
+import HMS.src.management.Gender;
+import HMS.src.management.Role;
+import HMS.src.management.User;
 import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
-import HMS.src.medication.ReplenishmentRequestStatus;
-import HMS.src.database.Database;
-import HMS.src.management.User;
-import HMS.src.prescription.Prescription;
-import HMS.src.appointment.Appointment;
-import HMS.src.appointment.AppointmentStatus;
-import HMS.src.appointment.AppointmentOutcome;
-import HMS.src.appointment.ServiceType;
-
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Administrator extends User {
@@ -69,14 +64,14 @@ public class Administrator extends User {
     public void approveReplenishmentRequest(ReplenishmentRequest request, boolean approve) {
         if (approve) {
             request.approveRequest(this.getName());
-            Medication medication = Database.getMedicineData().get(request.getMedicationID());
+            Medication medication = Database.getMedicineData().get(request.getmedicineName());
             if (medication != null) {
                 medication.setInventoryStock(medication.getInventoryStock() + request.getQuantity());
-                System.out.println("Replenishment approved for " + request.getMedicationID() + ": stock updated.");
+                System.out.println("Replenishment approved for " + request.getmedicineName() + ": stock updated.");
             }
         } else {
             request.rejectRequest(this.getName());
-            System.out.println("Replenishment request rejected for " + request.getMedicationID());
+            System.out.println("Replenishment request rejected for " + request.getmedicineName());
         }
     }
 

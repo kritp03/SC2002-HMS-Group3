@@ -1,15 +1,18 @@
 package HMS.src.medicalrecordsPDT;
 
+import HMS.src.database.Database;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MedicalRecordManager {
-    private static final Map<String, MedicalRecord> records = new HashMap<>();
+    private static Map<String, MedicalRecord> records = new HashMap<>();
 
     // Add a new medical record for a patient
-    public static void addMedicalRecord(MedicalRecord record) {
-        records.put(record.getPatientID(), record);
+    public static void addMedicalRecord(String patientID, MedicalRecord record) {
+        records.put(patientID, record);
     }
+    
 
     // Retrieve a medical record for a patient by patient ID
     public static MedicalRecord getMedicalRecord(String patientID) {
@@ -17,9 +20,13 @@ public class MedicalRecordManager {
     }
 
     // Check if a patient exists
-    public static boolean patientExists(String patientID) {
-        return records.containsKey(patientID);
+    public static boolean patientExists(String patientID) 
+    {
+        Database database = Database.getInstance();
+        Database.loadPatients();
+        return Database.getPatientData().containsKey(patientID);
     }
+
 
     // Add a new entry with diagnosis and treatment to a patient's medical record
     public static void addEntryToRecord(String patientID, String diagnosis, String treatment) {
@@ -51,6 +58,15 @@ public class MedicalRecordManager {
             System.out.println("Updated prescription status in the latest entry for patient ID: " + patientID);
         } else {
             System.out.println("Patient with ID " + patientID + " does not have a medical record.");
+        }
+    }
+
+    public static void initializeMedicalRecordsForPatients() {
+        for (String patientID : HMS.src.database.Database.getPatientData().keySet()) {
+            if (!records.containsKey(patientID)) {
+                records.put(patientID, new MedicalRecord(patientID, LocalDate.now()));
+                System.out.println("Initialized medical record for patient ID: " + patientID);
+            }
         }
     }
 }

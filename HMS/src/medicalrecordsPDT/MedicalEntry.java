@@ -56,6 +56,7 @@ public class MedicalEntry {
         return prescriptions;
     }
 
+    
     @Override
     public String toString() {
         return "Diagnosis: " + diagnosis + "\n" +

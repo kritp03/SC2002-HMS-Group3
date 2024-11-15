@@ -5,7 +5,6 @@ import HMS.src.medicalrecordsPDT.MedicalEntry;
 import HMS.src.medicalrecordsPDT.MedicalRecord;
 import HMS.src.medicalrecordsPDT.MedicalRecordManager;
 import HMS.src.prescription.Prescription;
-import HMS.src.slots.Slot;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -64,19 +63,6 @@ public class DoctorManager {
         }
     }
 
-    // Add a diagnosis to the current entry for a patient
-    public void addDoctorDiagnosis(String patientID, String diagnosis) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-
-        MedicalEntry entry = currentEntries.getOrDefault(patientID, new MedicalEntry());
-        entry.setDiagnosis(diagnosis);  // Set diagnosis
-        currentEntries.put(patientID, entry);  // Store/update current entry for patient
-        System.out.println("Diagnosis added to the current entry for patient ID: " + patientID);
-    }
-
     // Add a treatment to the current entry for a patient
     public void addDoctorTreatment(String patientID, String treatment) {
         if (!MedicalRecordManager.patientExists(patientID)) {
@@ -109,10 +95,15 @@ public class DoctorManager {
             System.out.println("Patient with ID " + patientID + " does not exist.");
             return;
         }
-
+    
         MedicalEntry entry = currentEntries.get(patientID);
         if (entry != null) {
             MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
+            if (record == null) {
+                System.out.println("No medical record found for patient ID: " + patientID + ". Creating a new one.");
+                record = new MedicalRecord(patientID, LocalDate.now());
+                MedicalRecordManager.addMedicalRecord(patientID, record);
+            }
             record.addEntry(entry);  // Add completed entry to the medical record
             currentEntries.remove(patientID);  // Clear the current entry
             System.out.println("Finalized entry added to medical record for patient ID: " + patientID);
@@ -120,29 +111,23 @@ public class DoctorManager {
             System.out.println("No current entry to finalize for patient ID: " + patientID);
         }
     }
+    
 
-    // Set all slots as available for a doctor
-    public void setDoctorAvailability(String doctorID, boolean isAvailable) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            for (Slot slot : doctor.getSlotManager().getSlots()) {
-                doctor.getSlotManager().setAvailability(slot.getStartTime(), isAvailable);
-            }
-            System.out.println("All slots updated to " + (isAvailable ? "Available" : "Unavailable") + " for Dr. " + doctor.getName());
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
+    public void addDoctorDiagnosis(String patientID, String diagnosis) {
+        if (!MedicalRecordManager.patientExists(patientID)) {
+            System.out.println("Patient with ID " + patientID + " does not exist.");
+            return;
         }
+    
+        // Debugging: Check if an entry already exists
+        System.out.println("Current entries before adding diagnosis: " + currentEntries.keySet());
+        MedicalEntry entry = currentEntries.getOrDefault(patientID, new MedicalEntry());
+        entry.setDiagnosis(diagnosis);  // Set diagnosis
+        currentEntries.put(patientID, entry);  // Store/update current entry for patient
+        System.out.println("Diagnosis added to the current entry for patient ID: " + patientID);
+        System.out.println("Current entries after adding diagnosis: " + currentEntries.keySet());
     }
-
-    // Add diagnosis, treatment, or prescription to a patient's medical record via a specific doctor
-    public void addDoctorDiagnosis(String doctorID, String patientID, String diagnosis) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.addDiagnosis(patientID, diagnosis);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
+    
 
     public void addDoctorTreatment(String doctorID, String patientID, String treatment) {
         Doctor doctor = findDoctorById(doctorID);

@@ -1,101 +1,108 @@
 package HMS.src.ui;
 
-import HMS.src.management.doctor.*;
-import HMS.src.medicalrecordsPDT.MedicalRecordManager;
+import HMS.src.authorisation.PasswordManager;
+import HMS.src.database.Database;
+import HMS.src.management.doctor.DoctorManager;
+import HMS.src.management.patient.Patient;
 import HMS.src.utils.InputScanner;
+import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
-// import HMS.src.io_new.MedicationCsvHelper;
+import java.util.HashMap;
 
 public class DoctorUI {
+    private static PasswordManager passwordManager = new PasswordManager();
 
-    // private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
-    
-    public static void displayOptions(){
+    public static void displayOptions() {
         System.out.println("=====================================");
         System.out.println("|                Menu                |");
-        System.out.println("|           Welcome Doctor!          |");    
+        System.out.println("|           Welcome Doctor!          |");
         System.out.println("=====================================");
-
-        // String medFilePath =  medicationCsvHelper.getFilePath();
-
+    
+        // Ensure the database is loaded
+        Database database = Database.getInstance();
+        Database.loadPatients();
+        HashMap<String, Patient> patients = Database.getPatientData();
+    
+        if (patients == null || patients.isEmpty()) 
+        {
+            System.out.println("No patient data found in the system.");
+            return;
+        }
+    
         boolean quit = false;
+        InputScanner sc = InputScanner.getInstance();
+        DoctorManager doctorManager = new DoctorManager();
+    
+        // Main loop for doctor actions
         do {
-            int doctorChoice = validateIntRange("Please select option: \n1. View Patient Medical Record\n2. Update Patient Medical Records\n3. View Personal Schedule \n4. Set Availability for Appointments \n5. Accept or Decline Appointment Requests \n6. View Upcoming Appointments \n7. Record AppointmentOutcome \n8. Logout \nEnter your choice:", 1, 8);
-
-            DoctorManager doctorManager = new DoctorManager();
-            InputScanner sc = InputScanner.getInstance();
+            int doctorChoice = validateIntRange(
+                    "Please select option: \n1. View Patient Medical Record\n2. Update Patient Medical Records\n"
+                            + "3. View Personal Schedule \n4. Set Availability for Appointments \n"
+                            + "5. Accept or Decline Appointment Requests \n6. View Upcoming Appointments \n"
+                            + "7. Record AppointmentOutcome \n8. Reset Password \n9. Logout\nEnter your choice: ",
+                    1, 9);
+    
             System.out.println();
-
-            switch(doctorChoice) {
+    
+            switch (doctorChoice) {
                 case 1:
                     System.out.println("=====================================");
                     System.out.println("|    View Patient Medical Records    |");
-                    System.out.println("Enter Patient's patientID: ");
-                    String patientID = sc.nextLine();
-                    doctorManager.viewPatientMedicalRecords(patientID);
-                    break; //tbd
+                    sc.nextLine();
+                    System.out.print("Enter Patient's patientID: ");
+                    String viewPatientID = sc.nextLine().trim();
+    
+                    if (!patients.containsKey(viewPatientID)) {
+                        System.out.println("Patient with ID " + viewPatientID + " does not exist.");
+                    } else {
+                        doctorManager.viewPatientMedicalRecords(viewPatientID);
+                    }
+                    break;
+    
                 case 2:
                     System.out.println("=====================================");
-                    System.out.println("|   Update Patient Medical Records   |"); 
+                    System.out.println("|   Update Patient Medical Records   |");
+                    sc.nextLine();
                     System.out.print("Enter Patient's patientID: ");
-                    sc.next();
-                    patientID = sc.nextLine();
-            
-                    // Check if the patient ID is valid
-                    while (!MedicalRecordManager.patientExists(patientID)) {
-                        System.out.println("Patient with that patient ID does not exist! Enter a valid patient ID:");
-                        patientID = sc.nextLine();
-                    }
-            
-                    // Get diagnosis and treatment information
-                    System.out.print("Enter the diagnosis for Patient " + patientID + ": ");
-                    String diagnosis = sc.nextLine();
-                    System.out.print("Enter the treatment plan for Patient " + patientID + ": ");
-                    String treatment = sc.nextLine();
-            
-                    // Add the diagnosis and treatment as a new entry in the patient's record
-                    MedicalRecordManager.addEntryToRecord(patientID, diagnosis, treatment);
-                    System.out.print("Enter the prescription for Patient " + patientID + " (optional, leave blank if none): ");
-                    String prescription = sc.nextLine();
-                    if (!prescription.isEmpty()) {
-                        MedicalRecordManager.addPrescriptionToLatestEntry(patientID, prescription);
-                        System.out.println("Prescription added to the latest entry with status 'PENDING'.");
-                    }
-                    System.out.print("Would you like to update the prescription status? (yes/no): ");
-                    String updateStatusChoice = sc.nextLine();
-                    if (updateStatusChoice.equalsIgnoreCase("yes")) {
-                        System.out.print("Enter the new status for prescription '" + prescription + "': ");
-                        String status = sc.nextLine();
-                        MedicalRecordManager.updatePrescriptionStatusInLatestEntry(patientID, prescription, status);
-                        System.out.println("Prescription status updated to '" + status + "'.");
+                    String updatePatientID = sc.nextLine().trim();
+    
+                    if (!patients.containsKey(updatePatientID)) {
+                        System.out.println("Patient with ID " + updatePatientID + " does not exist.");
+                    } else {
+                        System.out.print("Enter the diagnosis for Patient " + updatePatientID + ": ");
+                        String diagnosis = sc.nextLine();
+                        System.out.print("Enter the treatment plan for Patient " + updatePatientID + ": ");
+                        String treatment = sc.nextLine();
+    
+                        // Add diagnosis and treatment to the medical record
+                        doctorManager.addDoctorDiagnosis(updatePatientID, diagnosis);
+                        doctorManager.addDoctorTreatment(updatePatientID, treatment);
+    
+                        System.out.print("Enter the prescription for Patient " + updatePatientID + " (optional): ");
+                        String prescription = sc.nextLine();
+                        if (!prescription.isEmpty()) {
+                            doctorManager.addDoctorPrescription(updatePatientID, prescription);
+                            System.out.println("Prescription added to the current entry with status 'PENDING'.");
+                        }
+    
+                        doctorManager.finalizeCurrentEntry(updatePatientID);
                     }
                     break;
-                case 3:
-                    System.out.println("View Personal Schedule"); //tbd
-                    break;
-                case 4:
-                    System.out.println("Set Availability for Appointments"); //tbd
-                    break;
-                case 5:
-                    System.out.println("Accept or Decline Appointment Requests"); //tbd
-                    break;
-                case 6:
-                    System.out.println("View Upcoming Appointments"); //tbd
-                    break;
-                case 7:
-                    System.out.println("Record AppointmentOutcome"); //tbd
-                    break;
-                case 8:
-                System.out.println("Logging out...\nRedirecting to Main Menu...\n");
+    
+                case 9:
+                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                     break;
+    
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         } while (!quit);
     }
-
+    
     public static void main(String[] args) {
         displayOptions();
     }
 }
+

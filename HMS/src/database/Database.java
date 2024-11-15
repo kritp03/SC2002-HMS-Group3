@@ -1,65 +1,5 @@
-// package HMS.src.database;
-
-// import HMS.src.management.*;
-// import HMS.src.medication.*;
-// import HMS.src.misc_classes.FileIO;
-
-// import java.util.HashMap;
-
-// public class Database 
-// {
-//     private static Database instance = null;
-
-//     private static HashMap<String, User> USER_DATA = new HashMap<>();
-
-//     private static HashMap<String, Medication> MEDICINE_DATA = new HashMap<>();
-
-//     @SuppressWarnings("OverridableMethodCallInConstructor")
-//     private Database()
-//     {
-//         loadDatabase();
-//     }
-
-//     public static Database getInstance() 
-//     {
-//         if (instance == null)
-//             instance = new Database();
-//         return instance;
-//     }
-
-//     @SuppressWarnings("unchecked")
-//     public void loadDatabase() 
-//     {
-//         try
-//         {
-//             USER_DATA = (HashMap<String, User>) FileIO.deserializeObject("Users.txt");
-//             MEDICINE_DATA = (HashMap<String, Medication>) FileIO.deserializeObject("Medicine.txt");
-//         } catch (Exception e) {
-//             FileIO.loadDefaultUserData(USER_DATA, MEDICINE_DATA);
-//         }
-//     }
-
-//     public void saveToDatabase() 
-//     {
-//         FileIO.serializeObject("Users.txt", USER_DATA);
-//         FileIO.serializeObject("Camps.txt", MEDICINE_DATA);
-
-//     }
-
-//     public static HashMap<String, User> getUserData() 
-//     {
-//         return USER_DATA;
-//     }
-
-//     public static HashMap<String, Medication> getMedicineData() {
-//         return MEDICINE_DATA;
-//     }
-// }
-
 package HMS.src.database;
 
-import HMS.src.medication.Medication;
-import HMS.src.medication.ReplenishmentRequest;
 import HMS.src.appointment.Appointment;
 import HMS.src.io_new.FileIO;
 import HMS.src.io_new.PatientCsvHelper;
@@ -67,10 +7,12 @@ import HMS.src.management.ContactInformation;
 import HMS.src.management.Gender;
 import HMS.src.management.User;
 import HMS.src.management.patient.Patient;
-
-import java.util.HashMap;
+import HMS.src.medicalrecordsPDT.MedicalRecordManager;
+import HMS.src.medication.Medication;
+import HMS.src.medication.ReplenishmentRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Database {
@@ -85,6 +27,7 @@ public class Database {
     // Data structures for managing hospital data
     private static HashMap<String, User> USER_DATA = new HashMap<>();
     private static HashMap<String, Medication> MEDICINE_DATA = new HashMap<>();
+    private static HashMap<String, Patient> PATIENT_DATA = new HashMap<>();  // Add PATIENT_DATA
     private static List<Appointment> APPOINTMENTS = new ArrayList<>();
     private static List<ReplenishmentRequest> REPLENISHMENT_REQUESTS = new ArrayList<>();
     
@@ -100,25 +43,27 @@ public class Database {
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();
+            instance.loadDatabase(); // Ensure database loads properly
+            System.out.println("Database initialized and loaded.");
         }
         return instance;
     }
+    
+    
 
     // Method to load data from files into the application's memory
     @SuppressWarnings("unchecked")
     public void loadDatabase() {
-        try {
-            // Load users data
-            USER_DATA = (HashMap<String, User>) FileIO.deserializeObject(USERS_FILE);
-            // Load medication data
-            MEDICINE_DATA = (HashMap<String, Medication>) FileIO.deserializeObject(MEDICINE_FILE);
-            loadPatients();
-        } catch (Exception e) {
-            // Load default data if files do not exist or an error occurs
-            FileIO.loadDefaultUserData(USER_DATA, MEDICINE_DATA);
-        
-        }
+    try {
+        USER_DATA = (HashMap<String, User>) FileIO.deserializeObject(USERS_FILE);
+        MEDICINE_DATA = (HashMap<String, Medication>) FileIO.deserializeObject(MEDICINE_FILE);
+        loadPatients();
+        MedicalRecordManager.initializeMedicalRecordsForPatients(); // Initialize medical records
+    } catch (Exception e) {
+        FileIO.loadDefaultUserData(USER_DATA, MEDICINE_DATA);
     }
+}
+
 
     // Method to save data back to files
     public void saveToDatabase() {
@@ -129,6 +74,11 @@ public class Database {
     // Getter for USER_DATA HashMap
     public static HashMap<String, User> getUserData() {
         return USER_DATA;
+    }
+
+    // Getter for PATIENT_DATA HashMap
+    public static HashMap<String, Patient> getPatientData() {
+        return PATIENT_DATA;
     }
 
     // Getter for MEDICINE_DATA HashMap
@@ -156,23 +106,55 @@ public class Database {
         return currentUser;
     }
 
-    private void loadPatients() {
+    // Method to load patients from CSV into PATIENT_DATA
+    public static void loadPatients() {
         PatientCsvHelper patientHelper = new PatientCsvHelper();
         List<String[]> patientData = patientHelper.readCSV();
-
+    
+        if (patientData == null || patientData.isEmpty()) {
+            System.out.println("PatientCsvHelper returned no data. Ensure the file exists and has data.");
+            return;
+        }
+    
+        // Skip the header row
+        boolean isHeader = true;
+    
         for (String[] data : patientData) {
-            String patientID = data[0];
-            String name = data[1];
-            LocalDate dob = LocalDate.parse(data[2].trim());
-            Gender gender = Gender.valueOf(data[3].trim().toUpperCase());
-            String bloodType = data[4];
-            String contactEmail = data[5];
-
-             ContactInformation patientContactInfo = new ContactInformation();
-                        patientContactInfo.changeEmailId(contactEmail);  // Email set here
-            // Create Patient object and add to PATIENT_DATA
-            Patient patient = new Patient(patientID, name, dob, gender,bloodType, patientContactInfo);
-            PATIENT_DATA.put(patientID, patient);
+            if (isHeader) {
+                isHeader = false;
+                continue;  // Skip the first row
+            }
+    
+            if (data.length < 6) {
+                System.out.println("Invalid patient data: " + String.join(",", data));
+                continue;
+            }
+    
+            try {
+                String patientID = data[0].trim();
+                String name = data[1].trim();
+                LocalDate dob = LocalDate.parse(data[2].trim());
+                Gender gender = Gender.valueOf(data[3].trim().toUpperCase());
+                String bloodType = data[4].trim();
+                String contactEmail = data[5].trim();
+    
+                ContactInformation patientContactInfo = new ContactInformation();
+                patientContactInfo.changeEmailId(contactEmail);
+    
+                // Create Patient object and add to PATIENT_DATA
+                Patient patient = new Patient(patientID, name, dob, gender, bloodType, patientContactInfo);
+                PATIENT_DATA.put(patientID, patient);
+            } catch (Exception e) {
+                System.out.println("Error processing patient record: " + String.join(",", data));
+                e.printStackTrace();
+            }
         }
     }
+    
+    public static void main(String [] args)
+    {
+        Database.loadPatients();
+    }
 }
+
+    

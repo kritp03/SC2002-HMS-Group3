@@ -1,11 +1,9 @@
 package HMS.src.ui;
 
-import HMS.src.management.patient.PatientManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
-
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.patient.PatientManager;
+import HMS.src.management.patient.PatientManager;
 import HMS.src.utils.SessionManager;
+import static HMS.src.utils.ValidationHelper.validateIntRange;
 
 // import static HMS.src.patient.PatientManager;
 // import HMS.src.io_new.MedicationCsvHelper;

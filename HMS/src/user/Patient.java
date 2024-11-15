@@ -1,4 +1,4 @@
-package HMS.src.user.patient;
+package HMS.src.user;
 
 import HMS.src.appointment.*;
 import HMS.src.medicalrecordsPDT.*;

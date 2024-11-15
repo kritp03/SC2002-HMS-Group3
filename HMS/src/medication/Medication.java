@@ -8,12 +8,12 @@ public class Medication {
     private int inventoryStock;
     private int lowThreshold;
 
-    public Medication(String medicineName, int initialStock, int lowStockLevel)
-    {
-        this.name = medicineName;
-        this.inventoryStock = initialStock;
-        this.lowThreshold = lowStockLevel;
-    }
+    // public Medication(String medicineName, int initialStock, int lowStockLevel)
+    // {
+    //     this.name = medicineName;
+    //     this.inventoryStock = initialStock;
+    //     this.lowThreshold = lowStockLevel;
+    // }
 
     public Medication(String medicationID, String name, DosageForm dosageForm, int concentrationMg, int inventoryStock, int lowThreshold) {
         // this.medicationID = medicationID;
@@ -84,12 +84,12 @@ public class Medication {
     }
 }
 
-enum DosageForm {
-    TABLET, 
-    CAPSULE, 
-    LIQUID, 
-    INJECTION,
-    CREAM,
-    INHALER, 
-    SUPPOSITORY;
-}
+// enum DosageForm {
+//     TABLET, 
+//     CAPSULE, 
+//     LIQUID, 
+//     INJECTION,
+//     CREAM,
+//     INHALER, 
+//     SUPPOSITORY;
+// }

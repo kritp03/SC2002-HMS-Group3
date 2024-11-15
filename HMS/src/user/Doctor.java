@@ -1,4 +1,4 @@
-package HMS.src.user.doctor;
+package HMS.src.user;
 
 import HMS.src.appointment.Appointment;
 import HMS.src.appointment.AppointmentOutcome;

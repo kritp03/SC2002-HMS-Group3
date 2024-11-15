@@ -1,7 +1,7 @@
 package HMS.src.ui;
 
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.user.patient.PatientManager;
+import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 

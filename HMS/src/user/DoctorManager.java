@@ -11,7 +11,7 @@ import java.util.List;
 public class DoctorManager {
 
     private SlotManager slotManager;
-    private ApptCsvHelper apptCsvHelper;  // Helper for writing Appointment Outcomes to CSV
+    private ApptCsvHelper apptCsvHelper = new ApptCsvHelper();  // Helper for writing Appointment Outcomes to CSV
 
     // Constructor to initialize SlotManager and ApptCsvHelper
     public DoctorManager(SlotManager slotManager, ApptCsvHelper apptCsvHelper) {
@@ -31,24 +31,22 @@ public class DoctorManager {
     }
 
     // Method to record the outcome of an appointment
-public void recordAppointmentOutcome(Appointment appointment, ServiceType serviceType, String diagnosis, 
-                                     ArrayList<Prescription> prescriptions, String consultationNotes) {
-    if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
-        // Get the appointment ID
-        String appointmentID = appointment.getAppointmentID();
-        LocalDate appointmentDate = appointment.getDate(); 
-        AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, appointmentDate, serviceType, diagnosis, prescriptions, consultationNotes);
-        appointment.setOutcome(outcome);
+    public void recordAppointmentOutcome(Appointment appointment, ServiceType serviceType, String diagnosis, 
+                                         ArrayList<Prescription> prescriptions, String consultationNotes) {
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            // Get the appointment ID
+            String appointmentID = appointment.getAppointmentID();
+            LocalDate appointmentDate = appointment.getDate();
+            AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, appointmentDate, serviceType, diagnosis, prescriptions, consultationNotes);
+            appointment.setOutcome(outcome);
 
-        // Write the outcome to the CSV
-        writeAppointmentOutcomeToCSV(outcome);  // You need to implement this method to handle CSV writing
-        System.out.println("Recorded appointment outcome for Appointment ID: " + appointment.getAppointmentID());
-    } else {
-        System.out.println("Cannot record outcome. Appointment is not completed.");
+            // Write the outcome to the CSV using ApptCsvHelper
+            writeAppointmentOutcomeToCSV(outcome);
+            System.out.println("Recorded appointment outcome for Appointment ID: " + appointment.getAppointmentID());
+        } else {
+            System.out.println("Cannot record outcome. Appointment is not completed.");
+        }
     }
-}
-
-
 
     // Method to accept an appointment
     public void acceptAppointment(Appointment appointment, String doctorID) {
@@ -70,20 +68,36 @@ public void recordAppointmentOutcome(Appointment appointment, ServiceType servic
         }
     }
 
-    // Helper method to write appointment outcome to CSV
+    // Helper method to write appointment outcome to CSV using ApptCsvHelper
     private void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
         List<String[]> appointmentOutcomes = new ArrayList<>();
         String appointmentID = outcome.getAppointmentID();
-        String serviceType = outcome.getServiceType().toString(); 
+        String serviceType = outcome.getServiceType().toString();
         String appointmentDate = outcome.getAppointmentDate().toString();
         String consultationNotes = outcome.getConsultationNotes();
 
-        // Convert the appointment outcome to a string array
-        String[] outcomeData = { appointmentID, serviceType, appointmentDate, consultationNotes };
+        // Prescriptions and their statuses
+        StringBuilder medications = new StringBuilder();
+        StringBuilder medicationStatuses = new StringBuilder();
+
+        // Add medication details (if any) to the output
+        for (Prescription prescription : outcome.getPrescriptions()) {
+            medications.append(prescription.getName()).append(";");
+            medicationStatuses.append(prescription.getStatus().toString()).append(";");
+        }
+
+        // Convert the appointment outcome to a string array, including medications and their statuses
+        String[] outcomeData = {
+            appointmentID, 
+            serviceType, 
+            appointmentDate, 
+            consultationNotes, 
+            medications.toString(), 
+            medicationStatuses.toString()
+        };
         appointmentOutcomes.add(outcomeData);
 
-        // Write the list of appointment outcomes to the CSV
+        // Use ApptCsvHelper to write data to CSV
         apptCsvHelper.writeEntries(appointmentOutcomes);
-        System.out.println("Appointment outcome written to CSV for Appointment ID: " + appointmentID);
     }
 }

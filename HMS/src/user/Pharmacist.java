@@ -1,6 +1,5 @@
-package HMS.src.user.pharmacist;
+package HMS.src.user;
 
-import HMS.src.user.*;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
 import java.util.List;

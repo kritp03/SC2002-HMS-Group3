@@ -1,4 +1,4 @@
-package HMS.src.user.administrator;
+package HMS.src.user;
 
 public class AdministratorManager 
 {

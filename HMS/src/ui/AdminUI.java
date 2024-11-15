@@ -56,11 +56,11 @@ import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.medication.Medication;
 import HMS.src.user.Gender;
+import HMS.src.user.Pharmacist;
 import HMS.src.user.Role;
 import HMS.src.user.User;
 import HMS.src.user.administrator.Administrator;
 import HMS.src.user.doctor.Doctor;
-import HMS.src.user.pharmacist.Pharmacist;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 

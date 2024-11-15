@@ -1,4 +1,4 @@
-package HMS.src.user.pharmacist;
+package HMS.src.user;
 
 public class PharmacistManager 
 {

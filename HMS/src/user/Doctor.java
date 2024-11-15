@@ -14,34 +14,30 @@ import java.util.ArrayList;
 
 
 public class Doctor extends User{
+
     private final String doctorID;
+    private final SlotManager slotManager;
 
-    public String getDoctorID() {
-        return doctorID;
-    }
+   public String getDoctorID() {
+      return this.doctorID;
+   }
 
-    public SlotManager getSlotManager() {
-        return slotManager;
-    }
+   public SlotManager getSlotManager() {
+      return this.slotManager;
+   }
 
-    // Constructors
-    public Doctor(String doctorID, String name, String emailId, int age, Gender gender) {
-        super(doctorID, name, Role.DOCTOR, emailId, age, gender);  // use the emailId from parameter
-        
-    public Doctor(String doctorID, String name, String emailId, int age, Gender gender){
-        super(doctorID, name, Role.DOCTOR, emailId, age, gender);
-        this.doctorID = doctorID;
-    }
+   public Doctor(String var1, String var2, String var3, int var4, Gender var5) {
+      super(var1, var2, Role.DOCTOR, var3, var4, var5);
+      this.doctorID = var1;
+      this.slotManager = new SlotManager();
+   }
+
+   public void viewAvailableSlots() {
+      System.out.println("Available slots for Dr. " + this.name + " , " + this.doctorID + " :");
+      this.slotManager.printSlots();
+   }
     
-    public String getDoctorID() {
-        return doctorID;
-    }
-    
-    public void viewAvailableSlots() {
-        System.out.println("Available slots for Dr. " + name + " , " + doctorID + " :");
-        slotManager.printSlots();
-    }
-    
+
 
     // Method to mark a slot as unavailable but default slots should all be available 
     public void setUnavailable(LocalTime startTime) {

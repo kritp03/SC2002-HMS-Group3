@@ -21,8 +21,9 @@ public class DoctorUI {
         // Ensure the database is loaded
         Database database = Database.getInstance();
         Database.loadPatients();
+        Database.loadMedicalRecords();
         HashMap<String, Patient> patients = Database.getPatientData();
-    
+        
         if (patients == null || patients.isEmpty()) 
         {
             System.out.println("No patient data found in the system.");
@@ -35,11 +36,18 @@ public class DoctorUI {
     
         // Main loop for doctor actions
         do {
-            int doctorChoice = validateIntRange(
-                    "Please select option: \n1. View Patient Medical Record\n2. Update Patient Medical Records\n"
-                            + "3. View Personal Schedule \n4. Set Availability for Appointments \n"
-                            + "5. Accept or Decline Appointment Requests \n6. View Upcoming Appointments \n"
-                            + "7. Record AppointmentOutcome \n8. Reset Password \n9. Logout\nEnter your choice: ",
+            int doctorChoice = validateIntRange("""
+                                                Please select option: 
+                                                1. View Patient Medical Record
+                                                2. Update Patient Medical Records
+                                                3. View Personal Schedule 
+                                                4. Set Availability for Appointments 
+                                                5. Accept or Decline Appointment Requests 
+                                                6. View Upcoming Appointments 
+                                                7. Record AppointmentOutcome 
+                                                8. Reset Password 
+                                                9. Logout
+                                                Enter your choice: """,
                     1, 9);
     
             System.out.println();
@@ -52,9 +60,10 @@ public class DoctorUI {
                     System.out.print("Enter Patient's patientID: ");
                     String viewPatientID = sc.nextLine().trim();
     
-                    if (!patients.containsKey(viewPatientID)) {
+                    if (!Database.getPatientData().containsKey(viewPatientID)) {
                         System.out.println("Patient with ID " + viewPatientID + " does not exist.");
                     } else {
+                        Database.loadMedicalRecords();
                         doctorManager.viewPatientMedicalRecords(viewPatientID);
                     }
                     break;
@@ -86,7 +95,27 @@ public class DoctorUI {
                         }
     
                         doctorManager.finalizeCurrentEntry(updatePatientID);
+                        Database.saveMedicalRecords();
+                        System.out.println("Updated medical records saved successfully.");
                     }
+                    break;
+                case 3:
+                    System.out.println("View Personal Schedule"); // tbd
+                    break;
+                case 4:
+                    System.out.println("Set Availability for Appointments"); // tbd
+                    break;
+                case 5:
+                    System.out.println("Accept or Decline Appointment Requests"); // tbd
+                    break;
+                case 6:
+                    System.out.println("View Upcoming Appointments"); // tbd
+                    break;
+                case 7:
+                    System.out.println("Record AppointmentOutcome"); // tbd
+                    break;
+                case 8:
+                    passwordManager.changePassword();
                     break;
     
                 case 9:

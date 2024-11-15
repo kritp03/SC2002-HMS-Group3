@@ -7,50 +7,34 @@ import java.util.List;
 
 public class MedicalRecord {
     private final String patientID;
+    private final String recordID; // Unique identifier for each record
     private ServiceType serviceType;
     private final LocalDate appointmentDate;
     private final List<MedicalEntry> entries = new ArrayList<>();
 
     // Constructor
-    public MedicalRecord(String patientID, LocalDate date) {
+    public MedicalRecord(String recordID, String patientID, LocalDate date) {
+        this.recordID = recordID;
         this.patientID = patientID;
         this.appointmentDate = date;
     }
 
-    public void addEntry(MedicalEntry entry) 
-    {
+    public void addEntry(MedicalEntry entry) {
         entries.add(entry);
         System.out.println("Added entry for patient ID " + patientID);
     }
-    // Method to add a new entry with diagnosis and treatment
-    public void addEntry(String diagnosis, String treatment) {
-        entries.add(new MedicalEntry(diagnosis, treatment));
-        System.out.println("Added new entry with diagnosis and treatment.");
-    }
 
-    // Method to add a prescription to the latest entry
-    public void addPrescriptionToLatestEntry(String medicationName) {
+    // Getters for Record Details
+
+    public MedicalEntry getLatestEntry() {
         if (!entries.isEmpty()) {
-            entries.get(entries.size() - 1).addPrescription(medicationName);
-            System.out.println("Prescription added to the latest entry.");
-        } else {
-            System.out.println("No entries found. Add a diagnosis and treatment first.");
+            return entries.get(entries.size() - 1);
         }
+        return null;
     }
-
-    // Update prescription status in the latest entry
-    public void updatePrescriptionStatusInLatestEntry(String medicationName, String status) {
-        if (!entries.isEmpty()) {
-            entries.get(entries.size() - 1).updatePrescriptionStatus(medicationName, status);
-            System.out.println("Updated prescription status in the latest entry.");
-        } else {
-            System.out.println("No entries found. Cannot update prescription status.");
-        }
-    }
-
-    // Getters
-    public LocalDate getAppointmentDate() {
-        return appointmentDate;
+    
+    public String getRecordID() {
+        return recordID;
     }
 
     public String getPatientID() {
@@ -61,49 +45,49 @@ public class MedicalRecord {
         return entries;
     }
 
-    public void setServiceType(ServiceType serviceType) {
-        this.serviceType = serviceType;
-    }
-
     public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void addDiagnosis(String patientID, String diagnosis) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-        
-        MedicalRecordManager.addEntryToRecord(patientID, diagnosis, "");  // Adds diagnosis with an empty treatment for now
-        System.out.println("Diagnosis added to the latest entry for patient ID: " + patientID);
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 
-
-    public void addTreatment(String patientID, String treatment) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null && !record.getEntries().isEmpty()) {
-            // Get the latest entry and add treatment
-            MedicalRecordManager.addEntryToRecord(patientID, "", treatment);  // Adds treatment with an empty diagnosis for now
-            System.out.println("Treatment added to the latest entry for patient ID: " + patientID);
-        } else {
-            System.out.println("No entries found in the medical record for patient ID: " + patientID);
-        }
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
     }
 
-
-public void addPrescription(String patientID, String prescription) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
+    public String getDiagnosis() {
+        // Aggregate diagnoses from entries
+        StringBuilder diagnoses = new StringBuilder();
+        for (MedicalEntry entry : entries) {
+            if (entry.getDiagnosis() != null) {
+                diagnoses.append(entry.getDiagnosis()).append("; ");
+            }
         }
+        return diagnoses.toString().trim();
+    }
 
-        MedicalRecordManager.addPrescriptionToLatestEntry(patientID, prescription);
-        System.out.println("Prescription added to the latest entry for patient ID: " + patientID);
+    public String getTreatment() {
+        // Aggregate treatments from entries
+        StringBuilder treatments = new StringBuilder();
+        for (MedicalEntry entry : entries) {
+            if (entry.getTreatment() != null) {
+                treatments.append(entry.getTreatment()).append("; ");
+            }
+        }
+        return treatments.toString().trim();
+    }
+
+    public String getPrescriptions() {
+        // Aggregate prescriptions from entries
+        StringBuilder prescriptions = new StringBuilder();
+        for (MedicalEntry entry : entries) {
+            for (String prescription : entry.getPrescriptions().keySet()) {
+                prescriptions.append(prescription).append(", ");
+            }
+        }
+        return prescriptions.toString().replaceAll(", $", ""); // Remove trailing comma
     }
 
     @Override
@@ -112,12 +96,42 @@ public void addPrescription(String patientID, String prescription) {
         sb.append("Medical Record for ").append(patientID).append(":\n");
         sb.append("Service Type: ").append(serviceType != null ? serviceType : "Not set").append("\n");
         sb.append("Appointment Date: ").append(appointmentDate != null ? appointmentDate : "Not set").append("\n");
-
+        sb.append("Record ID: ").append(recordID).append("\n");
         for (int i = 0; i < entries.size(); i++) {
             sb.append("Entry ").append(i + 1).append(":\n");
             sb.append(entries.get(i).toString());
         }
-        
         return sb.toString();
     }
+
+    public void addDiagnosis(String diagnosis) {
+        if (!entries.isEmpty()) {
+            entries.get(entries.size() - 1).setDiagnosis(diagnosis);
+        } else {
+            MedicalEntry newEntry = new MedicalEntry();
+            newEntry.setDiagnosis(diagnosis);
+            entries.add(newEntry);
+        }
+    }
+
+    public void addPrescription(String prescription) {
+        if (!entries.isEmpty()) {
+            entries.get(entries.size() - 1).addPrescription(prescription);
+        } else {
+            MedicalEntry newEntry = new MedicalEntry();
+            newEntry.addPrescription(prescription);
+            entries.add(newEntry);
+        }
+    }
+
+    public void addTreatment(String treatment) {
+        if (!entries.isEmpty()) {
+            entries.get(entries.size() - 1).setTreatment(treatment);
+        } else {
+            MedicalEntry newEntry = new MedicalEntry();
+            newEntry.setTreatment(treatment);
+            entries.add(newEntry);
+        }
+    }
+
 }

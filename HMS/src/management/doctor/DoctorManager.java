@@ -1,6 +1,7 @@
 package HMS.src.management.doctor;
 
 import HMS.src.appointment.*;
+import HMS.src.database.Database;
 import HMS.src.medicalrecordsPDT.MedicalEntry;
 import HMS.src.medicalrecordsPDT.MedicalRecord;
 import HMS.src.medicalrecordsPDT.MedicalRecordManager;
@@ -95,22 +96,30 @@ public class DoctorManager {
             System.out.println("Patient with ID " + patientID + " does not exist.");
             return;
         }
-    
+
         MedicalEntry entry = currentEntries.get(patientID);
         if (entry != null) {
-            MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-            if (record == null) {
-                System.out.println("No medical record found for patient ID: " + patientID + ". Creating a new one.");
-                record = new MedicalRecord(patientID, LocalDate.now());
-                MedicalRecordManager.addMedicalRecord(patientID, record);
+            List<MedicalRecord> records = MedicalRecordManager.getMedicalRecords(patientID);
+            if (records.isEmpty()) {
+                // Create a new record for the patient if none exists
+                MedicalRecord newRecord = new MedicalRecord("R" + System.currentTimeMillis(), patientID, LocalDate.now());
+                newRecord.addEntry(entry);
+                MedicalRecordManager.addMedicalRecord(patientID, newRecord);
+            } else {
+                // Add the entry to the latest record
+                records.get(records.size() - 1).addEntry(entry);
             }
-            record.addEntry(entry);  // Add completed entry to the medical record
-            currentEntries.remove(patientID);  // Clear the current entry
+            currentEntries.remove(patientID);
+
+            // Save changes
+            Database.saveMedicalRecords();
             System.out.println("Finalized entry added to medical record for patient ID: " + patientID);
         } else {
             System.out.println("No current entry to finalize for patient ID: " + patientID);
         }
     }
+
+    
     
 
     public void addDoctorDiagnosis(String patientID, String diagnosis) {
@@ -192,39 +201,42 @@ public class DoctorManager {
     public void viewPatientMedicalRecords(String patientID) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            System.out.println(record);  // Uses the toString() method from MedicalRecord to display details
+            System.out.println("Medical Records for Patient ID: " + patientID);
+            System.out.println(record);
         } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
+            System.out.println("No medical records found for patient ID: " + patientID);
         }
     }
 
     public void updatePatientMedicalRecord(String patientID, String diagnosis, String treatment, String prescription) {
-        if (!MedicalRecordManager.patientExists(patientID)) 
-        {
+        if (!MedicalRecordManager.patientExists(patientID)) {
             System.out.println("Patient with ID " + patientID + " does not exist.");
             return;
         }
-
+    
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-
-        if (diagnosis != null && !diagnosis.isEmpty()) 
-        {
-            record.addDiagnosis(patientID,diagnosis);  // Adds to the existing list of diagnoses
+    
+        if (record == null) {
+            System.out.println("No medical record found for patient ID: " + patientID);
+            return;
+        }
+    
+        if (diagnosis != null && !diagnosis.isEmpty()) {
+            record.addDiagnosis(diagnosis);
             System.out.println("Diagnosis added to record.");
         }
-
-        if (treatment != null && !treatment.isEmpty()) 
-        {
-            record.addTreatment(patientID, treatment);  // Adds to the existing list of treatments
+    
+        if (treatment != null && !treatment.isEmpty()) {
+            record.addTreatment(treatment);
             System.out.println("Treatment added to record.");
         }
-
-        if (prescription != null && !prescription.isEmpty()) 
-        {
-            record.addPrescription(patientID, prescription);  // Adds to the prescription list with default status "PENDING"
+    
+        if (prescription != null && !prescription.isEmpty()) {
+            record.addPrescription(prescription);
             System.out.println("Prescription added to record with status PENDING.");
         }
     }
+    
 
     // List all doctors
     public List<Doctor> listAllDoctors() {

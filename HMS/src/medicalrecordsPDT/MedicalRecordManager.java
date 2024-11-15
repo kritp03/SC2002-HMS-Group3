@@ -1,41 +1,50 @@
 package HMS.src.medicalrecordsPDT;
 
-import HMS.src.database.Database;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import HMS.src.database.Database;
 
 public class MedicalRecordManager {
-    private static Map<String, MedicalRecord> records = new HashMap<>();
+    private static Map<String, List<MedicalRecord>> records = new HashMap<>();
 
     // Add a new medical record for a patient
     public static void addMedicalRecord(String patientID, MedicalRecord record) {
-        records.put(patientID, record);
+        records.putIfAbsent(patientID, new ArrayList<>());
+        records.get(patientID).add(record);
     }
-    
 
-    // Retrieve a medical record for a patient by patient ID
+    // Retrieve all medical records for a patient
+    public static List<MedicalRecord> getMedicalRecords(String patientID) {
+        return records.getOrDefault(patientID, new ArrayList<>());
+    }
+
+    // Retrieve the latest medical record for a patient
     public static MedicalRecord getMedicalRecord(String patientID) {
-        return records.get(patientID);
+        List<MedicalRecord> patientRecords = getMedicalRecords(patientID);
+        if (patientRecords.isEmpty()) {
+            return null;
+        }
+        return patientRecords.get(patientRecords.size() - 1);
     }
 
     // Check if a patient exists
-    public static boolean patientExists(String patientID) 
-    {
-        Database database = Database.getInstance();
-        Database.loadPatients();
-        return Database.getPatientData().containsKey(patientID);
+    public static boolean patientExists(String patientID) {
+        return records.containsKey(patientID);
     }
-
 
     // Add a new entry with diagnosis and treatment to a patient's medical record
     public static void addEntryToRecord(String patientID, String diagnosis, String treatment) {
         MedicalRecord record = getMedicalRecord(patientID);
         if (record != null) {
-            record.addEntry(diagnosis, treatment);
+            MedicalEntry entry = new MedicalEntry(diagnosis, treatment);
+            record.addEntry(entry);
             System.out.println("Added new entry to medical record for patient ID: " + patientID);
         } else {
-            System.out.println("Patient with ID " + patientID + " does not have a medical record.");
+            System.out.println("No medical record found for patient ID: " + patientID);
         }
     }
 
@@ -43,31 +52,31 @@ public class MedicalRecordManager {
     public static void addPrescriptionToLatestEntry(String patientID, String medicationName) {
         MedicalRecord record = getMedicalRecord(patientID);
         if (record != null) {
-            record.addPrescriptionToLatestEntry(medicationName);
-            System.out.println("Added prescription to the latest entry for patient ID: " + patientID);
-        } else {
-            System.out.println("Patient with ID " + patientID + " does not have a medical record.");
-        }
-    }
-
-    // Update the prescription status in the latest entry of a patient's medical record
-    public static void updatePrescriptionStatusInLatestEntry(String patientID, String medicationName, String status) {
-        MedicalRecord record = getMedicalRecord(patientID);
-        if (record != null) {
-            record.updatePrescriptionStatusInLatestEntry(medicationName, status);
-            System.out.println("Updated prescription status in the latest entry for patient ID: " + patientID);
-        } else {
-            System.out.println("Patient with ID " + patientID + " does not have a medical record.");
-        }
-    }
-
-    public static void initializeMedicalRecordsForPatients() {
-        for (String patientID : HMS.src.database.Database.getPatientData().keySet()) {
-            if (!records.containsKey(patientID)) {
-                records.put(patientID, new MedicalRecord(patientID, LocalDate.now()));
-                System.out.println("Initialized medical record for patient ID: " + patientID);
+            MedicalEntry latestEntry = record.getLatestEntry();
+            if (latestEntry != null) {
+                latestEntry.addPrescription(medicationName);
+                System.out.println("Added prescription to the latest entry for patient ID: " + patientID);
+            } else {
+                System.out.println("No entries found in the medical record for patient ID: " + patientID);
             }
+        } else {
+            System.out.println("No medical record found for patient ID: " + patientID);
         }
+    }
+
+    // Initialize medical records for patients without existing records
+    public static void initializeMedicalRecordsForPatients() 
+    {
+        for (String patientID : Database.getPatientData().keySet()) {
+            records.putIfAbsent(patientID, new ArrayList<>());
+        }
+        System.out.println("Medical records initialized for patients.");
+    }
+
+
+    // Get all patient IDs with medical records
+    public static Set<String> getAllPatientIDs() {
+        return records.keySet();
     }
 }
 

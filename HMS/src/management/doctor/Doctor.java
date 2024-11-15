@@ -49,16 +49,17 @@ public class Doctor extends User{
     public void addDiagnosis(String patientID, String diagnosis) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addDiagnosis(patientID, diagnosis);
+            record.addDiagnosis(diagnosis);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
     }
+    
         
     public void addTreatment(String patientID, String treatment) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addTreatment(patientID,treatment);
+            record.addTreatment(treatment);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
@@ -67,7 +68,7 @@ public class Doctor extends User{
     public void addPrescription(String patientID, String prescription) {
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
-            record.addPrescription(patientID, prescription);
+            record.addPrescription(prescription);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
@@ -89,9 +90,9 @@ public class Doctor extends User{
         MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
         if (record != null) {
             record.setServiceType(serviceType);  // Set appointment type and date
-            record.addDiagnosis(patientID, diagnosis);
-            record.addTreatment(patientID,treatment);
-            record.addPrescription(patientID,prescription);
+            record.addDiagnosis(diagnosis);
+            record.addTreatment(treatment);
+            record.addPrescription(prescription);
             System.out.println("Appointment outcome added for patient ID: " + patientID);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);

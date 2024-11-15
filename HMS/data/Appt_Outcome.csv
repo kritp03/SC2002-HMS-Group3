@@ -1,5 +1,5 @@
-﻿ApptID,Patient ID,Dr ID,Date of Appt,Appt Time,Service,Medicine Name,Dosage,Status,Notes
-A001,P1001,D001,1/1/24,0800-0815,Vaccination,Paracetamol,2mg,PENDING,May have fever
-A002,P1002,D002,1/1/24,0900-1515,Surgery,-,-,-,No solid food
-A003,P1003,D002,1/1/24,1000-1015,Consultation,-,-,-,Give MC
-A004,P1001,D001,1/1/24,1100-1115,Imaging,-,-,-,Return next Friday
+﻿ApptID,Patient ID,Dr ID,Date of Appt,Appt Time,Service,Medicine Name,Dosage,Notes
+A001,P1001,D001,1/1/24,0800-0815,Vaccination,Paracetamol,2mg,May have fever
+A002,P1002,D002,1/1/24,0900-1515,Surgery,-,-,No solid food
+A003,P1003,D002,1/1/24,1000-1015,Consultation,-,-,Give MC
+A004,P1001,D001,1/1/24,1100-1115,Imaging,-,-,Return next Friday

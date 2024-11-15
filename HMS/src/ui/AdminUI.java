@@ -54,19 +54,17 @@ package HMS.src.ui;
 
 import static HMS.src.utils.ValidationHelper.*;
 
+import HMS.src.archive.Database;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.utils.SessionManager;
 
 import HMS.src.medication.Medication;
-import HMS.src.database.Database;
-// import HMS.src.medication.ReplenishmentRequest;
-import HMS.src.management.Administrator;
-import HMS.src.management.Doctor;
-import HMS.src.management.Gender;
-import HMS.src.management.Pharmacist;
-import HMS.src.management.Role;
-import HMS.src.management.User;
-
+import HMS.src.user.Administrator;
+import HMS.src.user.Doctor;
+import HMS.src.user.Gender;
+import HMS.src.user.Pharmacist;
+import HMS.src.user.Role;
+import HMS.src.user.User;
 import HMS.src.authorisation.PasswordManager;
 
 public class AdminUI {

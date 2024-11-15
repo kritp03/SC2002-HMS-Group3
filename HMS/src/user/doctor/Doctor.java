@@ -11,7 +11,6 @@ import HMS.src.user.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-package HMS.src.user;
 
 
 public class Doctor extends User{
@@ -28,6 +27,7 @@ public class Doctor extends User{
     // Constructors
     public Doctor(String doctorID, String name, String emailId, int age, Gender gender) {
         super(doctorID, name, Role.DOCTOR, emailId, age, gender);  // use the emailId from parameter
+        
     public Doctor(String doctorID, String name, String emailId, int age, Gender gender){
         super(doctorID, name, Role.DOCTOR, emailId, age, gender);
         this.doctorID = doctorID;

@@ -34,7 +34,11 @@ public class PatientManager {
                 System.out.println("DOB: " + patient[2]);
                 System.out.println("Gender: " + patient[3]);
                 System.out.println("Blood Type: " + patient[4]);
-                System.out.println("Contact Information: " + patient[5]+"\n");
+                System.out.println("Email: " + patient[5]);
+                System.out.println("Phone: " + patient[6]);
+                System.out.println("Address: " + patient[7]);
+                System.out.println("Next of Kin: " + patient[8]);
+                System.out.println("Next of Kin Phone: " + patient[9]);
                 break;
             }
         }

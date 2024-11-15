@@ -1,9 +1,8 @@
-package HMS.src.user;
+package HMS.src.user.pharmacist;
 
-import HMS.src.misc_classes.*;
+import HMS.src.user.*;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
-
 import java.util.List;
 
 public class Pharmacist extends User {

@@ -54,7 +54,7 @@ public abstract class BaseCsvHelper {
      * Writes the given list of string arrays to the CSV file.
      * @param entries
      */
-    protected void writeEntries(List<String[]> entries) {
+    public void writeEntries(List<String[]> entries) {
         try (PrintWriter writer = new PrintWriter(new File(getFilePath()))) {
             for (String[] entry : entries) {
                 writer.println(String.join(",", entry));

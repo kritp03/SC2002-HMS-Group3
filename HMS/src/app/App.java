@@ -17,7 +17,7 @@ public class App
                 System.out.println("==================================");
                 System.out.println("|      Welcome to ClinicPal!      |");
                 System.out.println("==================================");
-                choice = validateIntRange("Please select an option: \n1. Login\n2. Forget UserID\n3. Exit\n", 1, 3);
+                choice = validateIntRange("Please select an option: \n1. Login\n2. Exit\n", 1, 2);
                 System.out.println();
 
                 switch (choice) {
@@ -25,9 +25,6 @@ public class App
                         pickerUI.displayLoginOptions();
                         break;
                     case 2:
-                        // PatientUI.displayOptions();
-                        break;
-                    case 3:
                         System.out.println("Exiting...");
                         break;
                     default:
@@ -38,7 +35,7 @@ public class App
                 System.out.println("Only integers are accepted! Please try again.");
                 sc.nextLine();
             }
-        } while(choice != 3);
+        } while(choice != 2);
 
         sc.close();
     }

@@ -5,6 +5,8 @@ import static HMS.src.utils.ValidationHelper.validateIntRange;
 import HMS.src.appointment.AppointmentManager;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
+import HMS.src.utils.SessionManager;
+import HMS.src.authorisation.PasswordManager;
 import HMS.src.io_new.ApptCsvHelper;
 import HMS.src.io_new.MedicationCsvHelper;
 
@@ -15,25 +17,28 @@ public class PharmacistUI {
     private static AppointmentManager appointmentManager = new AppointmentManager();
     private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
     private static ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
-    
-    public static void displayOptions(){
+    private static PasswordManager passwordManager = new PasswordManager();
+
+    public static void displayOptions() {
         System.out.println("=====================================");
         System.out.println("|                Menu                |");
-        System.out.println("|         Welcome Pharmacist!        |");    
+        System.out.println("|         Welcome Pharmacist!        |");
         System.out.println("=====================================");
 
-        String medFilePath =  medicationCsvHelper.getFilePath();
+        String medFilePath = medicationCsvHelper.getFilePath();
         String apptFilePath = apptCsvHelper.getFilePath();
 
         boolean quit = false;
         do {
-            int pharmacistChoice = validateIntRange("Please select option: \n1. View Appointment Outcome Record\n2. Update Prescription Status\n3. View Medication Inventory \n4. Submit Replenishment Request \n5. Logout \n", 1, 5);
+            int pharmacistChoice = validateIntRange(
+                    "Please select option: \n1. View Appointment Outcome Record\n2. Update Prescription Status\n3. View Medication Inventory \n4. Submit Replenishment Request \n5. Reset Password \n6. Logout\n",
+                    1, 6);
             System.out.println();
 
-            switch(pharmacistChoice) {
+            switch (pharmacistChoice) {
                 case 1:
                     appointmentManager.viewApptOutcomeRecord(apptFilePath);
-                    break; //tbd
+                    break; // tbd
                 case 2:
                     prescriptionManager.runPrescriptionUpdateProcess();
                     break;
@@ -44,8 +49,12 @@ public class PharmacistUI {
                     medicationManager.submitReplenishmentRequest(medFilePath);
                     break;
                 case 5:
-                System.out.println("Logging out...\nRedirecting to Main Menu...\n");
+                    passwordManager.changePassword();
+                    break;
+                case 6:
+                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

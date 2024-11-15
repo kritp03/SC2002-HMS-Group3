@@ -73,8 +73,8 @@
 
 package HMS.src.appointment;
 
-import HMS.src.management.doctor.Doctor;
-import HMS.src.management.patient.Patient;
+import HMS.src.doctor.*;
+import HMS.src.patient.Patient;
 import java.time.LocalDate;
 import java.time.LocalTime;
 

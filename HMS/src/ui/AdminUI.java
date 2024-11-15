@@ -52,18 +52,22 @@
 
 package HMS.src.ui;
 
+import static HMS.src.utils.ValidationHelper.*;
+
+import HMS.src.authorisation.PasswordManager;
+import HMS.src.utils.SessionManager;
+
+import HMS.src.medication.Medication;
 import HMS.src.database.Database;
 import HMS.src.management.Gender;
 import HMS.src.management.Role;
 import HMS.src.management.User;
-import HMS.src.management.administrator.Administrator;
-import HMS.src.management.doctor.Doctor;
-import HMS.src.management.pharmacist.Pharmacist;
-import HMS.src.medication.Medication;
-import static HMS.src.utils.ValidationHelper.*;
+
+import HMS.src.authorisation.PasswordManager;
 
 public class AdminUI {
     private static Administrator admin = (Administrator) Database.getCurrentUser();
+    private static PasswordManager passwordManager = new PasswordManager();
 
     public static void displayOptions() {
         System.out.println("=====================================");
@@ -73,7 +77,7 @@ public class AdminUI {
 
         boolean quit = false;
         do {
-            int adminChoice = validateIntRange("Please select an option: \n1. Manage Hospital Staff\n2. View Appointments\n3. Manage Medication Inventory\n4. Approve Replenishment Requests\n5. Logout\n", 1, 5);
+            int adminChoice = validateIntRange("Please select an option: \n1. Manage Hospital Staff\n2. View Appointments\n3. Manage Medication Inventory\n4. Approve Replenishment Requests\n5. Reset Password\n6. Logout\n", 1, 6);
             System.out.println();
 
             switch (adminChoice) {
@@ -81,12 +85,28 @@ public class AdminUI {
                 case 2 -> admin.viewAppointments();
                 case 3 -> manageMedicationInventory();
                 case 4 -> approveReplenishmentRequests();
-                case 5 -> {
+                case 5 -> passwordManager.changePassword();
+                case 6 -> {
                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
+
+            // switch (adminChoice) {
+            //     case 1 -> System.out.println("hi");
+            //     case 2 ->System.out.println("hi");
+            //     case 3 -> System.out.println("hi");
+            //     case 4 -> System.out.println("hi");
+            //     case 5 -> passwordManager.changePassword();
+            //     case 6 -> {
+            //         System.out.println("Logging out...\nRedirecting to Main Menu...\n");
+            //         quit = true;
+            //         SessionManager.logoutUser();
+            //     }
+            //     default -> System.out.println("Invalid choice. Please try again.");
+            // }
         } while (!quit);
     }
 

@@ -3,56 +3,67 @@ package HMS.src.ui;
 import HMS.src.management.patient.PatientManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 
+import HMS.src.authorisation.PasswordManager;
+import HMS.src.patient.PatientManager;
+import HMS.src.utils.SessionManager;
+
 // import static HMS.src.patient.PatientManager;
 // import HMS.src.io_new.MedicationCsvHelper;
 
 public class PatientUI {
     private static PatientManager patientManager = new PatientManager();
+    private static PasswordManager passwordManager = new PasswordManager();
 
+    // private static MedicationCsvHelper medicationCsvHelper = new
+    // MedicationCsvHelper();
 
-    // private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
-    
-    public static void displayOptions(){
+    public static void displayOptions() {
         System.out.println("=====================================");
         System.out.println("|                Menu                |");
-        System.out.println("|          Welcome Patient!          |");    
+        System.out.println("|          Welcome Patient!          |");
         System.out.println("=====================================");
 
-        // String medFilePath =  medicationCsvHelper.getFilePath();
+        // String medFilePath = medicationCsvHelper.getFilePath();
 
         boolean quit = false;
         do {
-            int patientChoice = validateIntRange("Please select option: \n1. View Medical Record\n2. Update Personal Information\n3. View Available Appointment Slots \n4. Schedule an Appointment \n5. Reschedule an Appointment \n6. Cancel an Appointment \n7. View Scheduled Appointments \n8. View Past Appointment Outcome Records \n9. Logout \n", 1, 9);
+            int patientChoice = validateIntRange(
+                    "\nPlease select option: \n1. View Medical Record\n2. Update Personal Information\n3. View Available Appointment Slots \n4. Schedule an Appointment \n5. Reschedule an Appointment \n6. Cancel an Appointment \n7. View Scheduled Appointments \n8. View Past Appointment Outcome Records \n9. Reset Password \n10. Logout\n",
+                    1, 10);
             System.out.println();
 
-            switch(patientChoice) {
+            switch (patientChoice) {
                 case 1:
                     patientManager.showPatientAndRecords();
-                    break; 
+                    break;
                 case 2:
                     patientManager.updatePatientContactInfo();
                     break;
                 case 3:
-                    System.out.println("View Available Appointment Slots"); //tbd
+                    System.out.println("View Available Appointment Slots"); // tbd
                     break;
                 case 4:
-                    System.out.println("Schedule an Appointment"); //tbd
+                    System.out.println("Schedule an Appointment"); // tbd
                     break;
                 case 5:
-                    System.out.println("Reschedule an Appointment"); //tbd
+                    System.out.println("Reschedule an Appointment"); // tbd
                     break;
                 case 6:
-                    System.out.println("Cancel an Appointment"); //tbd
+                    System.out.println("Cancel an Appointment"); // tbd
                     break;
                 case 7:
-                    System.out.println("View Scheduled Appointments"); //tbd
+                    System.out.println("View Scheduled Appointments"); // tbd
                     break;
                 case 8:
-                    System.out.println("View Past Appointment Outcome Records"); //tbd
+                    System.out.println("View Past Appointment Outcome Records"); // tbd
                     break;
                 case 9:
-                System.out.println("Logging out...\nRedirecting to Main Menu...\n");
+                    passwordManager.changePassword();
+                    break;
+                case 10:
+                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
+                    SessionManager.logoutUser();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

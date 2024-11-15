@@ -4,12 +4,10 @@ import HMS.src.io_new.MedicationCsvHelper;
 import HMS.src.io_new.ReplReqCsvHelper;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.UUID;
 
 public class MedicationManager {
 
@@ -83,21 +81,22 @@ public class MedicationManager {
         }
     }
 
+
     private String promptForMedicineName(Set<String> allMedicines) {
         while (true) {
-            System.out.println("\nEnter the name of the medicine you wish to replenish:");
+            System.out.print("Enter the name of the medicine you wish to replenish: "); 
             String medicineName = scanner.nextLine().toLowerCase();
             if (allMedicines.contains(medicineName)) {
                 return medicineName;
             } else {
-                System.out.println("Medicine not found in inventory. Please check the name and try again.");
+                System.out.println("Medicine not found in inventory. Please check the name and try again."); // This still prints on a new line for clarity.
             }
         }
     }
 
     private int promptForReplenishmentAmount() {
         while (true) {
-            System.out.println("\nEnter the amount to replenish:");
+            System.out.print("\nEnter the amount to replenish: ");
             String input = scanner.nextLine();
             if (input.matches("^[1-9]\\d*$")) {
                 return Integer.parseInt(input);
@@ -114,7 +113,7 @@ public class MedicationManager {
 
         displayReplReqSummary(new ReplenishmentRequest(requestID, medicineName, amount, LocalDate.now()));
 
-        System.out.println("\nAre you sure you want to replenish this medicine? (y/n)");
+        System.out.print("\nAre you sure you want to replenish this medicine? (y/n): ");
         String confirmation = scanner.nextLine().toLowerCase();
 
         if ("y".equals(confirmation)) {
@@ -140,7 +139,7 @@ public class MedicationManager {
         System.out.println("| Replenishment Request Summary |");
         System.out.println("=================================");
         System.out.println("Request ID: " + request.getRequestID());
-        System.out.println("Medication ID: " + request.getmedicineName());
+        System.out.println("Medication Name: " + request.getmedicineName());
         System.out.println("Quantity: " + request.getQuantity());
         System.out.println("Request Date: " + request.getDate());
         System.out.println("Status: " + request.getStatus().showStatusByColor());
@@ -156,12 +155,4 @@ public class MedicationManager {
         confirmSubmitRequest(medicineName, replenishAmt);
     }
 
-    // public static void main(String[] args) {
-    // MedicationManager manager = new MedicationManager();
-    // String filePath =
-    // "/Users/weipingtee/Library/CloudStorage/OneDrive-NanyangTechnologicalUniversity/Year
-    // 2/Sem 1/SC2002 Object Oriented
-    // Programming/Assignment/SC2002-HMS-Group3/HMS/data/Medicine_List.csv";
-    // manager.viewMedicationInventory(filePath);
-    // }
 }

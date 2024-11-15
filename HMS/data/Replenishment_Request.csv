@@ -1,5 +1,7 @@
 ﻿requestID,medicineName,quantity,dateOfRequest,status,approvedBy
 R001,Paracetamol,10,10/11/24,PENDING,
 R002,Amoxillin,20,9/11/24,PENDING,
-R003,amoxicillin,90,2024-11-14,PENDING,
-R004,ibuprofen,3,2024-11-15,PENDING,
+R003,ibuprofen,90,2024-11-15,PENDING,
+R004,paracetamol,8,2024-11-15,PENDING,
+R005,paracetamol,33,2024-11-15,PENDING,
+R006,ibuprofen,6,2024-11-15,PENDING,

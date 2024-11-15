@@ -23,7 +23,7 @@ public class DoctorUI {
         do {
             int doctorChoice = validateIntRange(
                     "Please select option: \n1. View Patient Medical Record\n2. Update Patient Medical Records\n3. View Personal Schedule \n4. Set Availability for Appointments \n5. Accept or Decline Appointment Requests \n6. View Upcoming Appointments \n7. Record AppointmentOutcome \n8. Reset Password \n9. Logout\n",
-                    1, 8);
+                    1, 9);
             System.out.println();
 
             switch (doctorChoice) {

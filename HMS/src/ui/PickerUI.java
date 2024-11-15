@@ -23,14 +23,14 @@ public class PickerUI {
                 allIDs.add(entry[0].toUpperCase());
             }
         }
-        return allIDs;  
+        return allIDs;
     }
 
     private int getUserDomain() {
         System.out.println("Roles");
         System.out.println("=====");
         System.out.println("1. Doctor\n2. Patient\n3. Pharmacist\n4. Admin");
-        int domain = validateIntRange("Please select your domain (1-4): ", 1, 4);
+        int domain = validateIntRange("Please select your role (1-4): ", 1, 4);
         return domain;
     }
 
@@ -62,43 +62,43 @@ public class PickerUI {
     }
 
     private void handleLogin(int choice, String id) {
-                String role = "";
-                switch (choice) {
-                    case 1:
-                        role = "Doctor";
-                        System.out.println("\nLogging in as Doctor...");
-                        SessionManager.loginUser(role, id);
-                        DoctorUI.displayOptions();
-                        break;
-                    case 2:
-                        role = "Patient";
-                        System.out.println("\nLogging in as Patient...");
-                        SessionManager.loginUser(role, id);
-                        PatientUI.displayOptions();
-                        break;
-                    case 3:
-                        role = "Pharmacist";
-                        System.out.println("\nLogging in as Pharmacist...");
-                        SessionManager.loginUser(role, id);
-                        PharmacistUI.displayOptions();
-                        break;
-                    case 4:
-                        role = "Admin";
-                        System.out.println("\nLogging in as Admin...");
-                        SessionManager.loginUser(role, getUserID());
-                        AdminUI.displayOptions();
-                        break;
-                    default:
-                        System.out.println("Invalid option. Please try again.");
-                        displayLoginOptions();
-                        break;
-                }
-                String userID = SessionManager.getCurrentUserID();
-                SessionManager.loginUser(userID, role);
-            }
+        String role = "";
+        switch (choice) {
+            case 1:
+                role = "Doctor";
+                System.out.println("\nLogging in as Doctor...");
+                SessionManager.loginUser(role, id);
+                DoctorUI.displayOptions();
+                break;
+            case 2:
+                role = "Patient";
+                System.out.println("\nLogging in as Patient...");
+                SessionManager.loginUser(role, id);
+                PatientUI.displayOptions();
+                break;
+            case 3:
+                role = "Pharmacist";
+                System.out.println("\nLogging in as Pharmacist...");
+                SessionManager.loginUser(role, id);
+                PharmacistUI.displayOptions();
+                break;
+            case 4:
+                role = "Administrator";
+                System.out.println("\nLogging in as Admin...");
+                SessionManager.loginUser(role, id);
+                AdminUI.displayOptions();
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                displayLoginOptions();
+                break;
+        }
+        String userID = SessionManager.getCurrentUserID();
+        SessionManager.loginUser(userID, role);
+    }
 
     // public static void main(String[] args) {
-    //     PickerUI ui = new PickerUI();
-    //     ui.displayLoginOptions();
+    // PickerUI ui = new PickerUI();
+    // ui.displayLoginOptions();
     // }
 }

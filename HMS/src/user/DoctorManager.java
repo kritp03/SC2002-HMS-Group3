@@ -1,7 +1,7 @@
 package HMS.src.user;
 
 import HMS.src.appointment.*;
-import HMS.src.io.ApptCsvHelper;
+import HMS.src.io.AppointmentCsvHelper;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
 import java.time.LocalDate;
@@ -14,14 +14,14 @@ import java.util.Scanner;
 public class DoctorManager{
 
 private static SlotManager slotManager;
-private static ApptCsvHelper apptCsvHelper = new ApptCsvHelper();  // Helper for writing Appointment Outcomes to CSV
+private static AppointmentCsvHelper appointmentCsvHelper = new AppointmentCsvHelper();  // Helper for writing Appointment Outcomes to CSV
 private final static Scanner scanner = new Scanner(System.in);
 private static Appointment appointment;
             
 // Constructor to initialize SlotManager and ApptCsvHelper
-public DoctorManager(SlotManager slotManager, ApptCsvHelper apptCsvHelper) {
+public DoctorManager(SlotManager slotManager, AppointmentCsvHelper appointmentCsvHelper) {
     DoctorManager.slotManager = slotManager;
-    DoctorManager.apptCsvHelper = apptCsvHelper;
+    DoctorManager.appointmentCsvHelper = appointmentCsvHelper;
 }
 
 // View available slots for the doctor
@@ -146,8 +146,8 @@ consultationNotes
 };
 appointmentOutcomes.add(outcomeData);
 
-// Use ApptCsvHelper to write data to CSV
-apptCsvHelper.writeEntries(appointmentOutcomes);
+// Use appointmentCsvHelper to write data to CSV
+appointmentCsvHelper.writeEntries(appointmentOutcomes);
 }
 
 
@@ -202,6 +202,5 @@ System.out.println("Appointment not found.");
 }
 
 
-// Helper method to write appointment outcome to CSV using ApptCsvHelper
 
 }

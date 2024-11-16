@@ -1,8 +1,9 @@
 package HMS.src.appointment;
 
-import java.util.List;
-
 import HMS.src.io.ApptCsvHelper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AppointmentManager {
     ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
@@ -17,6 +18,7 @@ public class AppointmentManager {
             System.out.println("No appointment outcomes found.");
             return;
         }
+        
 
         for (int i = 1; i < apptOutcome.size(); i++) {
             String[] row = apptOutcome.get(i);
@@ -34,5 +36,17 @@ public class AppointmentManager {
             System.out.println("Notes: " + row[8]);
             System.out.println();
         }
+    }
+
+    private static final Map<String, Appointment> allAppointments = new HashMap<>();
+
+    // Method to add an appointment to the system
+    public static void addAppointment(Appointment appointment) {
+        allAppointments.put(appointment.getAppointmentID(), appointment);
+    }
+
+    // Method to get appointment by ID
+    public static Appointment getAppointmentByID(String appointmentID) {
+        return allAppointments.get(appointmentID);  // Return null if not found
     }
 }

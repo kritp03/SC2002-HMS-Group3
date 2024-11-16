@@ -1,50 +1,67 @@
 package HMS.src.appointment;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SlotManager {
-    private final List<Slot> slots;
-
-    public SlotManager() {
-        this.slots = new ArrayList<>();
-        createTimeSlots();
-    }
-
-    // time slots from 9am -> 5pm, 1 hour intervals
-    private void createTimeSlots() {
-        LocalTime startTime = LocalTime.of(9, 0);
-        for (int i = 0; i < 8; i++) {
-            slots.add(new Slot(startTime));
-            startTime = startTime.plusHours(1);  // 1 hour interval
+    private static Map<String, List<Slot>> doctorSlots; // Map doctor to their slots
+    
+        public SlotManager() {
+            SlotManager.doctorSlots = new HashMap<>();
         }
-    }
-
-    public void setAvailability(LocalTime startTime, boolean isAvailable) {
-        for (Slot slot : slots) {
-            if (slot.getStartTime().equals(startTime)) {
-                slot.setAvailability(isAvailable);
-                System.out.println("Slot " + startTime + " updated to " + (isAvailable ? "Available" : "Unavailable"));
-                return;
+    
+        // Initialize slots for a given doctor for the full year
+        public void initializeDoctorSlots(String doctorID) {
+            List<Slot> slots = new ArrayList<>();
+            LocalDate startDate = LocalDate.now();
+            LocalDate endDate = startDate.plusYears(1);
+    
+            while (!startDate.isAfter(endDate)) {
+                LocalTime startTime = LocalTime.of(9, 0);
+                for (int i = 0; i < 8; i++) {
+                    slots.add(new Slot(startDate.atTime(startTime)));
+                    startTime = startTime.plusHours(1); // 1 hour interval
+                }
+                startDate = startDate.plusDays(1);
             }
+    
+            doctorSlots.put(doctorID, slots);
         }
-        System.out.println("Slot " + startTime + " is unavailable.");
-    }
-
-    public void setUnavailable(LocalTime startTime) {
-        setAvailability(startTime, false);
-    }
-
-    // Print all slots (useful for displaying available slots)
-    public void printSlots() {
-        for (Slot slot : slots) {
-            System.out.println(slot);
+    
+        // Set availability for a specific slot
+        public static void setAvailability(String doctorID, LocalDateTime dateTime, boolean isAvailable) {
+            List<Slot> slots = doctorSlots.get(doctorID);
+            if (slots != null) {
+                for (Slot slot : slots) {
+                    if (slot.getDateTime().equals(dateTime)) {
+                        slot.setAvailability(isAvailable);
+                        System.out.println("Slot " + dateTime + " updated to " + (isAvailable ? "Available" : "Unavailable"));
+                        return;
+                    }
+                }
+            }
+            System.out.println("Slot " + dateTime + " for doctor " + doctorID + " is unavailable.");
+        }
+    
+        // Print all slots for a specific doctor
+        public static void printSlots(String doctorID) {
+            List<Slot> slots = doctorSlots.get(doctorID);
+        if (slots != null) {
+            for (Slot slot : slots) {
+                System.out.println(slot);
+            }
+        } else {
+            System.out.println("No slots available for doctor " + doctorID);
         }
     }
 
-    // Return list of all slots
-    public List<Slot> getSlots() {
-        return slots;
+    // Return all slots for a specific doctor
+    public List<Slot> getSlots(String doctorID) {
+        return doctorSlots.getOrDefault(doctorID, new ArrayList<>());
     }
 }

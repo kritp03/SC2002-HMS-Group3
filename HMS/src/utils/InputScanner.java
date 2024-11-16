@@ -33,4 +33,16 @@ public class InputScanner {
     public void close() {
         scanner.close();
     }
+    public boolean nextBoolean() {
+        System.out.print("Please enter 'true' or 'false': ");
+        String input = scanner.nextLine().toLowerCase();
+
+        // Keep prompting the user until valid input is received
+        while (!input.equals("true") && !input.equals("false")) {
+            System.out.print("Invalid input. Please enter 'true' or 'false': ");
+            input = scanner.nextLine().toLowerCase();
+        }
+
+        return Boolean.parseBoolean(input);
+    }
 }

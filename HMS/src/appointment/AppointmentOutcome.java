@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AppointmentOutcome {
-    private String appointmentID; // Appointment ID
+    private final String appointmentID; // Appointment ID
     private LocalDate appointmentDate; // Field to store the date of the appointment
-    private ServiceType serviceType; // Type of service (e.g., Consultation)
+    private String serviceType; // Type of service (e.g., Consultation)
     private String diagnosis; // Diagnosis made during the appointment
     private ArrayList<Prescription> prescriptions; // List of prescriptions given
     private String consultationNotes; // Notes from the consultation
@@ -22,7 +22,7 @@ public class AppointmentOutcome {
      * @param prescriptions
      * @param consultationNotes
      */
-    public AppointmentOutcome(String appointmentID, LocalDate appointmentDate, ServiceType diagnosisserviceType,
+    public AppointmentOutcome(String appointmentID, LocalDate appointmentDate, String diagnosisserviceType,
             String diagnosis, ArrayList<Prescription> prescriptions, String consultationNotes) {
         this.appointmentID = appointmentID;
         this.serviceType = diagnosisserviceType;
@@ -52,7 +52,7 @@ public class AppointmentOutcome {
      * get the service type
      * @return serviceType
      */
-    public ServiceType getServiceType() {
+    public String getServiceType() {
         return serviceType;
     }
 
@@ -60,7 +60,7 @@ public class AppointmentOutcome {
      * get the diagnosis
      * @return diagnosis
      */
-    public void setServiceType(ServiceType serviceType) {
+    public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
 

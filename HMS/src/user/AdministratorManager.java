@@ -1,21 +1,21 @@
 package HMS.src.user;
 
 import HMS.src.appointment.Appointment;
-import HMS.src.io.AppointmentCsvHelper;
-import HMS.src.io.StaffCsvHelper;
+import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.ReplReqCsvHelper;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
-import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdministratorManager {
     private StaffCsvHelper staffHelper = new StaffCsvHelper();
     private MedicationCsvHelper medHelper = new MedicationCsvHelper();
     private ReplReqCsvHelper replReqHelper = new ReplReqCsvHelper();
-    private AppointmentCsvHelper apptHelper = new AppointmentCsvHelper();
+    private ApptCsvHelper apptHelper = new ApptCsvHelper();
 
     // ANSI color codes for console output
     private static final String ANSI_RED = "\u001B[31m";

@@ -7,7 +7,6 @@ import HMS.src.medicalrecordsPDT.MedicalEntry;
 import HMS.src.medicalrecordsPDT.MedicalRecord;
 import HMS.src.medicalrecordsPDT.MedicalRecordManager;
 import HMS.src.prescription.Prescription;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -18,6 +17,8 @@ import java.util.Map;
 public class DoctorManager {
     private final Map<String, Doctor> doctors;
     private final Map<String, MedicalEntry> currentEntries;  // Track current entries for each patient
+    private SlotManager slotManager;
+    private ApptCsvHelper apptCsvHelper = new ApptCsvHelper(); 
 
     public DoctorManager() {
         this.doctors = new HashMap<>();
@@ -242,13 +243,10 @@ public class DoctorManager {
     public DoctorManager(SlotManager slotManager, ApptCsvHelper apptCsvHelper) {
         this.slotManager = slotManager;
         this.apptCsvHelper = apptCsvHelper;
+        this.doctors = null;
+        this.currentEntries = null;
     }
 
-    // View available slots for the doctor
-    public void viewAvailableSlots(String doctorID) {
-        System.out.println("Available slots for Dr. " + doctorID + ":");
-        slotManager.printSlots();
-    }
 
     // Method to mark a slot as unavailable
     public void setUnavailable(LocalTime startTime) {

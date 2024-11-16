@@ -7,7 +7,6 @@ import HMS.src.appointment.ServiceType;
 import HMS.src.appointment.SlotManager;
 import HMS.src.medicalrecordsPDT.*;
 import HMS.src.prescription.Prescription;
-import HMS.src.user.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public class Doctor extends User{
                                          ArrayList<Prescription> prescriptions, String consultationNotes) {
         if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
             AppointmentOutcome outcome = new AppointmentOutcome(
-                appointment.getAppointmentID(), serviceType, diagnosis, prescriptions, consultationNotes);
+                appointment.getAppointmentID(),LocalDate.now(), serviceType, diagnosis, prescriptions, consultationNotes);
             appointment.setOutcome(outcome);
             System.out.println("Recorded appointment outcome: " + outcome);
         } else {

@@ -1,11 +1,9 @@
 package HMS.src.user;
 
 import HMS.src.appointment.*;
-import HMS.src.archive.Database;
-import HMS.src.io.ApptCsvHelper;
-import HMS.src.medicalrecordsPDT.MedicalEntry;
-import HMS.src.medicalrecordsPDT.MedicalRecord;
-import HMS.src.medicalrecordsPDT.MedicalRecordManager;
+import HMS.src.io.AppointmentCsvHelper;
+import HMS.src.io.MedicalRecordCsvHelper;
+import HMS.src.medicalrecordsPDT.*;
 import HMS.src.prescription.Prescription;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,9 +16,12 @@ public class DoctorManager {
     private final Map<String, Doctor> doctors;
     private final Map<String, MedicalEntry> currentEntries;  // Track current entries for each patient
     private SlotManager slotManager;
-    private ApptCsvHelper apptCsvHelper = new ApptCsvHelper(); 
+    private AppointmentCsvHelper apptCsvHelper = new AppointmentCsvHelper(); 
+    private MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
 
-    public DoctorManager() {
+    public DoctorManager(SlotManager slotManager, AppointmentCsvHelper apptCsvHelper) {
+        this.slotManager = slotManager;
+        this.apptCsvHelper = apptCsvHelper;
         this.doctors = new HashMap<>();
         this.currentEntries = new HashMap<>();
     }
@@ -50,7 +51,7 @@ public class DoctorManager {
     public void viewAvailableSlots(String doctorID) {
         Doctor doctor = findDoctorById(doctorID);
         if (doctor != null) {
-            doctor.viewAvailableSlots();
+            slotManager.printSlots();
         } else {
             System.out.println("Doctor with ID " + doctorID + " not found.");
         }
@@ -60,13 +61,13 @@ public class DoctorManager {
     public void setDoctorSlotUnavailable(String doctorID, LocalTime startTime) {
         Doctor doctor = findDoctorById(doctorID);
         if (doctor != null) {
-            doctor.setUnavailable(startTime);
-            System.out.println("Marked slot at " + startTime + " as unavailable for Dr. " + doctor.getName());
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
+            slotManager.setUnavailable(startTime);
+            List<String[]> apptCsvhelper = AppointmentCsvHelper.readCSV();
 
+
+    }
+}
+    
     // Add a treatment to the current entry for a patient
     public void addDoctorTreatment(String patientID, String treatment) {
         if (!MedicalRecordManager.patientExists(patientID)) {
@@ -91,35 +92,6 @@ public class DoctorManager {
         entry.addPrescription(medicationName);  // Add prescription to current entry
         currentEntries.put(patientID, entry);  // Store/update current entry for patient
         System.out.println("Prescription added to the current entry for patient ID: " + patientID);
-    }
-
-    // Finalize and add the current entry to the patient's medical record
-    public void finalizeCurrentEntry(String patientID) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-
-        MedicalEntry entry = currentEntries.get(patientID);
-        if (entry != null) {
-            List<MedicalRecord> records = MedicalRecordManager.getMedicalRecords(patientID);
-            if (records.isEmpty()) {
-                // Create a new record for the patient if none exists
-                MedicalRecord newRecord = new MedicalRecord("R" + System.currentTimeMillis(), patientID, LocalDate.now());
-                newRecord.addEntry(entry);
-                MedicalRecordManager.addMedicalRecord(patientID, newRecord);
-            } else {
-                // Add the entry to the latest record
-                records.get(records.size() - 1).addEntry(entry);
-            }
-            currentEntries.remove(patientID);
-
-            // Save changes
-            Database.saveMedicalRecords();
-            System.out.println("Finalized entry added to medical record for patient ID: " + patientID);
-        } else {
-            System.out.println("No current entry to finalize for patient ID: " + patientID);
-        }
     }
 
     
@@ -179,7 +151,42 @@ public class DoctorManager {
             System.out.println("Doctor with ID " + doctorID + " not found.");
         }
     }
-
+    public void finalizeCurrentEntry(String patientID) {
+        if (!MedicalRecordManager.patientExists(patientID)) {
+            System.out.println("Patient with ID " + patientID + " does not exist.");
+            return;
+        }
+        MedicalEntry entry = currentEntries.get(patientID);
+        if (entry != null) {
+            List<MedicalRecord> records = MedicalRecordManager.getMedicalRecords(patientID);
+    
+            if (records.isEmpty()) {
+                MedicalRecord newRecord = new MedicalRecord("R" + System.currentTimeMillis(), patientID, LocalDate.now());
+                newRecord.addEntry(entry);
+                MedicalRecordManager.addMedicalRecord(patientID, newRecord);
+            } else {
+                MedicalRecord latestRecord = records.get(records.size() - 1);
+                latestRecord.addEntry(entry);
+            }
+    
+            // Remove the finalized entry from the current entries map
+            currentEntries.remove(patientID);
+    
+            // Save changes to CSV (if needed)
+            List<String[]> appointments = apptCsvHelper.readCSV();
+            for (String[] appointment : appointments) {
+                if (appointment[0].equals(patientID)) {
+                    appointment[3] = "Finalized"; // Assuming the 4th column tracks the status
+                    apptCsvHelper.updateAppointment(appointment);
+                    break;
+                }
+            }
+    
+            System.out.println("Finalized entry for patient ID " + patientID);
+        } else {
+            System.out.println("No current entry found for patient ID " + patientID);
+        }
+    }
     // Update the status of an appointment
     public void updateDoctorAppointmentStatus(String doctorID, Appointment appointment, AppointmentStatus status) {
         Doctor doctor = findDoctorById(doctorID);
@@ -239,14 +246,6 @@ public class DoctorManager {
             System.out.println("Prescription added to record with status PENDING.");
         }
     }
-
-    public DoctorManager(SlotManager slotManager, ApptCsvHelper apptCsvHelper) {
-        this.slotManager = slotManager;
-        this.apptCsvHelper = apptCsvHelper;
-        this.doctors = null;
-        this.currentEntries = null;
-    }
-
 
     // Method to mark a slot as unavailable
     public void setUnavailable(LocalTime startTime) {
@@ -330,3 +329,4 @@ public class DoctorManager {
         return new ArrayList<>(doctors.values());
     }
 }
+

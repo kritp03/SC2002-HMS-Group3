@@ -32,6 +32,10 @@ public class SlotManager {
         System.out.println("Slot " + startTime + " is unavailable.");
     }
 
+    public void setUnavailable(LocalTime startTime) {
+        setAvailability(startTime, false);
+    }
+
     // Print all slots (useful for displaying available slots)
     public void printSlots() {
         for (Slot slot : slots) {

@@ -8,7 +8,6 @@ import HMS.src.appointment.SlotManager;
 import HMS.src.medicalrecordsPDT.*;
 import HMS.src.prescription.Prescription;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 
@@ -31,17 +30,9 @@ public class Doctor extends User{
       this.slotManager = new SlotManager();
    }
 
-   public void viewAvailableSlots() {
-      System.out.println("Available slots for Dr. " + this.name + " , " + this.doctorID + " :");
-      this.slotManager.printSlots();
-   }
-    
 
 
-    // Method to mark a slot as unavailable but default slots should all be available 
-    public void setUnavailable(LocalTime startTime) {
-        slotManager.setAvailability(startTime, false);
-    }
+
 
 
     //MEDICAL RECORD

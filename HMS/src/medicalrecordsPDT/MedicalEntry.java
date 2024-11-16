@@ -4,9 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MedicalEntry {
+    private String diagnosis;
+    private String treatment;
+    private Map<String, String> prescriptions = new HashMap<>();
 
     public MedicalEntry() 
     {
+    }
+
+
+    public MedicalEntry(String diagnosis, String treatment) {
+        this.diagnosis = diagnosis;
+        this.treatment = treatment;
     }
 
     public void setDiagnosis(String diagnosis) {
@@ -21,14 +30,6 @@ public class MedicalEntry {
         this.prescriptions = prescriptions;
     }
 
-    private String diagnosis;
-    private String treatment;
-    private Map<String, String> prescriptions = new HashMap<>();
-
-    public MedicalEntry(String diagnosis, String treatment) {
-        this.diagnosis = diagnosis;
-        this.treatment = treatment;
-    }
 
     // Methods to add and update prescriptions
     public void addPrescription(String medicationName) {

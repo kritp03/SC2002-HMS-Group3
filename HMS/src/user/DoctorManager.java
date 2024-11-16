@@ -1,332 +1,207 @@
 package HMS.src.user;
 
 import HMS.src.appointment.*;
-import HMS.src.io.AppointmentCsvHelper;
-import HMS.src.io.MedicalRecordCsvHelper;
-import HMS.src.medicalrecordsPDT.*;
+import HMS.src.io.ApptCsvHelper;
 import HMS.src.prescription.Prescription;
+import HMS.src.prescription.PrescriptionStatus;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Scanner;
 
-public class DoctorManager {
-    private final Map<String, Doctor> doctors;
-    private final Map<String, MedicalEntry> currentEntries;  // Track current entries for each patient
-    private SlotManager slotManager;
-    private AppointmentCsvHelper apptCsvHelper = new AppointmentCsvHelper(); 
-    private MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
+public class DoctorManager{
 
-    public DoctorManager(SlotManager slotManager, AppointmentCsvHelper apptCsvHelper) {
-        this.slotManager = slotManager;
-        this.apptCsvHelper = apptCsvHelper;
-        this.doctors = new HashMap<>();
-        this.currentEntries = new HashMap<>();
-    }
+private static SlotManager slotManager;
+private static ApptCsvHelper apptCsvHelper = new ApptCsvHelper();  // Helper for writing Appointment Outcomes to CSV
+private final static Scanner scanner = new Scanner(System.in);
+private static Appointment appointment;
+            
+// Constructor to initialize SlotManager and ApptCsvHelper
+public DoctorManager(SlotManager slotManager, ApptCsvHelper apptCsvHelper) {
+    DoctorManager.slotManager = slotManager;
+    DoctorManager.apptCsvHelper = apptCsvHelper;
+}
 
-    // Add a doctor to the manager
-    public void addDoctor(Doctor doctor) {
-        doctors.put(doctor.getUserID(), doctor);
-    }
+// View available slots for the doctor
+public void viewAvailableSlots(String doctorID) {
+    System.out.println("Available slots for Dr. " + doctorID + ":");
+    SlotManager.printSlots(doctorID);
+}
 
-    // Find a doctor by ID
-    public Doctor findDoctorById(String doctorID) {
-        return doctors.get(doctorID);
-    }
-
-    // Find a doctor by name
-    public Doctor findDoctorByName(String doctorName) {
-        for (Doctor doctor : doctors.values()) {
-            if (doctor.getName().equalsIgnoreCase(doctorName)) {
-                return doctor;
-            }
-        }
-        System.out.println("Doctor with name " + doctorName + " not found.");
-        return null;
-    }
-
-    // View available slots for a specific doctor
-    public void viewAvailableSlots(String doctorID) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            slotManager.printSlots();
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
-
-    // Set a specific slot as unavailable for a doctor
-    public void setDoctorSlotUnavailable(String doctorID, LocalTime startTime) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            slotManager.setUnavailable(startTime);
-            List<String[]> apptCsvhelper = AppointmentCsvHelper.readCSV();
-
-
+// View available slots for a specific day
+public static void viewScheduleForDay(LocalDate date, String doctorID) {
+        System.out.println("Schedule for Dr. " + doctorID + " on " + date + ":");
+    List<Slot> slots = slotManager.getSlots(doctorID);
+for (Slot slot : slots) {
+    if (slot.getDateTime().toLocalDate().equals(date)) {
+        System.out.println(slot);
     }
 }
-    
-    // Add a treatment to the current entry for a patient
-    public void addDoctorTreatment(String patientID, String treatment) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-
-        MedicalEntry entry = currentEntries.getOrDefault(patientID, new MedicalEntry());
-        entry.setTreatment(treatment);  // Set treatment
-        currentEntries.put(patientID, entry);  // Store/update current entry for patient
-        System.out.println("Treatment added to the current entry for patient ID: " + patientID);
     }
+            
+// Method to mark a slot as unavailable
+public void setUnavailable(String doctorID, LocalDateTime dateTime) {
+        SlotManager.setAvailability(doctorID, dateTime, false);
+}
 
-    // Add a prescription to the current entry for a patient
-    public void addDoctorPrescription(String patientID, String medicationName) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
+public static void recordAppointmentOutcome(String appointmentID) {
 
-        MedicalEntry entry = currentEntries.getOrDefault(patientID, new MedicalEntry());
-        entry.addPrescription(medicationName);  // Add prescription to current entry
-        currentEntries.put(patientID, entry);  // Store/update current entry for patient
-        System.out.println("Prescription added to the current entry for patient ID: " + patientID);
-    }
+    if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            // Collect service type
+            System.out.print("Enter service type: ");
+            String serviceType = scanner.nextLine();
+            // Collect diagnosis
+            System.out.print("Enter diagnosis: ");
+            String diagnosis = scanner.nextLine();
 
-    
-    
+            // Collect prescriptions (if any)
+            ArrayList<Prescription> prescriptions = new ArrayList<>();
+            String addMorePrescriptions = "y";
+            while (addMorePrescriptions.equalsIgnoreCase("y")) {
+                System.out.print("Enter prescriptionID: ");
+                String prescriptionID = scanner.nextLine();
+                System.out.print("Enter prescription name: ");
+                String medicationName = scanner.nextLine();
+                System.out.print("Enter prescription dosage: ");
+                int dosage = scanner.nextInt();  // Use nextInt for integer input
+                scanner.nextLine();  // Consume the newline left by nextInt()
+                System.out.print("Enter prescription status (e.g., Pending, Completed): ");
+                String statusInput = scanner.nextLine();
+                PrescriptionStatus status = PrescriptionStatus.valueOf(statusInput.toUpperCase());  // Convert input to PrescriptionStatus enum
+                prescriptions.add(new Prescription(prescriptionID, medicationName, dosage, status));
 
-    public void addDoctorDiagnosis(String patientID, String diagnosis) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-    
-        // Debugging: Check if an entry already exists
-        System.out.println("Current entries before adding diagnosis: " + currentEntries.keySet());
-        MedicalEntry entry = currentEntries.getOrDefault(patientID, new MedicalEntry());
-        entry.setDiagnosis(diagnosis);  // Set diagnosis
-        currentEntries.put(patientID, entry);  // Store/update current entry for patient
-        System.out.println("Diagnosis added to the current entry for patient ID: " + patientID);
-        System.out.println("Current entries after adding diagnosis: " + currentEntries.keySet());
-    }
-    
-
-    public void addDoctorTreatment(String doctorID, String patientID, String treatment) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.addTreatment(patientID, treatment);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
-
-    public void addDoctorPrescription(String doctorID, String patientID, String prescription) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.addPrescription(patientID, prescription);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
-
-    // Set the service type for a patient
-    public void setDoctorServiceType(String doctorID, String patientID, ServiceType serviceType) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.setServiceType(patientID, serviceType);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
-
-    // Add appointment outcome for a patient
-    public void addAppointmentOutcome(String doctorID, String patientID, ServiceType serviceType, LocalDate date,
-                                      String diagnosis, String treatment, String prescription) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.addAppointmentOutcome(patientID, serviceType, date, diagnosis, treatment, prescription);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
-    public void finalizeCurrentEntry(String patientID) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-        MedicalEntry entry = currentEntries.get(patientID);
-        if (entry != null) {
-            List<MedicalRecord> records = MedicalRecordManager.getMedicalRecords(patientID);
-    
-            if (records.isEmpty()) {
-                MedicalRecord newRecord = new MedicalRecord("R" + System.currentTimeMillis(), patientID, LocalDate.now());
-                newRecord.addEntry(entry);
-                MedicalRecordManager.addMedicalRecord(patientID, newRecord);
-            } else {
-                MedicalRecord latestRecord = records.get(records.size() - 1);
-                latestRecord.addEntry(entry);
+                System.out.print("Do you want to add another prescription? (y/n): ");
+                addMorePrescriptions = scanner.nextLine();
             }
-    
-            // Remove the finalized entry from the current entries map
-            currentEntries.remove(patientID);
-    
-            // Save changes to CSV (if needed)
-            List<String[]> appointments = apptCsvHelper.readCSV();
-            for (String[] appointment : appointments) {
-                if (appointment[0].equals(patientID)) {
-                    appointment[3] = "Finalized"; // Assuming the 4th column tracks the status
-                    apptCsvHelper.updateAppointment(appointment);
-                    break;
-                }
-            }
-    
-            System.out.println("Finalized entry for patient ID " + patientID);
-        } else {
-            System.out.println("No current entry found for patient ID " + patientID);
-        }
-    }
-    // Update the status of an appointment
-    public void updateDoctorAppointmentStatus(String doctorID, Appointment appointment, AppointmentStatus status) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.updateAppointmentStatus(appointment, status);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
 
-    // Record appointment outcome
-    public void recordAppointmentOutcome(String doctorID, Appointment appointment, ServiceType serviceType,
-                                         String diagnosis, ArrayList<Prescription> prescriptions, String consultationNotes) {
-        Doctor doctor = findDoctorById(doctorID);
-        if (doctor != null) {
-            doctor.recordAppointmentOutcome(appointment, serviceType, diagnosis, prescriptions, consultationNotes);
-        } else {
-            System.out.println("Doctor with ID " + doctorID + " not found.");
-        }
-    }
+            // Collect consultation notes
+            System.out.print("Enter consultation notes: ");
+            String consultationNotes = scanner.nextLine();
 
-    public void viewPatientMedicalRecords(String patientID) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            System.out.println("Medical Records for Patient ID: " + patientID);
-            System.out.println(record);
-        } else {
-            System.out.println("No medical records found for patient ID: " + patientID);
-        }
-    }
-
-    public void updatePatientMedicalRecord(String patientID, String diagnosis, String treatment, String prescription) {
-        if (!MedicalRecordManager.patientExists(patientID)) {
-            System.out.println("Patient with ID " + patientID + " does not exist.");
-            return;
-        }
-    
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-    
-        if (record == null) {
-            System.out.println("No medical record found for patient ID: " + patientID);
-            return;
-        }
-    
-        if (diagnosis != null && !diagnosis.isEmpty()) {
-            record.addDiagnosis(diagnosis);
-            System.out.println("Diagnosis added to record.");
-        }
-    
-        if (treatment != null && !treatment.isEmpty()) {
-            record.addTreatment(treatment);
-            System.out.println("Treatment added to record.");
-        }
-    
-        if (prescription != null && !prescription.isEmpty()) {
-            record.addPrescription(prescription);
-            System.out.println("Prescription added to record with status PENDING.");
-        }
-    }
-
-    // Method to mark a slot as unavailable
-    public void setUnavailable(LocalTime startTime) {
-        slotManager.setAvailability(startTime, false);
-    }
-
-    // Method to record the outcome of an appointment
-    public void recordAppointmentOutcome(Appointment appointment, ServiceType serviceType, String diagnosis, 
-                                         ArrayList<Prescription> prescriptions, String consultationNotes) {
-        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
-            // Get the appointment ID
-            String appointmentID = appointment.getAppointmentID();
-            LocalDate appointmentDate = appointment.getDate();
+            // Create AppointmentOutcome object with the collected data
+            LocalDate appointmentDate = appointment.getDate();  // Assuming appointment date is available as LocalDate
             AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, appointmentDate, serviceType, diagnosis, prescriptions, consultationNotes);
+
+            // Set the outcome on the appointment
             appointment.setOutcome(outcome);
 
-            // Write the outcome to the CSV using ApptCsvHelper
+            System.out.println("Recorded appointment outcome for Appointment ID: " + appointment.getAppointmentID() + " on " + appointmentDate);
+
+            // Write the outcome to the CSV file
             writeAppointmentOutcomeToCSV(outcome);
-            System.out.println("Recorded appointment outcome for Appointment ID: " + appointment.getAppointmentID());
-        } else {
-            System.out.println("Cannot record outcome. Appointment is not completed.");
-        }
-    }
+                
+                    } else {
+                        System.out.println("Appointment is not completed yet, cannot record outcome.");
+                    }
+                }
+                
 
-    // Method to accept an appointment
-    public void acceptAppointment(Appointment appointment, String doctorID) {
-        if (appointment.getStatus() == AppointmentStatus.PENDING) {
-            appointment.setStatus(AppointmentStatus.CONFIRMED);
-            System.out.println("Appointment ID " + appointment.getAppointmentID() + " accepted by Dr. " + doctorID);
-        } else {
-            System.out.println("Cannot accept appointment. Current status: " + appointment.getStatus());
-        }
-    }
+    // Helper method to write the appointment outcome to a CSV
+    private static void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
+List<String[]> appointmentOutcomes = new ArrayList<>();
+String appointmentID = outcome.getAppointmentID();
+String serviceType = outcome.getServiceType();
+String appointmentDate = outcome.getAppointmentDate().toString();
+String consultationNotes = outcome.getConsultationNotes();
 
-    // Method to decline an appointment
-    public void declineAppointment(Appointment appointment, String doctorID) {
-        if (appointment.getStatus() == AppointmentStatus.PENDING) {
-            appointment.setStatus(AppointmentStatus.DECLINED);
-            System.out.println("Appointment ID " + appointment.getAppointmentID() + " declined by Dr. " + doctorID);
-        } else {
-            System.out.println("Cannot decline appointment. Current status: " + appointment.getStatus());
-        }
-    }
+// Prescriptions and their statuses
+StringBuilder medications = new StringBuilder();
+StringBuilder medicationDosages = new StringBuilder();
+StringBuilder medicationStatuses = new StringBuilder();
 
-    // Helper method to write appointment outcome to CSV using ApptCsvHelper
-    private void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
-        List<String[]> appointmentOutcomes = new ArrayList<>();
-        String appointmentID = outcome.getAppointmentID();
-        String serviceType = outcome.getServiceType().toString();
-        String appointmentDate = outcome.getAppointmentDate().toString();
-        String consultationNotes = outcome.getConsultationNotes();
-
-        // Prescriptions and their statuses
-        StringBuilder medications = new StringBuilder();
-        StringBuilder medicationStatuses = new StringBuilder();
-
-        // Add medication details (if any) to the output
-        for (Prescription prescription : outcome.getPrescriptions()) {
-            medications.append(prescription.getName()).append(";");
-            medicationStatuses.append(prescription.getStatus().toString()).append(";");
-        }
-
-        // Convert the appointment outcome to a string array, including medications and their statuses
-        String[] outcomeData = {
-            appointmentID, 
-            serviceType, 
-            appointmentDate, 
-            consultationNotes, 
-            medications.toString(), 
-            medicationStatuses.toString()
-        };
-        appointmentOutcomes.add(outcomeData);
-
-        // Use ApptCsvHelper to write data to CSV
-        apptCsvHelper.writeEntries(appointmentOutcomes);
-    }
-    
-
-    // List all doctors
-    public List<Doctor> listAllDoctors() {
-        return new ArrayList<>(doctors.values());
-    }
+// Add medication details (if any) to the output
+if (outcome.getPrescriptions() != null && !outcome.getPrescriptions().isEmpty()) {
+for (Prescription prescription : outcome.getPrescriptions()) {
+    // Append medication name, dosage, and status, separated by commas for CSV format
+    medications.append(prescription.getName()).append(";");
+    medicationDosages.append(prescription.getQuantity()).append(";");
+    medicationStatuses.append(prescription.getStatus().toString()).append(";");
+}
+} else {
+// If no prescriptions, ensure empty values for CSV
+medications.append("None;");
+medicationDosages.append("None;");
+medicationStatuses.append("None;");
 }
 
+// Assume that the `appointment` object has methods to retrieve the patient and doctor information
+Patient patientID = appointment.getPatient();
+Doctor doctorID = appointment.getDoctor();
+LocalTime appointmentTime = appointment.getTime(); // Assuming time is available in `appointment`
+
+// Convert the appointment outcome to a string array, including medications and their statuses
+String[] outcomeData = {
+appointmentID, 
+patientID.toString(), 
+doctorID.toString(), 
+appointmentDate, 
+appointmentTime.toString(), 
+serviceType, 
+medications.toString(), 
+medicationDosages.toString(), 
+medicationStatuses.toString(), 
+consultationNotes
+};
+appointmentOutcomes.add(outcomeData);
+
+// Use ApptCsvHelper to write data to CSV
+apptCsvHelper.writeEntries(appointmentOutcomes);
+}
+
+
+// public void acceptAppointment(Appointment appointmentID, String doctorID) {
+//     if (appointmentID.getStatus() == AppointmentStatus.PENDING) {
+//         appointmentID.setStatus(AppointmentStatus.CONFIRMED);
+//         System.out.println("Appointment ID " + appointmentID.getAppointmentID() + " accepted by Dr. " + doctorID);
+//     } else {
+//         System.out.println("Cannot accept appointment. Current status: " + appointment.getStatus());
+//     }
+// }
+
+// // Method to decline an appointment
+// public void declineAppointment(Appointment appointmentID, String doctorID) {
+//     if (appointmentID.getStatus() == AppointmentStatus.PENDING) {
+//         appointmentID.setStatus(AppointmentStatus.DECLINED);
+//         System.out.println("Appointment ID " + appointmentID.getAppointmentID() + " declined by Dr. " + doctorID);
+//     } else {
+//         System.out.println("Cannot decline appointment. Current status: " + appointmentID.getStatus());
+//     }
+// }
+
+
+// Method to accept an appointment
+public static void acceptAppointment(String appointmentID, String doctorID) {
+// Get the appointment by ID from AppointmentManager
+Appointment appointment = AppointmentManager.getAppointmentByID(appointmentID);
+
+if (appointment != null && appointment.getStatus() == AppointmentStatus.PENDING) {
+appointment.setStatus(AppointmentStatus.CONFIRMED);
+System.out.println("Appointment ID " + appointment.getAppointmentID() + " accepted by Dr. " + doctorID);
+} else if (appointment != null) {
+System.out.println("Cannot accept appointment. Current status: " + appointment.getStatus());
+} else {
+System.out.println("Appointment not found.");
+}
+}
+
+// Method to decline an appointment
+public static void declineAppointment(String appointmentID, String doctorID) {
+// Get the appointment by ID from AppointmentManager
+Appointment appointment = AppointmentManager.getAppointmentByID(appointmentID);
+
+if (appointment != null && appointment.getStatus() == AppointmentStatus.PENDING) {
+appointment.setStatus(AppointmentStatus.DECLINED);
+System.out.println("Appointment ID " + appointment.getAppointmentID() + " declined by Dr. " + doctorID);
+} else if (appointment != null) {
+System.out.println("Cannot decline appointment. Current status: " + appointment.getStatus());
+} else {
+System.out.println("Appointment not found.");
+}
+}
+
+
+// Helper method to write appointment outcome to CSV using ApptCsvHelper
+
+}

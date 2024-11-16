@@ -79,9 +79,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Appointment {
-    private String appointmentID;        // Unique ID for the appointment
-    private Patient patient;             // Associated patient
-    private Doctor doctor;               // Associated doctor
+    private final String appointmentID;        // Unique ID for the appointment
+    private final Patient patient;             // Associated patient
+    private final Doctor doctor;               // Associated doctor
     private LocalDate date;              // Date of appointment
     private LocalTime time;              // Time of appointment
     private AppointmentStatus status;    // Status of the appointment
@@ -95,10 +95,10 @@ public class Appointment {
      * @param date
      * @param time
      */
-    public Appointment(String appointmentID, Patient patient, Doctor doctor, LocalDate date, LocalTime time) {
+    public Appointment(String appointmentID, Patient patientID, Doctor doctorID, LocalDate date, LocalTime time) {
         this.appointmentID = appointmentID;
-        this.patient = patient;
-        this.doctor = doctor;
+        this.patient = patientID;
+        this.doctor = doctorID;
         this.date = date;
         this.time = time;
         this.status = AppointmentStatus.PENDING;  // Default status
@@ -205,6 +205,6 @@ public class Appointment {
     @Override
     public String toString() {
         return String.format("Appointment [ID: %s, Patient ID: %s, Doctor ID: %s, Status: %s, Date: %s, Time: %s, Outcome: %s]",
-                appointmentID, patient.getUserID(), doctor.getUserID(), status, date, time, outcome != null ? outcome : "N/A");
+                appointmentID, patient.getUserID(), doctor.getDoctorID(), status, date, time, outcome != null ? outcome : "N/A");
     }
 }

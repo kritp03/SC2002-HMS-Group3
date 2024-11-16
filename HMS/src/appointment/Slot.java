@@ -1,27 +1,26 @@
 package HMS.src.appointment;
 
-import java.time.LocalTime;
-
+import java.time.LocalDateTime;
 
 public class Slot {
-    private final LocalTime startTime;
-    private final LocalTime endTime;
+    private final LocalDateTime dateTime; // Start time including date
+    private final LocalDateTime endDateTime;
     private boolean isAvailable;  // true if slot is available, false if booked
 
     // Constructor
-    public Slot(LocalTime startTime) {
-        this.startTime = startTime;
-        this.endTime = startTime.plusHours(1); // 1 hour interval
+    public Slot(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+        this.endDateTime = dateTime.plusHours(1); // 1 hour interval
         this.isAvailable = true;  // Initially, the slot is available
     }
 
     // Getters
-    public LocalTime getStartTime() {
-        return startTime;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public LocalTime getEndTime() {
-        return endTime;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
     public boolean isAvailable() {
@@ -35,7 +34,8 @@ public class Slot {
 
     @Override
     public String toString() {
-        return "Slot: " + startTime + " - " + endTime + (isAvailable ? " (Available)" : " (Booked)");
+        return "Slot: " + dateTime + " - " + endDateTime + (isAvailable ? " (Available)" : " (Booked)");
     }
 }
+
 

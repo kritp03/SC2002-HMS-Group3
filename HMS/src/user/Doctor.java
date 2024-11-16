@@ -1,112 +1,38 @@
 package HMS.src.user;
 
-import HMS.src.appointment.Appointment;
-import HMS.src.appointment.AppointmentOutcome;
-import HMS.src.appointment.AppointmentStatus;
-import HMS.src.appointment.ServiceType;
-import HMS.src.appointment.SlotManager;
-import HMS.src.medicalrecordsPDT.*;
-import HMS.src.prescription.Prescription;
-import java.time.LocalDate;
+import HMS.src.appointment.*;
 import java.util.ArrayList;
+import java.util.List;
 
-
-public class Doctor extends User{
-
+public class Doctor {
     private final String doctorID;
+    private final String name;
     private final SlotManager slotManager;
+    private final List<Appointment> appointments;
 
-   public String getDoctorID() {
-      return this.doctorID;
-   }
-
-   public SlotManager getSlotManager() {
-      return this.slotManager;
-   }
-
-   public Doctor(String var1, String var2, String var3, int var4, Gender var5) {
-      super(var1, var2, Role.DOCTOR, var3, var4, var5);
-      this.doctorID = var1;
-      this.slotManager = new SlotManager();
-   }
-
-
-
-
-
-
-    //MEDICAL RECORD
-
-    public void addDiagnosis(String patientID, String diagnosis) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            record.addDiagnosis(diagnosis);
-        } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
-        }
-    }
-    
-        
-    public void addTreatment(String patientID, String treatment) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            record.addTreatment(treatment);
-        } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
-        }
+    // Constructor
+    public Doctor(String doctorID, String name, SlotManager slotManager) {
+        this.doctorID = doctorID;
+        this.name = name;
+        this.slotManager = slotManager;
+        this.appointments = new ArrayList<>();
     }
 
-    public void addPrescription(String patientID, String prescription) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            record.addPrescription(prescription);
-        } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
-        }
+    // Getters
+    public String getDoctorID() {
+        return doctorID;
     }
 
-    // service type
-    public void setServiceType(String patientID, ServiceType serviceType) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            record.setServiceType(serviceType);
-            System.out.println("Appointment type " + serviceType + " set for patient ID: " + patientID);
-        } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
-        }
-    }
-    
-    public void addAppointmentOutcome(String patientID, ServiceType serviceType, LocalDate date, 
-                                      String diagnosis, String treatment, String prescription) {
-        MedicalRecord record = MedicalRecordManager.getMedicalRecord(patientID);
-        if (record != null) {
-            record.setServiceType(serviceType);  // Set appointment type and date
-            record.addDiagnosis(diagnosis);
-            record.addTreatment(treatment);
-            record.addPrescription(prescription);
-            System.out.println("Appointment outcome added for patient ID: " + patientID);
-        } else {
-            System.out.println("No medical record found for patient ID: " + patientID);
-        }
+    public String getName() {
+        return name;
     }
 
-        // Method to update appointment status
-    public void updateAppointmentStatus(Appointment appointment, AppointmentStatus status) {
-        appointment.setStatus(status);
-        System.out.println("Updated appointment status to: " + status);
+    public SlotManager getSlotManager() {
+        return slotManager;
     }
 
-    // Method to record appointment outcome
-    public void recordAppointmentOutcome(Appointment appointment, ServiceType serviceType, String diagnosis,
-                                         ArrayList<Prescription> prescriptions, String consultationNotes) {
-        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
-            AppointmentOutcome outcome = new AppointmentOutcome(
-                appointment.getAppointmentID(),LocalDate.now(), serviceType, diagnosis, prescriptions, consultationNotes);
-            appointment.setOutcome(outcome);
-            System.out.println("Recorded appointment outcome: " + outcome);
-        } else {
-            System.out.println("Cannot record outcome. Appointment is not completed.");
-        }
+    public List<Appointment> getAppointments() {
+        return appointments;
     }
+
 }
-

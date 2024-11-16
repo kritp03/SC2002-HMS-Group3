@@ -7,6 +7,9 @@ import java.util.Scanner;
 import HMS.src.io.PasswordCsvHelper;
 import HMS.src.utils.SessionManager;
 
+/**
+ * PasswordManager class is responsible for changing the password of the currently logged in user.
+ */
 public class PasswordManager {
     private Scanner scanner;
     private PasswordCsvHelper passwordCsvHelper = new PasswordCsvHelper();
@@ -16,6 +19,9 @@ public class PasswordManager {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Changes the password of the currently logged in user.
+     */
     public void changePassword() {
         if (userId != null) {
             boolean authenticated = false;
@@ -40,11 +46,21 @@ public class PasswordManager {
 
     }
 
+    /**
+     * Authenticates the user with the given userId and hashed password.
+     * @param userId
+     * @param hashedPassword
+     * @return
+     */
     public boolean authenticate(String userId, String hashedPassword) {
         String[] userData = passwordCsvHelper.getCredsById(userId);
         return userData != null && hashedPassword.equals(userData[1]);
     }
 
+    /**
+     * Prompts the user to enter the new password and confirms it.
+     * @return
+     */
     private String getNewPassword() {
         String newPassword1 = getPassword("Enter your new password: ");
         String newPassword2 = getPassword("Confirm your new password: ");
@@ -57,6 +73,11 @@ public class PasswordManager {
         return newPassword1;
     }
 
+    /**
+     * Prompts the user to enter a password.
+     * @param prompt
+     * @return
+     */
     public String getPassword(String prompt) {
         java.io.Console console = System.console();
         if (console == null) {
@@ -68,6 +89,11 @@ public class PasswordManager {
         }
     }
 
+    /**
+     * Updates the password of the user with the given userId.
+     * @param userId
+     * @param hashedPassword
+     */
     private void updatePassword(String userId, String hashedPassword) {
         String[] userData = passwordCsvHelper.getEntryById(userId);
         if (userData != null) {
@@ -79,6 +105,11 @@ public class PasswordManager {
         }
     }
 
+    /**
+     * Hashes the given password using SHA-256 algorithm.
+     * @param password
+     * @return
+     */
     public String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -94,10 +125,5 @@ public class PasswordManager {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Failed to hash password", e);
         }
-    }
-
-    public static void main(String[] args) {
-        PasswordManager manager = new PasswordManager();
-        manager.changePassword();
     }
 }

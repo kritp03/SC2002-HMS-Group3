@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.PrescriptionCsvHelper;
+import HMS.src.utils.SessionManager;
 
 import java.time.LocalDate;
 
@@ -60,6 +61,7 @@ public class PrescriptionManager {
         if ("D".equalsIgnoreCase(newStatus)) {
             prescription[3] = "DISPENSED";
             prescription[7] = LocalDate.now().toString();
+            prescription[8] = SessionManager.getCurrentUserID();
             prescriptionCsvHelper.updatePrescriptionById(prescription[0], prescription);
             decrementStock(prescription[1]);
             System.out.println("Prescription has been dispensed!");
@@ -100,23 +102,25 @@ public class PrescriptionManager {
     }
 
     private void printPrescriptions(List<String[]> data, boolean skipHeader) {
+        // Extended table format to accommodate the new column
         System.out.println(
-                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
-        System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s |\n",
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
+        System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s | %-14s |\n",
                 "Prescription ID", "Medicine Name", "Dosage", "Status", "Patient Name", "Requested By",
-                "Date of Request", "Date of Approval");
+                "Date of Request", "Date of Approval", "Approved by");
         System.out.println(
-                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
         int startIdx = skipHeader ? 1 : 0;
         for (int i = startIdx; i < data.size(); i++) {
             String[] row = data.get(i);
-            String status = row[3].trim().toUpperCase();
-            String coloredStatus = PrescriptionStatus.valueOf(status).showStatusByColor();
-            System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s |\n",
-                    row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7]);
+            if (row.length >= 9) { // Ensure there is an "Approved by" data in the row
+                String status = row[3].trim().toUpperCase();
+                String coloredStatus = PrescriptionStatus.valueOf(status).showStatusByColor();
+                System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s | %-14s |\n",
+                        row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7], row[8]); // Assuming the last element is "Approved by"
+            }
         }
         System.out.println(
-                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+");
+                "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
     }
-
 }

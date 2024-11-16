@@ -5,6 +5,8 @@ import static HMS.src.utils.ValidationHelper.validateIntRange;
 import HMS.src.appointment.AppointmentManager;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
+import HMS.src.user.Gender;
+import HMS.src.user.Pharmacist;
 import HMS.src.utils.SessionManager;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.io.ApptCsvHelper;
@@ -14,7 +16,7 @@ public class PharmacistUI {
 
     private static MedicationManager medicationManager = new MedicationManager();
     private static PrescriptionManager prescriptionManager = new PrescriptionManager();
-    private static AppointmentManager appointmentManager = new AppointmentManager();
+    private static Pharmacist pharmacist = new Pharmacist("P001", "Mark Lee", "ml@hospital", 30, Gender.MALE);
     private static MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
     private static ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
     private static PasswordManager passwordManager = new PasswordManager();
@@ -37,16 +39,16 @@ public class PharmacistUI {
 
             switch (pharmacistChoice) {
                 case 1:
-                    appointmentManager.viewApptOutcomeRecord(apptFilePath);
+                    pharmacist.viewApptOutcomeRecord();
                     break; // tbd
                 case 2:
-                    prescriptionManager.runPrescriptionUpdateProcess();
+                    pharmacist.updatePrescriptionStatus();
                     break;
                 case 3:
-                    medicationManager.viewMedicationInventory(medFilePath);
+                    pharmacist.viewMedicationInventory();
                     break;
                 case 4:
-                    medicationManager.submitReplenishmentRequest(medFilePath);
+                    medicationManager.submitReplenishmentRequest();
                     break;
                 case 5:
                     passwordManager.changePassword();

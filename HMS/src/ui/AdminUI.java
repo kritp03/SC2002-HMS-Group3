@@ -185,7 +185,7 @@ public class AdminUI {
         }
         System.out.println(line);
 
-        String requestID = validateString("\nEnter Request ID to process (or press Enter to skip): ");
+        String requestID = validateString("\nEnter Request ID to process (or press Enter to skip): ").toUpperCase();
         if (!requestID.trim().isEmpty()) {
             String choice = validateString("Approve or Reject? (A/R): ").toUpperCase();
             boolean approve = choice.equals("A");

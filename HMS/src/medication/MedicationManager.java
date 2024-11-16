@@ -9,8 +9,14 @@ import java.util.Set;
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.ReplReqCsvHelper;
 
+/**
+ * Manages the replenishment of medication in the inventory.
+ */
 public class MedicationManager {
 
+    /**
+     * ANSI color codes for console output.
+     */
     private final String ANSI_RESET = "\u001B[0m";
     private final String ANSI_RED = "\u001B[31m";
     private final String ANSI_YELLOW = "\u001B[33m";
@@ -20,7 +26,11 @@ public class MedicationManager {
     private MedicationCsvHelper medCsvHelper = new MedicationCsvHelper();
     ReplReqCsvHelper replReqCsvHelper = new ReplReqCsvHelper();
 
-    public Set<String> getAllMedicineNames(String filePath) {
+    /**
+     * Fetches all medicine names from the CSV file.
+     * @return A set of all medicine names in the inventory.
+     */
+    public Set<String> getAllMedicineNames() {
         List<String[]> data = medCsvHelper.readCSV();
         Set<String> medicineNames = new HashSet<>();
         for (int i = 1; i < data.size(); i++) {
@@ -49,7 +59,10 @@ public class MedicationManager {
         return "R" + String.format("%03d", highestId + 1); // Returns the next ID, formatted as three digits
     }
 
-    public void viewMedicationInventory(String filePath) {
+    /**
+     * Displays the current medication inventory.
+     */
+    public void viewMedicationInventory() {
         List<String[]> data = medCsvHelper.readCSV();
         if (data.isEmpty()) {
             System.out.println("No data found in CSV file.");
@@ -70,6 +83,13 @@ public class MedicationManager {
         System.out.println("+----------------------+---------------+-------------+--------------+\n");
     }
 
+    /**
+     * Determines the stock status of a medicine based on the initial stock, low stock alert threshold, and current stock left.
+     * @param initialStock The initial stock of the medicine.
+     * @param lowStockAlert The low stock alert threshold.
+     * @param stockLeft The current stock left.
+     * @return A string representing the stock status.
+     */
     private String determineStockStatus(int initialStock, int lowStockAlert, int stockLeft) {
         int highThreshold = (int) (lowStockAlert + 0.2 * initialStock);
         if (stockLeft > highThreshold) {
@@ -81,7 +101,11 @@ public class MedicationManager {
         }
     }
 
-
+    /**
+     * Prompts the user to enter the name of the medicine to replenish.
+     * @param allMedicines A set of all medicine names in the inventory.
+     * @return The name of the medicine to replenish.
+     */
     private String promptForMedicineName(Set<String> allMedicines) {
         while (true) {
             System.out.print("Enter the name of the medicine you wish to replenish: "); 
@@ -94,6 +118,10 @@ public class MedicationManager {
         }
     }
 
+    /**
+     * Prompts the user to enter the amount to replenish.
+     * @return The amount to replenish.
+     */
     private int promptForReplenishmentAmount() {
         while (true) {
             System.out.print("\nEnter the amount to replenish: ");
@@ -106,6 +134,11 @@ public class MedicationManager {
         }
     }
 
+    /**
+     * Confirms the submission of a replenishment request.
+     * @param medicineName The name of the medicine to replenish.
+     * @param amount The amount to replenish.
+     */
     private void confirmSubmitRequest(String medicineName, int amount) {
         String requestID = getNextRequestId();
         String status = "PENDING"; // Default status for new requests
@@ -133,7 +166,10 @@ public class MedicationManager {
         }
     }
 
-
+    /**
+     * Displays a summary of the replenishment request.
+     * @param request The replenishment request to display.
+     */
     private void displayReplReqSummary(ReplenishmentRequest request) {
         System.out.println("=================================");
         System.out.println("| Replenishment Request Summary |");
@@ -148,8 +184,11 @@ public class MedicationManager {
         System.out.println("=================================");
     }
 
-    public void submitReplenishmentRequest(String filePath) {
-        Set<String> allMedicines = getAllMedicineNames(filePath);
+    /**
+     * Submits a replenishment request for a medicine.
+     */
+    public void submitReplenishmentRequest() {
+        Set<String> allMedicines = getAllMedicineNames();
         String medicineName = promptForMedicineName(allMedicines);
         int replenishAmt = promptForReplenishmentAmount();
         confirmSubmitRequest(medicineName, replenishAmt);

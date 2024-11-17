@@ -1,15 +1,13 @@
 package HMS.src.ui;
 
+import HMS.src.authorisation.PasswordManager;
+import HMS.src.io.PasswordCsvHelper;
+import HMS.src.utils.SessionManager;
+import static HMS.src.utils.ValidationHelper.validateIntRange;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
-import HMS.src.utils.SessionManager;
-import HMS.src.authorisation.PasswordManager;
-import HMS.src.io.PasswordCsvHelper;
-
-import static HMS.src.utils.ValidationHelper.validateIntRange;
 
 public class PickerUI {
     private Scanner scanner = new Scanner(System.in);
@@ -69,7 +67,12 @@ public class PickerUI {
                 role = "Doctor";
                 System.out.println("\nLogging in as Doctor...");
                 SessionManager.loginUser(role, id);
-                DoctorUI.displayOptions();
+                try {
+                    DoctorUI.displayOptions();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 break;
             case 2:
                 role = "Patient";

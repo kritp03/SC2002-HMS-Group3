@@ -51,21 +51,42 @@ public class SlotManager {
     }
 
     
-        // Set availability for a specific slot
-        public static void setAvailability(String doctorID, LocalDateTime dateTime, boolean isAvailable) {
-            List<Slot> slots = doctorSlots.get(doctorID);
-            if (slots != null) {
-                for (Slot slot : slots) {
-                    if (slot.getDateTime().equals(dateTime)) {
-                        slot.setAvailability(isAvailable);
-                        System.out.println("Slot " + dateTime + " updated to " + (isAvailable ? "Available" : "Unavailable"));
-                        return;
-                    }
-                }
+    public static void setUnavailability(String doctorID, LocalDateTime dateTime) {
+        // Read existing appointments from CSV
+        List<String[]> appointments = appointmentCsvHelper.readCSV();
+    
+        // Flag to check if the slot was found and updated
+        boolean slotFound = false;
+    
+        // Loop through appointments to find the matching slot
+        for (String[] appointmentData : appointments) {
+            // Parse the slot DateTime using the same format as the appointments in CSV
+            LocalDateTime slotDateTime = LocalDateTime.parse(appointmentData[0], DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+    
+            // Check if the slot matches the given dateTime
+            if (slotDateTime.equals(dateTime)) {
+                // If slot is found, update availability to "false" (unavailable)
+                appointmentData[1] = Boolean.toString(false); // Set the slot to unavailable
+    
+                // Set the flag to indicate the slot was updated
+                slotFound = true;
+                System.out.println("Slot " + dateTime + " is updated to Unavailable");
+    
+                // Update the specific appointment in the CSV
+                appointmentCsvHelper.updateAppointment(appointmentData); // Update only the modified slot
+                break; // Exit after updating the slot
             }
-            System.out.println("Slot " + dateTime + " for doctor " + doctorID + " is unavailable.");
         }
     
+        // If no matching slot is found, print a message
+        if (!slotFound) {
+            System.out.println("Slot is already unavailable or not found");
+        }
+    }
+    
+    
+    
+
         // Print all slots for a specific doctor
         public static void printSlots(String doctorID) {
             List<Slot> slots = doctorSlots.get(doctorID);

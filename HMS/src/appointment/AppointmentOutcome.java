@@ -2,6 +2,7 @@
 package HMS.src.appointment;
 
 import HMS.src.prescription.Prescription;
+import HMS.src.user.Doctor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class AppointmentOutcome {
     private String diagnosis; // Diagnosis made during the appointment
     private ArrayList<Prescription> prescriptions; // List of prescriptions given
     private String consultationNotes; // Notes from the consultation
+    private final Doctor doctor;  
 
     /**
      * Constructor for creating a new appointment outcome.  
@@ -23,13 +25,17 @@ public class AppointmentOutcome {
      * @param consultationNotes
      */
     public AppointmentOutcome(String appointmentID, LocalDate appointmentDate, String diagnosisserviceType,
-            String diagnosis, ArrayList<Prescription> prescriptions, String consultationNotes) {
+            String diagnosis, ArrayList<Prescription> prescriptions, String consultationNotes, Doctor doctor) {
         this.appointmentID = appointmentID;
         this.serviceType = diagnosisserviceType;
         this.diagnosis = diagnosis;
         this.appointmentDate = appointmentDate;
         this.prescriptions = prescriptions;
         this.consultationNotes = consultationNotes;
+        this.doctor = doctor;
+    }
+    public Doctor getDoctor() {
+        return doctor;
     }
 
     /**

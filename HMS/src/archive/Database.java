@@ -33,7 +33,7 @@ public class Database {
     private static HashMap<String, User> USER_DATA = new HashMap<>();
     private static HashMap<String, Medication> MEDICINE_DATA = new HashMap<>();
     private static HashMap<String, Patient> PATIENT_DATA = new HashMap<>();
-    private static List<Appointment> APPOINTMENTS = new ArrayList<>();
+    private static HashMap<String, Appointment> APPOINTMENTS = new HashMap<>();
     private static List<ReplenishmentRequest> REPLENISHMENT_REQUESTS = new ArrayList<>();
     private static User currentUser;
 
@@ -221,7 +221,7 @@ public class Database {
         return currentUser;
     }
 
-    public static List<Appointment> getAppointments() {
+    public static  HashMap<String, Appointment> getAppointments() {
         return APPOINTMENTS;
     }
 

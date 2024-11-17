@@ -39,6 +39,15 @@ public class AvailabilityCsvHelper extends BaseCsvHelper
     }
 
     /**
+     * Adds a new unavailability record to the CSV file.
+     * @param unavailability The unavailability data to add
+     */
+    public void addAvailability(String[] availability) {
+        addEntry(availability);
+    }
+
+
+    /**
      * Removes an unavailability record by doctor ID and date.
      * @param doctorID The doctor ID to identify the record
      * @param date The date to identify the record

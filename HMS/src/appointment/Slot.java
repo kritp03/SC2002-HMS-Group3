@@ -37,5 +37,3 @@ public class Slot {
         return "Slot: " + dateTime + " - " + endDateTime + (isAvailable ? " (Available)" : " (Booked)");
     }
 }
-
-

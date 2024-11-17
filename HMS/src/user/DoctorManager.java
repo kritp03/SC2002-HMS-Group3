@@ -2,7 +2,7 @@ package HMS.src.user;
 
 import HMS.src.appointment.*;
 import HMS.src.archive.Database;
-import HMS.src.io.AppointmentCsvHelper;
+import HMS.src.io.*;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
 import java.time.LocalDate;
@@ -207,4 +207,76 @@ public class DoctorManager{
             System.out.println("Appointment not found.");
         }
     }
+
+    public static void viewPatientMedicalRecords(String patientID) {
+        
+        // Initialize the CSV Helper to fetch medical records
+        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+        List<String[]> medicalRecords = csvHelper.readCSV();
+    
+        // Check if records exist for the given patient ID
+        boolean recordFound = false;
+        System.out.println("Medical Records for Patient ID: " + patientID);
+        System.out.println("================================================================");
+    
+        for (String[] record : medicalRecords) {
+            // Ensure the CSV row is valid and belongs to the patient ID
+            if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
+                System.out.println("Record ID: " + record[0]);
+                System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
+                System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
+                System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" : record[3]));
+                System.out.println("----------------------------------------------------------------");
+                recordFound = true;
+            }
+        }
+    
+        if (!recordFound) {
+            System.out.println("No medical records found for patient ID: " + patientID);
+        }
+    }
+
+    public static void updatePatientMedicalRecord(String patientID, String diagnosis, String treatmentPlan, String prescriptions) {
+        System.out.println("Updating Medical Records for Patient ID: " + patientID);
+    
+        // Initialize the CSV Helper to fetch and update medical records
+        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+        List<String[]> medicalRecords = csvHelper.readCSV();
+    
+        int highestRecordID = 0;
+    
+        // Find the highest existing RecordID
+        for (String[] record : medicalRecords) {
+            if (record.length >= 5) {
+                // Extract the numeric part of the RecordID and track the highest value
+                String recordID = record[0];
+                if (recordID.startsWith("R")) {
+                    int recordIDNum = Integer.parseInt(recordID.substring(1));
+                    highestRecordID = Math.max(highestRecordID, recordIDNum);
+                }
+            }
+        }
+    
+        // Generate the next RecordID for the new entry
+        String newRecordID = "R" + String.format("%03d", highestRecordID + 1);
+    
+        // Create a new record for the patient
+        String[] newRecord = {
+            newRecordID,                                      // RecordID
+            diagnosis != null ? diagnosis : "",              // Diagnosis
+            treatmentPlan != null ? treatmentPlan : "",      // Treatment Plan
+            prescriptions != null ? prescriptions : "",      // Prescriptions
+            patientID                                        // PatientID
+        };
+    
+        // Append the new record to the list
+        medicalRecords.add(newRecord);
+        System.out.println("New medical record added with RecordID: " + newRecordID);
+    
+        // Write updated records back to the CSV
+        csvHelper.updateMedicalRecords(medicalRecords);
+        System.out.println("Medical record updated successfully.");
+    }
+    
+    
 }

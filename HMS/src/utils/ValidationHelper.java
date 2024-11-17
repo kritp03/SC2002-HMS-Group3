@@ -49,8 +49,12 @@
 // }
 
 package HMS.src.utils;
-import java.util.InputMismatchException;
 import HMS.src.exceptions.InvalidValueException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 
 public class ValidationHelper {
 
@@ -125,5 +129,45 @@ public class ValidationHelper {
                 System.out.println("Invalid input. Please enter 'Y' or 'N'.");
             }
         } while (true);
+    }
+
+    public static LocalDate validateDate(String msg) {
+        InputScanner sc = InputScanner.getInstance();
+        LocalDate date = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        boolean success = false;
+
+        do {
+            try {
+                System.out.print(msg);
+                String input = sc.nextLine().trim();
+                date = LocalDate.parse(input, formatter); // Parse input to LocalDate
+                success = true; // Exit loop if no exception
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in 'yyyy-MM-dd' format.");
+            }
+        } while (!success);
+
+        return date;
+    }
+
+    public static LocalDateTime validateDateTime(String msg) {
+        InputScanner sc = InputScanner.getInstance();
+        LocalDateTime dateTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyyHH:mm");
+        boolean success = false;
+
+        do {
+            try {
+                System.out.print(msg);
+                String input = sc.nextLine().trim();
+                dateTime = LocalDateTime.parse(input, formatter); // Parse input to LocalDateTime
+                success = true; // Exit loop if successful
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date and time format. Please enter in 'DD-MM-YYYYHH:MM' format.");
+            }
+        } while (!success);
+
+        return dateTime;
     }
 }

@@ -54,21 +54,6 @@ public class MedicalRecordManager {
         return records.keySet();
     }
 
-    // // Add a prescription to the latest entry in a patient's medical record
-    // public static void addPrescriptionToLatestEntry(String patientID, String medicationName) {
-    //     List<MedicalRecord> record = getMedicalRecords(patientID);
-    //     if (record != null) {
-    //         MedicalEntry latestEntry = getLatestEntry(patientID);
-    //         if (latestEntry != null) {
-    //             latestEntry.addPrescription(medicationName);
-    //             System.out.println("Added prescription to the latest entry for patient ID: " + patientID);
-    //         } else {
-    //             System.out.println("No entries found in the medical record for patient ID: " + patientID);
-    //         }
-    //     } else {
-    //         System.out.println("No medical record found for patient ID: " + patientID);
-    //     }
-    // }
 
 }
 

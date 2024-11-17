@@ -16,7 +16,6 @@ public class Doctor extends User{
     //     this.appointments = new ArrayList<>();
     // }
 
-
     public Doctor(String userID, String name, String emailId, int age, Gender gender) {
         super(userID, name, Role.DOCTOR, emailId, age, gender);
     }

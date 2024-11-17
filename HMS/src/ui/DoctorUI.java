@@ -2,28 +2,18 @@ package HMS.src.ui;
 
 import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
-import HMS.src.medicalrecordsPDT.MedicalRecordManager;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import static HMS.src.utils.ValidationHelper.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DoctorUI {
 
     private static final PasswordManager passwordManager = new PasswordManager();
-    private static String doctorID; // Store Doctor ID globally for session
 
     public static void displayOptions() {
-        InputScanner sc = InputScanner.getInstance();
-
-        // Ask for Doctor ID at the start
-        if (doctorID == null) { // Ensure we ask only if not already set
-            System.out.print("Enter your Doctor ID to log in: ");
-            doctorID = sc.next(); // Save Doctor ID globally
-        }
-
         System.out.println("=====================================");
         System.out.println("|                Menu                |");
         System.out.println("|           Welcome Doctor!          |");
@@ -47,63 +37,18 @@ public class DoctorUI {
                                                 10. Logout
                                                 Enter your choice: """,
                     1, 10);
-
+            // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
             System.out.println();
 
             switch (doctorChoice) {
-                case 1 -> {
-                    System.out.println("View Patient Medical Records");
-                    System.out.print("Enter Patient ID: ");
-                    String patientID = sc.next();
-                    MedicalRecordManager.getMedicalRecords(patientID);
-                }
-                // case 2 -> {
-                //     System.out.println("Update Patient Medical Records");
-                //     System.out.print("Enter Patient ID: ");
-                //     String patientID = sc.next();
-                //     // Add logic to update medical records
-                // }
-                case 3 -> {
-                    System.out.println("View Personal Schedule");
-                    SlotManager.printSlots(doctorID); // Reuse doctorID
-                }
-                case 4 -> {
-                    System.out.println("Set Unavailability for Appointments");
-                    System.out.print("Enter Timing Unavailable (YYYY-MM-DDTHH:MM): ");
-                    String timeInput = sc.next();
-                    try {
-                        LocalDateTime time = LocalDateTime.parse(timeInput);
-                        DoctorManager.setUnavailable(doctorID, time); // Reuse doctorID
-                        System.out.println("Doctor " + doctorID + " set as unavailable for " + time);
-                    } catch (Exception e) {
-                        System.out.println("Invalid time format. Please use YYYY-MM-DDTHH:MM.");
-                    }
-                }
-                case 5 -> {
-                    System.out.println("Accept Appointment Requests");
-                    System.out.print("Enter Appointment ID: ");
-                    String apptID = sc.next();
-                    DoctorManager.acceptAppointment(apptID, doctorID); // Reuse doctorID
-                }
-                case 6 -> {
-                    System.out.println("Decline Appointment Requests");
-                    System.out.print("Enter Appointment ID: ");
-                    String apptID = sc.next();
-                    DoctorManager.declineAppointment(apptID, doctorID); // Reuse doctorID
-                }
-                case 7 -> {
-                    System.out.println("View Upcoming Appointments");
-                    System.out.print("Enter the date (YYYY-MM-DD): ");
-                    String dateString = sc.next();
-                    LocalDate date = LocalDate.parse(dateString);
-                    DoctorManager.viewScheduleForDay(date, doctorID); // Reuse doctorID
-                }
-                case 8 -> {
-                    System.out.println("Record Appointment Outcome");
-                    System.out.println("Enter Appointment ID: ");
-                    String apptID = sc.nextLine();
-                    DoctorManager.recordAppointmentOutcome(apptID);
-                }
+                case 1 -> viewPatientMedicalRecords();
+                case 2 -> updatePatientMedicalRecords();
+                case 3 -> viewPersonalSchedule();
+                case 4 -> setUnavailablityForAppointments();
+                case 5 ->acceptAppointmentRequests();
+                case 6 -> declineAppointmentRequests();
+                case 7 -> viewUpcomingAppointments();
+                case 8 -> recordAppointmentOutcome();
                 case 9 -> passwordManager.changePassword();
                 case 10 -> {
                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
@@ -113,6 +58,90 @@ public class DoctorUI {
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (!quit);
+    }
+
+    private static String getDoctorID() {
+        if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            System.out.println("You must log in as a Doctor to access this feature.");
+            PickerUI pickerUI = new PickerUI();
+            pickerUI.displayLoginOptions(); // Force login
+        }
+        return SessionManager.getCurrentUserID();
+    }
+
+    private static void viewPatientMedicalRecords()
+    {
+        InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("View Patient Medical Records");
+        String patientID = validateString("Enter Patient ID: ");
+        DoctorManager.viewPatientMedicalRecords(patientID);
+    }
+
+    private static void updatePatientMedicalRecords()
+    {
+        InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("Update Patient Medical Records");
+        String patientID = validateString("Enter Patient ID: ");
+        String diagnosis = validateString("Enter the diagnosis for Patient " + patientID +" : ");
+        String treatment = validateString("Enter the treatment for Patient " + patientID + " : ");
+        System.out.print("Enter the prescription for Patient " + patientID + " : ");
+        String prescription = InputScanner.getInstance().nextLine().trim();
+        if (prescription.isEmpty()) 
+        {
+            prescription = null; // Set prescription to null if input is empty
+        }
+        DoctorManager.updatePatientMedicalRecord(patientID,diagnosis,treatment, prescription);
+    }
+    
+    private static void viewPersonalSchedule()
+    {
+        System.out.println("View Personal Schedule");
+        String doctorID = getDoctorID();
+        SlotManager.printSlots(doctorID); // Reuse doctorID
+    }
+    private static void setUnavailablityForAppointments()
+    {
+        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("Set Unavailability for Appointments");
+        String timeInput = validateString("Enter Timing Unavailable (DD-MM_YYYY): ");
+        LocalDateTime time = validateDateTime(timeInput);
+        String doctorID = getDoctorID();
+        DoctorManager.setUnavailable(doctorID, time); // Reuse doctorID
+        System.out.println("Doctor " + doctorID + " set as unavailable for " + time);
+    }
+
+    private static void acceptAppointmentRequests()
+    {
+        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("Accept Appointment Requests");
+        String apptID = validateString("Enter Appointment ID: ");
+        String doctorID = getDoctorID();
+        DoctorManager.acceptAppointment(apptID, doctorID); // Reuse doctorID
+    }
+
+    private static void declineAppointmentRequests()
+    {
+        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("Decline Appointment Requests");
+        String apptID = validateString("Enter Appointment ID: ");
+        String doctorID = getDoctorID();
+        DoctorManager.declineAppointment(apptID, doctorID); // Reuse doctorID
+    }
+    private static void recordAppointmentOutcome()
+    {
+        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("Record Appointment Outcome");
+        String apptID = validateString("Enter Appointment ID: ");
+        DoctorManager.recordAppointmentOutcome(apptID);
+    }
+
+    private static void viewUpcomingAppointments()
+    {
+        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
+        System.out.println("View Upcoming Appointments");
+        LocalDate date = validateDate("Enter the date (DD-MM-YYYY): ");
+        String doctorID = getDoctorID();
+        DoctorManager.viewScheduleForDay(date, doctorID); // Reuse doctorID
     }
 
     public static void main(String[] args) {

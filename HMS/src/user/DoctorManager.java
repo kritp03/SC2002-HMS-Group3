@@ -6,7 +6,6 @@ import HMS.src.io.*;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionStatus;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,10 +172,6 @@ public class DoctorManager{
         }
     }
 
-    // Method to mark a slot as unavailable
-    public static void setUnavailable(String doctorID, LocalDateTime dateTime) {
-        SlotManager.setAvailability(doctorID, dateTime, false);
-    }
     
     // Method to accept an appointment
     public static void acceptAppointment(String appointmentID, String doctorID) {

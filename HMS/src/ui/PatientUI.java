@@ -32,10 +32,11 @@ public class PatientUI {
 
             switch (patientChoice) {
                 case 1:
+                    getPatientID();
                     patientManager.showPatientAndRecords();
                     break;
                 case 2:
-                    patientManager.updatePatientContactInfo();
+                    // patientManager.updatePatientContactInfo();
                     break;
                 case 3:
                     System.out.println("View Available Appointment Slots"); // tbd
@@ -68,7 +69,14 @@ public class PatientUI {
             }
         } while (!quit);
     }
-
+    private static String getPatientID() {
+        if (!SessionManager.isUserLoggedIn() || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            System.out.println("You must log in as a Patient to access this feature.");
+            PickerUI pickerUI = new PickerUI();
+            pickerUI.displayLoginOptions(); // Force login
+        }
+        return SessionManager.getCurrentUserID();
+    }
     public static void main(String[] args) {
         displayOptions();
     }

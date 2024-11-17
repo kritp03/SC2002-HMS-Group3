@@ -1,28 +1,27 @@
 package HMS.src.user;
 
-import java.util.List;
-import java.util.Scanner;
-
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.utils.SessionManager;
+import java.util.List;
+import java.util.Scanner;
 
 public class PatientManager {
     private PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
     private MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
     private Scanner scanner = new Scanner(System.in);
-    String patientID = SessionManager.getCurrentUserID();
 
-    private List<String[]> getAllPatientInfo() {
-        return patientCsvHelper.readCSV();
+    private String getPatientID() {
+        String patientID = SessionManager.getCurrentUserID();
+        if (patientID == null || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            throw new IllegalStateException("No patient is logged in.");
+        }
+        return patientID;
     }
 
-    private List<String[]> getAllMedicalRecords() {
-        return medicalRecordCsvHelper.readCSV();
-    }
-
-    public void displayPatientInfo(String patientID) {
-        List<String[]> patients = getAllPatientInfo();
+    public void displayPatientInfo() {
+        String patientID = getPatientID(); // Fetch patientID dynamically
+        List<String[]> patients = patientCsvHelper.readCSV();
         boolean foundPatient = false;
         for (String[] patient : patients) {
             if (patient.length > 0 && patient[0].equalsIgnoreCase(patientID)) {
@@ -47,84 +46,91 @@ public class PatientManager {
         }
     }
 
-    public void displayMedicalRecords(String patientID) {
-        List<String[]> records = getAllMedicalRecords();
-        boolean foundRecord = false;
-        for (String[] record : records) {
-            if (record.length > 0 && record[4].equalsIgnoreCase(patientID)) {
-                foundRecord = true;
-                System.out.println("\nMedical Records:");
-                System.out.println("=======================");
+    public void displayMedicalRecords() {
+        String patientID = getPatientID(); // Fetch patientID dynamically
+        List<String[]> medicalRecords = medicalRecordCsvHelper.readCSV();
+
+        boolean recordFound = false;
+        System.out.println("Medical Records for Patient ID: " + patientID);
+        System.out.println("================================================================");
+
+        for (String[] record : medicalRecords) {
+            if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
                 System.out.println("Record ID: " + record[0]);
-                System.out.println("Diagnosis: " + record[1]);
-                System.out.println("Treatment: " + record[2]);
-                System.out.println("Prescription: " + record[3]);
-                System.out.println("----------------------");
+                System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
+                System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
+                System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" : record[3]));
+                System.out.println("----------------------------------------------------------------");
+                recordFound = true;
             }
         }
-        if (!foundRecord) {
+
+        if (!recordFound) {
             System.out.println("No medical records found for patient ID: " + patientID);
         }
     }
 
     public void showPatientAndRecords() {
-        
-        displayPatientInfo(patientID);
-        displayMedicalRecords(patientID);
+        try {
+            displayPatientInfo();
+            displayMedicalRecords();
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
     }
     
-    public void updatePatientContactInfo() {
+    // public void updatePatientContactInfo() {
     
-        List<String[]> patients = patientCsvHelper.readCSV();
-        String[] patientToUpdate = null;
+    //     List<String[]> patients = patientCsvHelper.readCSV();
+    //     String[] patientToUpdate = null;
     
-        for (String[] patient : patients) {
-            if (patient.length > 0 && patient[0].equalsIgnoreCase(patientID)) {
-                patientToUpdate = patient;
-                break;
-            }
-        }
+    //     for (String[] patient : patients) {
+    //         if (patient.length > 0 && patient[0].equalsIgnoreCase(patientID)) {
+    //             patientToUpdate = patient;
+    //             break;
+    //         }
+    //     }
     
-        if (patientToUpdate == null) {
-            System.out.println("No patient found with ID: " + patientID);
-            return;
-        }
+    //     if (patientToUpdate == null) {
+    //         System.out.println("No patient found with ID: " + patientID);
+    //         return;
+    //     }
     
-        System.out.println("Current email: " + patientToUpdate[5]);
-        System.out.println("Current phone number: " + patientToUpdate[6]);
+    //     System.out.println("Current email: " + patientToUpdate[5]);
+    //     System.out.println("Current phone number: " + patientToUpdate[6]);
     
-        System.out.print("Do you want to update email (E) or phone number (P)? ");
-        String choice = scanner.nextLine().trim().toUpperCase();
+    //     System.out.print("Do you want to update email (E) or phone number (P)? ");
+    //     String choice = scanner.nextLine().trim().toUpperCase();
     
-        if (!choice.equals("E") && !choice.equals("P")) {
-            System.out.println("Invalid choice. Please enter 'E' for email or 'P' for phone number.");
-            return;
-        }
+    //     if (!choice.equals("E") && !choice.equals("P")) {
+    //         System.out.println("Invalid choice. Please enter 'E' for email or 'P' for phone number.");
+    //         return;
+    //     }
     
-        String newContactInfo = "";
-        boolean validInput = false;
-        while (!validInput) {
-            if (choice.equals("E")) {
-                System.out.print("Enter new email: ");
-            } else {
-                System.out.print("Enter new phone number: ");
-            }
-            newContactInfo = scanner.nextLine().trim();
-            if (choice.equals("E") && newContactInfo.matches("^(.+)@(.+)\\.(.+)$")) {
-                validInput = true;
-                patientToUpdate[5] = newContactInfo;
-            } else if (choice.equals("P") && newContactInfo.matches("^[8|9]\\d{7}$")) {
-                validInput = true;
-                patientToUpdate[6] = newContactInfo; 
-            } else {
-                System.out.println("Invalid. Please provide a valid input.");
-            }
-        }
+    //     String newContactInfo = "";
+    //     boolean validInput = false;
+    //     while (!validInput) {
+    //         if (choice.equals("E")) {
+    //             System.out.print("Enter new email: ");
+    //         } else {
+    //             System.out.print("Enter new phone number: ");
+    //         }
+    //         newContactInfo = scanner.nextLine().trim();
+    //         if (choice.equals("E") && newContactInfo.matches("^(.+)@(.+)\\.(.+)$")) {
+    //             validInput = true;
+    //             patientToUpdate[5] = newContactInfo;
+    //         } else if (choice.equals("P") && newContactInfo.matches("^[8|9]\\d{7}$")) {
+    //             validInput = true;
+    //             patientToUpdate[6] = newContactInfo; 
+    //         } else {
+    //             System.out.println("Invalid. Please provide a valid input.");
+    //         }
+    //     }
     
-        patientCsvHelper.updateEntry(patientID, patientToUpdate); // Update the entry in CSV
+    //     patientCsvHelper.updateEntry(patientID, patientToUpdate); // Update the entry in CSV
     
-        System.out.println("\nContact information updated successfully!");
-        displayPatientInfo(patientID); // Display updated patient info
-    }
+    //     System.out.println("\nContact information updated successfully!");
+    //     displayPatientInfo(patientID); // Display updated patient info
+    // }
     
 }

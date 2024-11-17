@@ -1,64 +1,75 @@
 package HMS.src.ui;
 
+import HMS.src.app.App;
 import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DoctorUI {
 
     private static final PasswordManager passwordManager = new PasswordManager();
 
-    public static void displayOptions() {
-        System.out.println("=====================================");
-        System.out.println("|                Menu                |");
-        System.out.println("|           Welcome Doctor!          |");
-        System.out.println("=====================================");
+    public static void displayOptions() throws Exception{
+    System.out.println("=====================================");
+    System.out.println("|                Menu                |");
+    System.out.println("|           Welcome Doctor!          |");
+    System.out.println("=====================================");
 
-        boolean quit = false;
+    boolean quit = false;
 
-        // Main loop for doctor actions
-        do {
-            int doctorChoice = validateIntRange("""
-                                                Please select an option:
-                                                1. View Patient Medical Record
-                                                2. Update Patient Medical Records
-                                                3. View Personal Schedule
-                                                4. Set Availability for Appointments
-                                                5. Accept Appointment Requests
-                                                6. Decline Appointment Requests
-                                                7. View Upcoming Appointments
-                                                8. Record Appointment Outcome
-                                                9. Reset Password
-                                                10. Logout
-                                                Enter your choice: """,
-                    1, 10);
-            // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
-            System.out.println();
+    do {
+        // Check if the user is still logged in
+        if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            System.out.println("You are not logged in. Redirecting to Main Menu...");
+            quit = true;
+            App.main(null); // Redirect to main menu
+            return; // Exit the method to stop further execution
+        }
 
-            switch (doctorChoice) {
-                case 1 -> viewPatientMedicalRecords();
-                case 2 -> updatePatientMedicalRecords();
-                case 3 -> viewPersonalSchedule();
-                case 4 -> setUnavailablityForAppointments();
-                case 5 ->acceptAppointmentRequests();
-                case 6 -> declineAppointmentRequests();
-                case 7 -> viewUpcomingAppointments();
-                case 8 -> recordAppointmentOutcome();
-                case 9 -> passwordManager.changePassword();
-                case 10 -> {
-                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
-                    quit = true;
-                    SessionManager.logoutUser();
-                }
-                default -> System.out.println("Invalid choice. Please try again.");
+        int doctorChoice = validateIntRange("""
+                                            Please select an option:
+                                            1. View Patient Medical Record
+                                            2. Update Patient Medical Records
+                                            3. View Personal Schedule
+                                            4. Set Availability for Appointments
+                                            5. Accept Appointment Requests
+                                            6. Decline Appointment Requests
+                                            7. View Upcoming Appointments
+                                            8. Record Appointment Outcome
+                                            9. Reset Password
+                                            10. Logout
+                                            Enter your choice: """,
+                1, 10);
+        System.out.println();
+
+        switch (doctorChoice) {
+            case 1 -> viewPatientMedicalRecords();
+            case 2 -> updatePatientMedicalRecords();
+            case 3 -> viewPersonalSchedule();
+            case 4 -> setAvailablityForAppointments();
+            case 5 -> acceptAppointmentRequests();
+            case 6 -> declineAppointmentRequests();
+            case 7 -> viewUpcomingAppointments();
+            case 8 -> recordAppointmentOutcome();
+            case 9 -> passwordManager.changePassword();
+            case 10 -> {
+                System.out.println("Logging out...\nRedirecting to Main Menu...\n");
+                quit = true;
+                SessionManager.logoutUser();
+                App.main(null); // Redirect to main menu
+                return; // Exit the method after logging out
             }
-        } while (!quit);
-    }
+            default -> System.out.println("Invalid choice. Please try again.");
+        }
+    } while (!quit);
+}
 
     private static String getDoctorID() {
         if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
@@ -97,18 +108,60 @@ public class DoctorUI {
     {
         System.out.println("View Personal Schedule");
         String doctorID = getDoctorID();
-        SlotManager.printSlots(doctorID); // Reuse doctorID
+        SlotManager.initializeDoctorSlotsFromCSV(doctorID);
+        SlotManager.printFullSchedule(doctorID); // Reuse doctorID
     }
-    private static void setUnavailablityForAppointments()
-    {
-        // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
-        System.out.println("Set Unavailability for Appointments");
-        String timeInput = validateString("Enter Timing Unavailable (DD-MM_YYYY): ");
-        LocalDateTime time = validateDateTime(timeInput);
+
+    private static void setAvailablityForAppointments() {
+        System.out.println("Set Availability for Appointments");
+    
         String doctorID = getDoctorID();
-        DoctorManager.setUnavailable(doctorID, time); // Reuse doctorID
-        System.out.println("Doctor " + doctorID + " set as unavailable for " + time);
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+        boolean validInput = false;
+    
+        do {
+            try {
+                // Prompt for start time
+                System.out.print("Enter start of availability in 'DD-MM-YYYY HH:MM' format: ");
+                String startInput = InputScanner.getInstance().nextLine().trim(); // Read and trim input
+                System.out.println("Debug: Start input received: '" + startInput + "'");
+                startTime = LocalDateTime.parse(startInput, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+    
+                // Prompt for end time
+                System.out.print("Enter end of availability in 'DD-MM-YYYY HH:MM' format: ");
+                String endInput = InputScanner.getInstance().nextLine().trim(); // Read and trim input
+                System.out.println("Debug: End input received: '" + endInput + "'");
+                endTime = LocalDateTime.parse(endInput, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+    
+                // Validate time range
+                if (endTime.isAfter(startTime)) {
+                    validInput = true; // Input is valid, exit loop
+                } else {
+                    System.out.println("Invalid time range: End time must be after the start time. Please try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid format. Please use 'DD-MM-YYYY HH:MM' format.");
+                System.out.println("Debug: Error details: " + e.getMessage());
+            }
+        } while (!validInput);
+    
+        // Format the data for writing into the CSV
+        String[] availabilityEntry = {
+            doctorID,
+            startTime.toLocalDate().toString(), // Extract date part
+            startTime.toLocalTime() + "-" + endTime.toLocalTime() // Combine time range
+        };
+    
+        // Write the entry to the CSV file using UnavailabilityCsvHelper
+        AvailabilityCsvHelper unavailabilityHelper = new AvailabilityCsvHelper();
+        unavailabilityHelper.addUnavailability(availabilityEntry);
+    
+        System.out.println("Availability set for Dr. " + doctorID + " on " + startTime.toLocalDate() +
+                " from " + startTime.toLocalTime() + " to " + endTime.toLocalTime());
     }
+    
+    
 
     private static void acceptAppointmentRequests()
     {
@@ -145,6 +198,10 @@ public class DoctorUI {
     }
 
     public static void main(String[] args) {
-        displayOptions();
+        try {
+            displayOptions();
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 }

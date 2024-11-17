@@ -51,7 +51,6 @@
 package HMS.src.utils;
 import HMS.src.exceptions.InvalidValueException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
@@ -151,23 +150,32 @@ public class ValidationHelper {
         return date;
     }
 
-    public static LocalDateTime validateDateTime(String msg) {
-        InputScanner sc = InputScanner.getInstance();
-        LocalDateTime dateTime = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyyHH:mm");
-        boolean success = false;
-
-        do {
-            try {
-                System.out.print(msg);
-                String input = sc.nextLine().trim();
-                dateTime = LocalDateTime.parse(input, formatter); // Parse input to LocalDateTime
-                success = true; // Exit loop if successful
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date and time format. Please enter in 'DD-MM-YYYYHH:MM' format.");
-            }
-        } while (!success);
-
-        return dateTime;
-    }
+    // public static LocalDateTime validateDateTime(String msg) {
+    //     InputScanner sc = InputScanner.getInstance();
+    //     LocalDateTime dateTime = null;
+    //     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"); // Correct format
+    //     boolean success = false;
+    
+    //     do {
+    //         try {
+    //             sc.nextLine(); // Flush the buffer before reading input
+    //             System.out.print(msg + " "); // Display the prompt
+    //             String input = sc.nextLine().trim(); // Read user input
+                
+    //             // Debugging input
+    //             System.out.println("Debug: Prompt displayed: '" + msg + "'");
+    //             System.out.println("Debug: Input received: '" + input + "'");
+    
+    //             // Attempt to parse the input
+    //             dateTime = LocalDateTime.parse(input, formatter);
+    //             success = true; // Exit the loop if successful
+    //         } catch (DateTimeParseException e) {
+    //             System.out.println("Invalid date and time format. Please enter in 'DD-MM-YYYY HH:MM' format.");
+    //         }
+    //     } while (!success);
+    
+    //     return dateTime;
+    // }
+    
+    
 }

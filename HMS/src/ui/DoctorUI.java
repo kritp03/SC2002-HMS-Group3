@@ -3,12 +3,14 @@ package HMS.src.ui;
 import HMS.src.app.App;
 import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -54,7 +56,7 @@ public class DoctorUI {
                 case 1 -> viewPatientMedicalRecords();
                 case 2 -> updatePatientMedicalRecords();
                 case 3 -> viewPersonalSchedule();
-                case 4 -> setUnavailablityForAppointments();
+                case 4 -> setAvailabilityForAppointments();
                 case 5 -> acceptAppointmentRequests();
                 case 6 -> declineAppointmentRequests();
                 case 7 -> viewUpcomingAppointments();
@@ -109,6 +111,7 @@ public class DoctorUI {
         SlotManager.printFullSchedule(doctorID); // Reuse doctorID
     }
 
+    // hair
     // private static void setAvailablityForAppointments() {
     // System.out.println("Set Availability for Appointments");
 
@@ -165,45 +168,108 @@ public class DoctorUI {
     // " from " + startTime.toLocalTime() + " to " + endTime.toLocalTime());
     // }
 
-    private static Scanner scanner = new Scanner(System.in);
+    // en jia
+    // private static Scanner scanner = new Scanner(System.in);
 
-    private static void setUnavailablityForAppointments() {
-        System.out.println("Set Unavailability for Appointments");
-    
-        String doctorID = getDoctorID();  // Ensure this method gets the doctor ID
+    // private static void setUnavailablityForAppointments() {
+    // System.out.println("Set Unavailability for Appointments");
+
+    // String doctorID = getDoctorID(); // Ensure this method gets the doctor ID
+    // boolean validInput = false;
+
+    // do {
+    // try {
+    // // Prompt user to enter the start time of unavailability
+    // System.out.print("Enter start of unavailability in 'dd-MM-yyyy HH:mm'
+    // format:");
+    // String startInput = scanner.nextLine().trim(); // Trim any extra spaces
+    // // Correct format pattern for parsing date and time
+    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy
+    // HH:mm");
+
+    // // Attempt to parse the input with the specified format
+    // LocalDateTime startTime = LocalDateTime.parse(startInput, formatter);
+
+    // // If parsing is successful, set the unavailability
+    // SlotManager.setUnavailability(doctorID, startTime);
+
+    // // Successfully set unavailability, mark input as valid
+    // validInput = true;
+
+    // // Calculate end time and output the unavailability
+    // System.out.println("Dr. " + doctorID + " is unavailable on " +
+    // startTime.toLocalDate() +
+    // " from " + startTime.toLocalTime() + " to " +
+    // startTime.plusHours(1).toLocalTime());
+    // } catch (DateTimeParseException e) {
+    // // Catch and display an error if the format is wrong
+    // System.out.println("Invalid format. Please use 'dd-MM-yyyy HH:mm' format.");
+    // }
+    // } while (!validInput); // Repeat if invalid input
+    // }
+
+    private static void setAvailabilityForAppointments() {
+
+        Scanner scanner = new Scanner(System.in);
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        
+        System.out.println("Set Availability for Appointments");
+
+        String doctorID = getDoctorID();
+        LocalDate date = null;
+        LocalTime startTime = null;
+        LocalTime endTime = null;
         boolean validInput = false;
-    
+
+        // Get date
+        System.out.print("Enter the date in 'DD-MM-YYYY' format: ");
+        while (date == null) {
+            try {
+                String dateInput = scanner.nextLine().trim();
+                date = LocalDate.parse(dateInput, dateFormatter);
+            } catch (Exception e) {
+                System.out.println("Invalid date format. Please use 'DD-MM-YYYY' format.");
+            }
+        }
+
+        // Get start and end times
         do {
             try {
-                // Prompt user to enter the start time of unavailability
-                System.out.print("Enter start of unavailability in 'dd-MM-yyyy HH:mm' format:");
-                String startInput = scanner.nextLine().trim();  // Trim any extra spaces
-                // Correct format pattern for parsing date and time
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                
-                // Attempt to parse the input with the specified format
-                LocalDateTime startTime = LocalDateTime.parse(startInput, formatter);
-    
-                // If parsing is successful, set the unavailability
-                SlotManager.setUnavailability(doctorID, startTime);
-    
-                // Successfully set unavailability, mark input as valid
-                validInput = true;
-    
-                // Calculate end time and output the unavailability
-                System.out.println("Dr. " + doctorID + " is unavailable on " + startTime.toLocalDate() +
-                        " from " + startTime.toLocalTime() + " to " + startTime.plusHours(1).toLocalTime());
-            } catch (DateTimeParseException e) {
-                // Catch and display an error if the format is wrong
-                System.out.println("Invalid format. Please use 'dd-MM-yyyy HH:mm' format.");
-            }
-        } while (!validInput);  // Repeat if invalid input
-    }
-    
-    
+                System.out.print("Enter start of availability in 'HH:MM' format: ");
+                String startInput = scanner.nextLine().trim();
+                startTime = LocalTime.parse(startInput, timeFormatter);
 
-    
-    
+                System.out.print("Enter end of availability in 'HH:MM' format: ");
+                String endInput = scanner.nextLine().trim();
+                endTime = LocalTime.parse(endInput, timeFormatter);
+
+                if (endTime.isAfter(startTime)) {
+                    validInput = true;
+                } else {
+                    System.out.println("End time must be after the start time. Please try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid time format. Please use 'HH:MM' format.");
+            }
+        } while (!validInput);
+
+        // Store each hour slot between start and end times
+        AvailabilityCsvHelper availabilityHelper = new AvailabilityCsvHelper();
+        while (startTime.isBefore(endTime)) {
+            String[] availabilityEntry = {
+                    doctorID,
+                    date.toString(),
+                    startTime.toString()
+            };
+            availabilityHelper.addAvailability(availabilityEntry);
+            System.out.println("Slot added for " + date.toString() + " at " + startTime.toString());
+            startTime = startTime.plusHours(1);
+        }
+
+        System.out.println("Availability set for Dr. " + doctorID);
+    }
+
     private static void acceptAppointmentRequests() {
         // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
         System.out.println("Accept Appointment Requests");
@@ -236,6 +302,7 @@ public class DoctorUI {
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         try {
             displayOptions();
         } catch (Exception e) {

@@ -216,7 +216,7 @@ public class PatientManager {
             "PENDING",           // Status
             ""                   // Outcome
         };
-        appointmentCsvHelper.updateAppointment(appointmentEntry);
+        appointmentCsvHelper.addAppointment(appointmentEntry);
 
         System.out.println("Appointment successfully scheduled!");
         System.out.println("Doctor: " + selectedSlotData[0]);

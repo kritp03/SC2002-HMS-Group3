@@ -44,4 +44,8 @@ public class AppointmentCsvHelper extends BaseCsvHelper {
     public void getApptById(String apptID) {
         getEntryById(apptID);
     }
+
+    public void addAppointment(String[] newAppointment) {
+        addEntry(newAppointment);
+    }
 }

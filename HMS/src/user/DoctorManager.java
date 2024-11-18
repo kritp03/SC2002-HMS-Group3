@@ -203,34 +203,69 @@ public class DoctorManager{
         }
     }
 
-    public static void viewPatientMedicalRecords(String patientID) {
+    // public static void viewPatientMedicalRecords(String patientID) {
         
+    //     // Initialize the CSV Helper to fetch medical records
+    //     MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+    //     List<String[]> medicalRecords = csvHelper.readCSV();
+    
+    //     // Check if records exist for the given patient ID
+    //     boolean recordFound = false;
+    //     System.out.println("Medical Records for Patient ID: " + patientID);
+    //     System.out.println("================================================================");
+    
+    //     for (String[] record : medicalRecords) {
+    //         // Ensure the CSV row is valid and belongs to the patient ID
+    //         if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
+    //             System.out.println("Record ID: " + record[0]);
+    //             System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
+    //             System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
+    //             System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" : record[3]));
+    //             System.out.println("----------------------------------------------------------------");
+    //             recordFound = true;
+    //         }
+    //     }
+    
+    //     if (!recordFound) {
+    //         System.out.println("No medical records found for patient ID: " + patientID);
+    //     }
+    // }
+
+
+    public static void viewPatientMedicalRecords(String patientID) {
         // Initialize the CSV Helper to fetch medical records
         MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
         List<String[]> medicalRecords = csvHelper.readCSV();
     
         // Check if records exist for the given patient ID
         boolean recordFound = false;
-        System.out.println("Medical Records for Patient ID: " + patientID);
-        System.out.println("================================================================");
+    
+        // Print the header
+        System.out.println("+------------+---------------------+------------------------+--------------------+");
+        System.out.format("| %-10s | %-20s | %-22s | %-18s |\n", 
+                          "Record ID", "Diagnosis", "Treatment Plan", "Prescriptions");
+        System.out.println("+------------+---------------------+------------------------+--------------------+");
     
         for (String[] record : medicalRecords) {
             // Ensure the CSV row is valid and belongs to the patient ID
             if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
-                System.out.println("Record ID: " + record[0]);
-                System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
-                System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
-                System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" : record[3]));
-                System.out.println("----------------------------------------------------------------");
+                System.out.format("| %-10s | %-20s | %-22s | %-18s |\n",
+                                  record[0],
+                                  (record[1].isEmpty() ? "N/A" : record[1]),
+                                  (record[2].isEmpty() ? "N/A" : record[2]),
+                                  (record[3].isEmpty() ? "N/A" : record[3]));
                 recordFound = true;
             }
         }
     
-        if (!recordFound) {
+        // Close the table or display a message if no records found
+        if (recordFound) {
+            System.out.println("+------------+---------------------+------------------------+--------------------+");
+        } else {
             System.out.println("No medical records found for patient ID: " + patientID);
         }
     }
-
+    
     public static void updatePatientMedicalRecord(String patientID, String diagnosis, String treatmentPlan, String prescriptions) {
         System.out.println("Updating Medical Records for Patient ID: " + patientID);
     

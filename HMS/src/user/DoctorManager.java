@@ -77,7 +77,16 @@ public class DoctorManager {
                     notes
             };
 
+            String [] updatedAppointment = new String[] {
+                    appointment[0],
+                    appointment[1],
+                    appointment[2],
+                    appointment[3],
+                    appointment[4],
+                    "COMPLETED"
+            };
             apptCsvHelper.addNewOutcome(newOutome);
+            csvHelper.updateApptById(appointmentID, updatedAppointment);
             System.out.println("Updated appointment details saved successfully.");
         }
     }

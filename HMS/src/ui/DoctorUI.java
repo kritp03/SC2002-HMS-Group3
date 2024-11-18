@@ -214,7 +214,7 @@ public class DoctorUI {
     private static void recordAppointmentOutcome() {
         DoctorManager.viewAllConfirmed(getDoctorID());
         System.out.print("Enter Appointment ID to proceed: ");
-        String apptID = scanner.nextLine().trim();
+        String apptID = scanner.nextLine().trim().toUpperCase();
         if (apptID.isEmpty()) {
             System.out.println("No Appointment ID entered. Exiting...");
             return;

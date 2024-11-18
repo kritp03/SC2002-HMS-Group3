@@ -56,13 +56,12 @@ public class PatientUI {
 
     private static String getPatientID() {
         if (!SessionManager.isUserLoggedIn() || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
-            System.out.println("Debug: User not logged in as Patient. Redirecting to login.");
+            System.out.println("User not logged in as Patient. Redirecting to login.");
             PickerUI pickerUI = new PickerUI();
             pickerUI.displayLoginOptions(); // Force login
         }
 
         String patientID = SessionManager.getCurrentUserID();
-        System.out.println("Debug: Retrieved Patient ID: " + patientID);
 
         if (patientID == null || patientID.isEmpty()) {
             System.out.println("Error: Unable to retrieve Patient ID. Please log in again.");
@@ -74,7 +73,6 @@ public class PatientUI {
     }
 
     private static void viewMedicalRecords() {
-        System.out.println("View Medical Records");
         String patientID = getPatientID();
 
         if (patientID == null) {
@@ -82,94 +80,75 @@ public class PatientUI {
             return;
         }
 
-        System.out.println("Debug: Displaying records for Patient ID: " + patientID);
         patientManager.showPatientAndRecords();
     }
 
     private static void updatePersonalInformation() {
-        System.out.println("Update Personal Information");
         String patientID = getPatientID();
 
         if (patientID == null) {
             System.out.println("Error: Cannot update information. Invalid Patient ID.");
             return;
         }
-
-        System.out.println("Debug: Updating contact info for Patient ID: " + patientID);
         patientManager.updatePatientContactInfo();
     }
 
     private static void viewAvailableSlots() 
     {
-        System.out.println("View Available Appointment Slots");
         patientManager.viewAvailableSlots();
     }
 
     private static void scheduleAppointment() 
     {
-        System.out.println("Schedule an Appointment");
         String patientID = getPatientID();
     
         if (patientID == null) {
             System.out.println("Error: Cannot schedule an appointment. Invalid Patient ID.");
             return;
         }
-    
-        System.out.println("Debug: Scheduling appointment for Patient ID: " + patientID);
         patientManager.scheduleAppointment(patientID);
     }
 
-    private static void viewScheduledAppointments() {
-        System.out.println("View Scheduled Appointments");
+    private static void viewScheduledAppointments() 
+    {
         String patientID = getPatientID();
     
         if (patientID == null) {
             System.out.println("Error: Cannot view appointments. Invalid Patient ID.");
             return;
         }
-    
-        System.out.println("Debug: Viewing scheduled appointments for Patient ID: " + patientID);
         patientManager.viewScheduledAppointments(patientID);
     }
 
-    private static void cancelAppointment() {
-        System.out.println("Cancel an Appointment");
-    
+    private static void cancelAppointment() 
+    {
         String patientID = getPatientID();
     
         if (patientID == null) {
             System.out.println("Error: Cannot cancel appointment. Invalid Patient ID.");
             return;
         }
-    
-        // Cancel an appointment interactively (slot-based selection)
         patientManager.cancelAppointment();
     }
 
-    private static void rescheduleAppointment() {
-        System.out.println("Reschedule an Appointment");
-    
+    private static void rescheduleAppointment()
+    {
         String patientID = getPatientID();
     
         if (patientID == null) {
             System.out.println("Error: Cannot reschedule appointment. Invalid Patient ID.");
             return;
         }
-    
-        // Display scheduled appointments for the patient with a selection number
         int appointmentToReschedule = patientManager.getAppointmentToReschedule(patientID);
     
         if (appointmentToReschedule == -1) {
             System.out.println("Error: No appointment selected to reschedule.");
             return;
         }
-    
-        // Remove the selected appointment from Appt_List and add back to Availability_List
         boolean rescheduled = patientManager.rescheduleAppointment(appointmentToReschedule);
     
         if (rescheduled) {
             System.out.println("Appointment successfully canceled and added back to available slots.");
-            // Call scheduleAppointment function to reschedule a new appointment
             patientManager.scheduleAppointment(patientID);
         } else {
             System.out.println("Error: Unable to reschedule appointment. Please try again.");
@@ -177,16 +156,12 @@ public class PatientUI {
     }
 
     private static void viewPastAppointmentOutcomeRecords() {
-        System.out.println("View Past Appointment Outcome Records");
-    
         String patientID = getPatientID();
     
         if (patientID == null) {
             System.out.println("Error: Cannot view appointment outcomes. Invalid Patient ID.");
             return;
         }
-    
-        // Display the past appointment outcomes for the patient
         patientManager.viewPastAppointmentOutcomes(patientID);
     }
     

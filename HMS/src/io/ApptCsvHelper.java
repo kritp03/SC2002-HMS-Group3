@@ -36,6 +36,11 @@ public class ApptCsvHelper extends BaseCsvHelper{
         return new File(basePath, FILE_NAME).getAbsolutePath();
     }
 
-    
-
+    /**
+     * Adds new outcome to the CSV file.
+     * @param newEntry
+     */
+    public void addNewOutcome(String[] newEntry) {
+        addEntry(newEntry);
+    }
 }

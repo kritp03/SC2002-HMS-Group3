@@ -29,10 +29,19 @@ public class AppointmentCsvHelper extends BaseCsvHelper {
     }
 
     /**
-     * Updates an appointment in the CSV file.
-     * @param appointment The appointment data to update
+     * Updates an appt entry in the CSV file by appt ID.
+     * @param apptID The ID of the appt to be updated.
+     * @param updatedAppt A String array representing the updated appt entry.
      */
-    public void updateAppointment(String[] appointment) {
-        addEntry(appointment);
+    public void updateApptById(String apptID, String[] updatedAppt) {
+        updateEntry(apptID, updatedAppt);
+    }
+
+    /**
+     * get an appointment by ID
+     * @param apptID
+     */
+    public void getApptById(String apptID) {
+        getEntryById(apptID);
     }
 }

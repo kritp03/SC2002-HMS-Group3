@@ -1,14 +1,8 @@
 package HMS.src.user;
 
 import HMS.src.appointment.*;
-import HMS.src.archive.Database;
 import HMS.src.io.*;
-import HMS.src.prescription.Prescription;
-import HMS.src.prescription.PrescriptionStatus;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,193 +33,121 @@ public class DoctorManager {
         return false; // Appointment ID not found
     }
 
-    // Method to record appointment outcome
-    public static void recordAppointmentOutcome(String appointmentID) {
-        AppointmentCsvHelper csvHelper = new AppointmentCsvHelper();
-        ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
+// Method to record appointment outcome
+public static void recordAppointmentOutcome(String appointmentID) {
+    AppointmentCsvHelper csvHelper = new AppointmentCsvHelper();
+    ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
+    MedicalRecordCsvHelper medicalrecCsvHelper = new MedicalRecordCsvHelper();
 
-        // Check if the appointment exists
-        if (!getAppointmentByID(appointmentID)) {
-            System.out.println("Appointment not found for ID: " + appointmentID);
-            return;
-        }
-
-        // Retrieve the appointment array using the getEntryById method
-        String[] appointment = csvHelper.getEntryById(appointmentID);
-
-        if (appointment == null) {
-            System.out.println("No data found for appointment ID: " + appointmentID);
-        } else {
-            System.out.print("Enter the type of service provided: ");
-            String service = scanner.nextLine().trim();
-            System.out.print("Enter the medicine name (if any): ");
-            String medicine = scanner.nextLine().trim();
-            System.out.print("Enter the dosage (if any): ");
-            String dosage = scanner.nextLine().trim();
-            System.out.print("Enter any notes: ");
-            String notes = scanner.nextLine().trim();
-
-            String[] newOutome = new String[] {
-                    appointment[0],
-                    appointment[1],
-                    appointment[2],
-                    appointment[3],
-                    appointment[4],
-                    service,
-                    medicine,
-                    dosage,
-                    notes
-            };
-
-            String [] updatedAppointment = new String[] {
-                    appointment[0],
-                    appointment[1],
-                    appointment[2],
-                    appointment[3],
-                    appointment[4],
-                    "COMPLETED"
-            };
-            apptCsvHelper.addNewOutcome(newOutome);
-            csvHelper.updateApptById(appointmentID, updatedAppointment);
-            System.out.println("Updated appointment details saved successfully.");
-        }
+    // Check if the appointment exists
+    if (!getAppointmentByID(appointmentID)) {
+        System.out.println("Appointment not found for ID: " + appointmentID);
+        return;
     }
-    // public static void recordAppointmentOutcome(String appointmentID) {
-    // AppointmentCsvHelper csvHelper = new AppointmentCsvHelper();
-    // List<String[]> appointments = csvHelper.getApptById();
-    // // // Retrieve the appointment object based on the appointmentID
-    // // Appointment appointmentOutcome =
-    // getAppointmentByID(appointmentID.toUpperCase());
 
-    // // Check if the appointment exists
-    // if (getAppointmentByID(appointmentID) == false) {
-    // System.out.println("Appointment not found for ID: " + appointmentID);
-    // return;
-    // }
-    // else{
+    // Retrieve the appointment array using the getEntryById method
+    String[] appointment = csvHelper.getEntryById(appointmentID);
 
-    // }
+    if (appointment == null) {
+        System.out.println("No data found for appointment ID: " + appointmentID);
+    } else {
+        // Ask for doctor inputs related to the outcome
+        System.out.print("Enter the type of service provided: ");
+        String service = scanner.nextLine();
+        System.out.print("Enter the Diagnosis: ");
+        String diagnosis = scanner.nextLine();
+        System.out.print("Enter the Treatment Plan: ");
+        String treatmentPlan = scanner.nextLine();
+        System.out.print("Enter the medicine name (if any): ");
+        String medicine = scanner.nextLine().trim();
+        System.out.print("Enter the dosage (if any): ");
+        String dosage = scanner.nextLine().trim();
+        System.out.print("Enter any notes: ");
+        String notes = scanner.nextLine().trim();
 
-    // // Proceed only if the appointment status is COMPLETED
-    // if (appointmentOutcome.getStatus() == AppointmentStatus.COMPLETED) {
-    // // Collect service type
-    // System.out.print("Enter service type: ");
-    // String serviceType = scanner.nextLine();
+        // Debug: Print out diagnosis and treatmentPlan
+        System.out.println("Diagnosis: " + diagnosis);
+        System.out.println("Treatment Plan: " + treatmentPlan);
 
-    // // Collect diagnosis
-    // System.out.print("Enter diagnosis: ");
-    // String diagnosis = scanner.nextLine();
+        // Combine medicine and dosage for prescriptions
+        String prescriptions = (medicine != null && !medicine.isEmpty() ? medicine : "N/A") + 
+                               (dosage != null && !dosage.isEmpty() ? ", " + dosage : "");
 
-    // // Collect prescriptions
-    // ArrayList<Prescription> prescriptions = new ArrayList<>();
-    // String addMorePrescriptions = "y";
-    // while (addMorePrescriptions.equalsIgnoreCase("y")) {
-    // System.out.print("Enter prescription ID: ");
-    // String prescriptionID = scanner.nextLine();
-    // System.out.print("Enter prescription name: ");
-    // String medicationName = scanner.nextLine();
-    // System.out.print("Enter prescription dosage: ");
-    // int dosage = scanner.nextInt();
-    // scanner.nextLine(); // Consume newline
-    // System.out.print("Enter prescription status (e.g., Pending, Completed): ");
-    // String statusInput = scanner.nextLine();
-    // PrescriptionStatus status =
-    // PrescriptionStatus.valueOf(statusInput.toUpperCase());
-
-    // prescriptions.add(new Prescription(prescriptionID, medicationName, dosage,
-    // status));
-
-    // System.out.print("Do you want to add another prescription? (y/n): ");
-    // addMorePrescriptions = scanner.nextLine();
-    // }
-
-    // // Collect consultation notes
-    // System.out.print("Enter consultation notes: ");
-    // String consultationNotes = scanner.nextLine();
-
-    // // Get doctor object from appointment
-    // Doctor doctor = appointmentOutcome.getDoctor(); // Assuming appointment has a
-    // method getDoctor()
-
-    // // Create AppointmentOutcome object
-    // LocalDate appointmentDate = appointmentOutcome.getDate();
-    // AppointmentOutcome outcome = new AppointmentOutcome(
-    // appointmentID, appointmentDate, serviceType, diagnosis, prescriptions,
-    // consultationNotes, doctor);
-
-    // // Set the outcome on the appointment
-    // appointmentOutcome.setOutcome(outcome);
-
-    // System.out.println(
-    // "Recorded appointment outcome for Appointment ID: " +
-    // appointmentOutcome.getAppointmentID());
-
-    // // Write the outcome to a CSV file
-    // writeAppointmentOutcomeToCSV(outcome);
-    // } else {
-    // System.out.println("Appointment is not completed yet, cannot record
-    // outcome.");
-    // }
-    // }
-
-    // Helper method to write the appointment outcome to a CSV
-    private static void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
-        List<String[]> appointmentOutcomes = new ArrayList<>();
-        String appointmentID = outcome.getAppointmentID();
-        String serviceType = outcome.getServiceType();
-        String appointmentDate = outcome.getAppointmentDate().toString();
-        String consultationNotes = outcome.getConsultationNotes();
-
-        // Prescriptions and their statuses
-        StringBuilder medications = new StringBuilder();
-        StringBuilder medicationDosages = new StringBuilder();
-        StringBuilder medicationStatuses = new StringBuilder();
-
-        // Add medication details (if any) to the output
-        if (outcome.getPrescriptions() != null && !outcome.getPrescriptions().isEmpty()) {
-            for (Prescription prescription : outcome.getPrescriptions()) {
-                medications.append(prescription.getName()).append(";");
-                medicationDosages.append(prescription.getQuantity()).append(";");
-                medicationStatuses.append(prescription.getStatus().toString()).append(";");
-            }
-        } else {
-            medications.append("None;");
-            medicationDosages.append("None;");
-            medicationStatuses.append("None;");
-        }
-
-        // Assuming `appointment` object is stored with `outcome` or can be retrieved
-        // elsewhere
-        Appointment appointment = getAppointmentByID(outcome.getAppointmentID()); // Retrieve appointment using the
-                                                                                  // appointmentID
-        if (appointment == null) {
-            System.out.println("Appointment not found for outcome: " + outcome.getAppointmentID());
-            return;
-        }
-
-        // Retrieve the patient and doctor information from the appointment
-        Patient patient = appointment.getPatient();
-        Doctor doctor = appointment.getDoctor();
-        LocalTime appointmentTime = appointment.getTime(); // Assuming time is available in `appointment`
-
-        // Convert the appointment outcome to a string array
-        String[] outcomeData = {
-                appointmentID,
-                patient.toString(), // Assuming patient object has a toString() method
-                doctor.toString(), // Assuming doctor object has a toString() method
-                appointmentDate,
-                appointmentTime.toString(),
-                serviceType,
-                medications.toString(),
-                medicationDosages.toString(),
-                medicationStatuses.toString(),
-                consultationNotes
+        // Create the outcome entry for the appointment outcome CSV (with service)
+        String[] newOutcome = new String[] {
+                appointment[0],  // Appointment ID
+                appointment[1],  // Patient ID
+                appointment[2],  // Doctor ID
+                appointment[3],  // Date of Appointment
+                appointment[4],  // Appointment Time
+                service,         // Service Type (Service Provided)
+                prescriptions,   // Prescriptions (medicine and dosage)
+                notes            // Notes
         };
-        appointmentOutcomes.add(outcomeData);
 
-        // Write the data to a CSV using the helper
-        appointmentCsvHelper.writeEntries(appointmentOutcomes);
+        // Prepare the updated appointment status (set to "COMPLETED")
+        String[] updatedAppointment = new String[] {
+                appointment[0],  // Appointment ID
+                appointment[1],  // Patient ID
+                appointment[2],  // Doctor ID
+                appointment[3],  // Date of Appointment
+                appointment[4],  // Appointment Time
+                "COMPLETED"      // Status
+        };
+
+        // Add the outcome entry to the appointment outcome CSV
+        apptCsvHelper.addNewOutcome(newOutcome);
+        csvHelper.updateApptById(appointmentID, updatedAppointment);
+
+        // Now, check if a medical record exists for the patient
+        List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
+        String patientID = appointment[1];
+
+        // Create the new record ID for this entry
+        String newRecordID = getNextRecordID(medicalRecords);
+
+
+        // Create the new medical record with diagnosis and treatment plan
+        String[] newRecord = new String[] {
+            newRecordID,        // Generate new Record ID
+            diagnosis,          // Diagnosis
+            treatmentPlan,      // Treatment Plan
+            patientID           // Patient ID
+        };
+
+        // Add the new record to the list
+        medicalRecords.add(newRecord);
+        // Update the medical records CSV by appending the new record
+        medicalrecCsvHelper.updateMedicalRecords(medicalRecords);
+
+        System.out.println("Updated appointment details and added new medical record successfully.");
     }
+}
+
+
+// Helper method to find the next available Record ID
+private static String getNextRecordID(List<String[]> medicalRecords) {
+    int highestRecordID = 0;
+
+    // Iterate over all records and find the highest Record ID that starts with "R"
+    for (String[] record : medicalRecords) {
+        if (record.length >= 5 && record[0].startsWith("R")) {
+            try {
+                // Get numeric part after "R" and find the highest number
+                int recordID = Integer.parseInt(record[0].substring(1));
+                highestRecordID = Math.max(highestRecordID, recordID);
+            } catch (NumberFormatException e) {
+                System.err.println("Error parsing RecordID: " + record[0]);
+            }
+        }
+    }
+
+    // Return the next Record ID as "R" followed by the incremented number
+    return "R" + String.format("%03d", highestRecordID + 1);
+}
+
+
+   
 
     // View available slots for the doctor
     public void viewAvailableSlots(String doctorID) {

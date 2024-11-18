@@ -216,7 +216,7 @@ public class PatientManager {
             "PENDING",           // Status
             ""                   // Outcome
         };
-        appointmentCsvHelper.updateAppointment(appointmentEntry);
+        appointmentCsvHelper.addAppointment(appointmentEntry);
 
         System.out.println("Appointment successfully scheduled!");
         System.out.println("Doctor: " + selectedSlotData[0]);
@@ -339,105 +339,135 @@ public class PatientManager {
 }
 
 
-public int getAppointmentToReschedule(String patientID) {
-    List<String[]> appointments = appointmentCsvHelper.readCSV();
-    List<String[]> patientAppointments = new ArrayList<>();
+    public int getAppointmentToReschedule(String patientID) 
+    {
+        List<String[]> appointments = appointmentCsvHelper.readCSV();
+        List<String[]> patientAppointments = new ArrayList<>();
 
-    // Filter appointments belonging to the patient
-    for (String[] appointment : appointments) {
-        if (appointment.length >= 2 && appointment[1].equalsIgnoreCase(patientID)) {
-            patientAppointments.add(appointment);
+        // Filter appointments belonging to the patient
+        for (String[] appointment : appointments) {
+            if (appointment.length >= 2 && appointment[1].equalsIgnoreCase(patientID)) {
+                patientAppointments.add(appointment);
+            }
         }
-    }
 
-    if (patientAppointments.isEmpty()) {
-        System.out.println("No scheduled appointments found for patient ID: " + patientID);
-        return -1;
-    }
-
-    // Display appointments in tabular format
-    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-    System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", "Slot No.", "Appt ID", "Doctor ID", "Date", "Time", "Status");
-    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
-    int slotNumber = 1;
-    for (String[] appointment : patientAppointments) {
-        System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n",
-                slotNumber++, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
-    }
-    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
-    // Prompt user to select the appointment by slot number
-    System.out.print("Enter the slot number of the appointment to reschedule: ");
-    int selectedSlot = new Scanner(System.in).nextInt();
-
-    if (selectedSlot < 1 || selectedSlot > patientAppointments.size()) {
-        System.out.println("Error: Invalid slot number.");
-        return -1;
-    }
-
-    return selectedSlot - 1; // Return index in the list
-}
-
-public boolean rescheduleAppointment(int appointmentIndex) {
-    List<String[]> appointments = appointmentCsvHelper.readCSV();
-    List<String[]> availability = availabilityCsvHelper.readCSV();
-
-    if (appointmentIndex < 0 || appointmentIndex >= appointments.size()) {
-        System.out.println("Error: Invalid appointment index.");
-        return false;
-    }
-
-    String[] appointmentToReschedule = appointments.get(appointmentIndex);
-
-    // Add the slot back to Availability_List
-    String[] newAvailability = {appointmentToReschedule[2], appointmentToReschedule[3], appointmentToReschedule[4]};
-    availability.add(newAvailability);
-
-    // Remove the appointment from Appt_List
-    appointments.remove(appointmentIndex);
-
-    // Write updated data back to CSV files
-    availabilityCsvHelper.writeEntries(availability);
-    appointmentCsvHelper.writeEntries(appointments);
-
-    return true;
-}
-
-public void viewPastAppointmentOutcomes(String patientID) {
-    ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
-    List<String[]> outcomeData = apptOutcomeHelper.readCSV();
-
-    // Filter outcomes belonging to the patient
-    List<String[]> patientOutcomes = new ArrayList<>();
-    for (String[] record : outcomeData) {
-        if (record.length >= 2 && record[1].equalsIgnoreCase(patientID)) {
-            patientOutcomes.add(record);
+        if (patientAppointments.isEmpty()) {
+            System.out.println("No scheduled appointments found for patient ID: " + patientID);
+            return -1;
         }
+
+        // Display appointments in tabular format
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+        System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", "Slot No.", "Appt ID", "Doctor ID", "Date", "Time", "Status");
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+
+        int slotNumber = 1;
+        for (String[] appointment : patientAppointments) {
+            System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n",
+                    slotNumber++, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
+        }
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+
+        // Prompt user to select the appointment by slot number
+        System.out.print("Enter the slot number of the appointment to reschedule: ");
+        int selectedSlot = new Scanner(System.in).nextInt();
+
+        if (selectedSlot < 1 || selectedSlot > patientAppointments.size()) {
+            System.out.println("Error: Invalid slot number.");
+            return -1;
+        }
+
+        return selectedSlot - 1; // Return index in the list
     }
 
-    // If no outcomes found, print a message and return
-    if (patientOutcomes.isEmpty()) {
-        System.out.println("No past appointment outcomes found for patient ID: " + patientID);
-        return;
+    public boolean rescheduleAppointment(int appointmentIndex) {
+        List<String[]> appointments = appointmentCsvHelper.readCSV();
+        List<String[]> availability = availabilityCsvHelper.readCSV();
+
+        if (appointmentIndex < 0 || appointmentIndex >= appointments.size()) {
+            System.out.println("Error: Invalid appointment index.");
+            return false;
+        }
+
+        String[] appointmentToReschedule = appointments.get(appointmentIndex);
+
+        // Add the slot back to Availability_List
+        String[] newAvailability = {appointmentToReschedule[2], appointmentToReschedule[3], appointmentToReschedule[4]};
+        availability.add(newAvailability);
+
+        // Remove the appointment from Appt_List
+        appointments.remove(appointmentIndex);
+
+        // Write updated data back to CSV files
+        availabilityCsvHelper.writeEntries(availability);
+        appointmentCsvHelper.writeEntries(appointments);
+
+        return true;
     }
 
-    // Print outcomes in tabular format
-    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
-    System.out.format("| %-8s | %-10s | %-10s | %-13s | %-11s | %-15s | %-13s | %-6s | %-15s |\n",
-                      "Appt ID", "Patient ID", "Dr ID", "Date", "Time", "Service", "Medicine Name", "Dosage", "Notes");
-    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
+    public void viewPastAppointmentOutcomes(String patientID) {
+        ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
+        List<String[]> outcomeData = apptOutcomeHelper.readCSV();
 
-    for (String[] record : patientOutcomes) {
-        System.out.format("| %-8s | %-10s | %-10s | %-13s | %-11s | %-15s | %-13s | %-6s | %-15s |\n",
-                          record[0], record[1], record[2], record[3], record[4], record[5],
-                          record[6].isEmpty() ? "N/A" : record[6],
-                          record[7].isEmpty() ? "N/A" : record[7],
-                          record[8].isEmpty() ? "N/A" : record[8]);
+        // Filter outcomes belonging to the patient
+        List<String[]> patientOutcomes = new ArrayList<>();
+        for (String[] record : outcomeData) {
+            if (record.length >= 2 && record[1].equalsIgnoreCase(patientID)) 
+            {
+                patientOutcomes.add(record);
+            }
+        }
+
+        // If no outcomes found, print a message and return
+        if (patientOutcomes.isEmpty()) {
+            System.out.println("No past appointment outcomes found for patient ID: " + patientID);
+            return;
+        }
+
+    // Define column headers
+        String[] headers = {
+            "Appt ID", "Patient ID", "Dr ID", "Date", "Time", 
+            "Service", "Medicine Name", "Dosage", "Notes"
+        };
+
+        // Determine column widths dynamically
+        int[] columnWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length(); // Start with header length
+        }
+        for (String[] record : patientOutcomes) {
+            for (int i = 0; i < record.length; i++) {
+            columnWidths[i] = Math.max(columnWidths[i], record[i].length());
+            }
+        }
+
+        // Adjust column widths for empty values
+        for (int i = 0; i < columnWidths.length; i++) {
+            columnWidths[i] = Math.max(columnWidths[i], 2); // Minimum width for "-"
+        }
+
+        // Print header
+        StringBuilder separator = new StringBuilder("+");
+        for (int width : columnWidths) {
+        separator.append("-".repeat(width + 2)).append("+");
+        }
+        System.out.println(separator);
+        System.out.print("|");
+        for (int i = 0; i < headers.length; i++) {
+            System.out.printf(" %-"+columnWidths[i]+"s |", headers[i]);
+        }
+        System.out.println();
+        System.out.println(separator);
+
+        // Print rows
+        for (String[] record : patientOutcomes) {
+            System.out.print("|");
+            for (int i = 0; i < headers.length; i++) {
+                String value = i < record.length ? record[i] : "-";
+                System.out.printf(" %-"+columnWidths[i]+"s |", value.isEmpty() ? "-" : value);
+            }
+            System.out.println();
+        }
+        System.out.println(separator);
     }
-
-    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
-}
-
-    
 }

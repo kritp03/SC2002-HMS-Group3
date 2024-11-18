@@ -1,10 +1,12 @@
 package HMS.src.user;
 
 import HMS.src.io.AppointmentCsvHelper;
+import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.utils.SessionManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -225,47 +227,217 @@ public class PatientManager {
     public void viewScheduledAppointments(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
 
-    if (appointments.isEmpty()) {
-        System.out.println("No appointments found.");
-        return;
-    }
+        if (appointments.isEmpty()) {
+            System.out.println("No appointments found.");
+            return;
+        }
 
-    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-    System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+        System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
                       "Appt ID", "Status", "Doctor ID", "Date", "Time Slot", "Outcome");
-    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
 
-    boolean foundAppointments = false;
+        boolean foundAppointments = false;
 
-    for (String[] appointment : appointments) {
-        try {
-            // Ensure each row has the required fields and matches the patient ID
-            if (appointment.length >= 7 && appointment[1].equalsIgnoreCase(patientID)) {
-                foundAppointments = true;
+        for (String[] appointment : appointments) {
+            try {
+                // Ensure each row has the required fields and matches the patient ID
+                if (appointment.length >= 7 && appointment[1].equalsIgnoreCase(patientID)) {
+                    foundAppointments = true;
 
-                // Default handling for empty fields
-                String status = appointment[5].isEmpty() ? "N/A" : appointment[5];
-                String outcome = appointment[6].isEmpty() ? "N/A" : appointment[6];
+                    // Default handling for empty fields
+                    String status = appointment[5].isEmpty() ? "N/A" : appointment[5];
+                    String outcome = appointment[6].isEmpty() ? "N/A" : appointment[6];
 
-                System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
+                    System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
                                   appointment[0], // Appointment ID
                                   status,         // Status (Pending/Confirmed)
                                   appointment[2], // Doctor ID
                                   appointment[3], // Date
                                   appointment[4], // Time Slot
                                   outcome         // Outcome
-                );
+                    );
+                }
+            }catch (Exception e) {
+                System.out.println("Error processing row: " + String.join(", ", appointment));
+                System.out.println("Details: " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("Error processing row: " + String.join(", ", appointment));
-            System.out.println("Details: " + e.getMessage());
+        }
+
+        if (!foundAppointments) {
+            System.out.println("No appointments found for Patient ID: " + patientID);
+        }
+
+        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
+    }
+
+    public void cancelAppointment() {
+    List<String[]> appointments = appointmentCsvHelper.readCSV();
+    List<String[]> availabilitySlots = availabilityCsvHelper.readCSV();
+    String patientID = getPatientID();
+
+    // Filter appointments for the logged-in patient
+    List<String[]> patientAppointments = new ArrayList<>();
+    for (String[] appointment : appointments) {
+        if (appointment.length >= 7 && appointment[1].trim().equalsIgnoreCase(patientID)) {
+            patientAppointments.add(appointment);
         }
     }
 
-    if (!foundAppointments) {
-        System.out.println("No appointments found for Patient ID: " + patientID);
+    if (patientAppointments.isEmpty()) {
+        System.out.println("You have no appointments to cancel.");
+        return;
     }
 
+    // Print the appointments with an extra "Slot Number" column
+    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+    System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", 
+                      "Slot No.", "Appt ID", "Doctor ID", "Date", "Time Slot", "Status");
+    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+
+    for (int i = 0; i < patientAppointments.size(); i++) {
+        String[] appointment = patientAppointments.get(i);
+        System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n", 
+                          i + 1, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
+    }
     System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
+
+    // Prompt for slot number
+    int slotNumber = -1;
+    boolean validInput = false;
+    while (!validInput) {
+        try {
+            System.out.print("Enter the slot number of the appointment you wish to cancel: ");
+            slotNumber = Integer.parseInt(scanner.nextLine().trim());
+            if (slotNumber < 1 || slotNumber > patientAppointments.size()) {
+                System.out.println("Invalid slot number. Please select a valid number from the table.");
+            } else {
+                validInput = true;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+        }
+    }
+
+    // Get the appointment to cancel
+    String[] canceledAppointment = patientAppointments.get(slotNumber - 1);
+    appointments.remove(canceledAppointment);
+
+    // Add the canceled slot back to availability
+    String[] newSlot = {
+        canceledAppointment[2], // Doctor ID
+        canceledAppointment[3], // Date
+        canceledAppointment[4]  // Time
+    };
+    availabilitySlots.add(newSlot);
+
+    // Update the CSV files
+    appointmentCsvHelper.writeEntries(appointments);
+    availabilityCsvHelper.writeEntries(availabilitySlots);
+
+    System.out.println("Appointment " + canceledAppointment[0] + " has been successfully canceled.");
 }
+
+
+public int getAppointmentToReschedule(String patientID) {
+    List<String[]> appointments = appointmentCsvHelper.readCSV();
+    List<String[]> patientAppointments = new ArrayList<>();
+
+    // Filter appointments belonging to the patient
+    for (String[] appointment : appointments) {
+        if (appointment.length >= 2 && appointment[1].equalsIgnoreCase(patientID)) {
+            patientAppointments.add(appointment);
+        }
+    }
+
+    if (patientAppointments.isEmpty()) {
+        System.out.println("No scheduled appointments found for patient ID: " + patientID);
+        return -1;
+    }
+
+    // Display appointments in tabular format
+    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+    System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", "Slot No.", "Appt ID", "Doctor ID", "Date", "Time", "Status");
+    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+
+    int slotNumber = 1;
+    for (String[] appointment : patientAppointments) {
+        System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n",
+                slotNumber++, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
+    }
+    System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
+
+    // Prompt user to select the appointment by slot number
+    System.out.print("Enter the slot number of the appointment to reschedule: ");
+    int selectedSlot = new Scanner(System.in).nextInt();
+
+    if (selectedSlot < 1 || selectedSlot > patientAppointments.size()) {
+        System.out.println("Error: Invalid slot number.");
+        return -1;
+    }
+
+    return selectedSlot - 1; // Return index in the list
+}
+
+public boolean rescheduleAppointment(int appointmentIndex) {
+    List<String[]> appointments = appointmentCsvHelper.readCSV();
+    List<String[]> availability = availabilityCsvHelper.readCSV();
+
+    if (appointmentIndex < 0 || appointmentIndex >= appointments.size()) {
+        System.out.println("Error: Invalid appointment index.");
+        return false;
+    }
+
+    String[] appointmentToReschedule = appointments.get(appointmentIndex);
+
+    // Add the slot back to Availability_List
+    String[] newAvailability = {appointmentToReschedule[2], appointmentToReschedule[3], appointmentToReschedule[4]};
+    availability.add(newAvailability);
+
+    // Remove the appointment from Appt_List
+    appointments.remove(appointmentIndex);
+
+    // Write updated data back to CSV files
+    availabilityCsvHelper.writeEntries(availability);
+    appointmentCsvHelper.writeEntries(appointments);
+
+    return true;
+}
+
+public void viewPastAppointmentOutcomes(String patientID) {
+    ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
+    List<String[]> outcomeData = apptOutcomeHelper.readCSV();
+
+    // Filter outcomes belonging to the patient
+    List<String[]> patientOutcomes = new ArrayList<>();
+    for (String[] record : outcomeData) {
+        if (record.length >= 2 && record[1].equalsIgnoreCase(patientID)) {
+            patientOutcomes.add(record);
+        }
+    }
+
+    // If no outcomes found, print a message and return
+    if (patientOutcomes.isEmpty()) {
+        System.out.println("No past appointment outcomes found for patient ID: " + patientID);
+        return;
+    }
+
+    // Print outcomes in tabular format
+    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
+    System.out.format("| %-8s | %-10s | %-10s | %-13s | %-11s | %-15s | %-13s | %-6s | %-15s |\n",
+                      "Appt ID", "Patient ID", "Dr ID", "Date", "Time", "Service", "Medicine Name", "Dosage", "Notes");
+    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
+
+    for (String[] record : patientOutcomes) {
+        System.out.format("| %-8s | %-10s | %-10s | %-13s | %-11s | %-15s | %-13s | %-6s | %-15s |\n",
+                          record[0], record[1], record[2], record[3], record[4], record[5],
+                          record[6].isEmpty() ? "N/A" : record[6],
+                          record[7].isEmpty() ? "N/A" : record[7],
+                          record[8].isEmpty() ? "N/A" : record[8]);
+    }
+
+    System.out.println("+----------+------------+------------+---------------+-------------+-----------------+---------------+--------+-----------------+");
+}
+
+    
 }

@@ -9,10 +9,9 @@ import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
 public class DoctorUI {
@@ -110,76 +109,81 @@ public class DoctorUI {
         SlotManager.printFullSchedule(doctorID); // Reuse doctorID
     }
 
-    private static void setAvailabilityForAppointments() {
+private static void setAvailabilityForAppointments() {
+    Scanner scanner = new Scanner(System.in);
+    final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        Scanner scanner = new Scanner(System.in);
-        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    System.out.println("Set Availability for Appointments");
 
-        System.out.println("Set Availability for Appointments");
+    String doctorID = getDoctorID();
+    LocalDate date = null;
+    LocalTime startTime = null;
+    LocalTime endTime = null;
+    boolean validInput = false;
 
-        String doctorID = getDoctorID();
-        LocalDate date = null;
-        LocalTime startTime = null;
-        LocalTime endTime = null;
-        boolean validInput = false;
-
-        // Get date
-        System.out.print("Enter the date in 'DD-MM-YYYY' format: ");
-        while (date == null) {
-            try {
-                String dateInput = scanner.nextLine().trim();
-                date = LocalDate.parse(dateInput, dateFormatter);
-            } catch (Exception e) {
-                System.out.println("Invalid date format. Please use 'DD-MM-YYYY' format.");
-            }
+    // Get date
+    System.out.print("Enter the date in 'DD-MM-YYYY' format: ");
+    while (date == null) {
+        try {
+            String dateInput = scanner.nextLine().trim();
+            date = LocalDate.parse(dateInput, dateFormatter);
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Please use 'DD-MM-YYYY' format.");
         }
-
-        // Get start and end times
-        do {
-            try {
-                System.out.print("Enter start of availability in 'HH:MM' format: ");
-                String startInput = scanner.nextLine().trim();
-                startTime = LocalTime.parse(startInput, timeFormatter);
-
-                System.out.print("Enter end of availability in 'HH:MM' format: ");
-                String endInput = scanner.nextLine().trim();
-                endTime = LocalTime.parse(endInput, timeFormatter);
-
-                if (endTime.isAfter(startTime)) {
-                    validInput = true;
-                } else {
-                    System.out.println("End time must be after the start time. Please try again.");
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid time format. Please use 'HH:MM' format.");
-            }
-        } while (!validInput);
-
-        // Store each hour slot between start and end times
-        AvailabilityCsvHelper availabilityHelper = new AvailabilityCsvHelper();
-        while (startTime.isBefore(endTime)) {
-            String[] availabilityEntry = {
-                    doctorID,
-                    date.toString(),
-                    startTime.toString()
-            };
-            availabilityHelper.addAvailability(availabilityEntry);
-            System.out.println("Slot added for " + date.toString() + " at " + startTime.toString());
-            startTime = startTime.plusHours(1);
-        }
-
-        System.out.println("Availability set for Dr. " + doctorID);
     }
 
-    // private static void acceptAppointmentRequests() {
-    // DoctorManager.viewAllAppts(getDoctorID());
-    // // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
-    // System.out.println("Accept Appointment Requests");
-    // String apptID = validateString("Enter Appointment ID: ");
-    // String doctorID = getDoctorID();
-    // DoctorManager.acceptAppointment(apptID, doctorID); // Reuse doctorID
-    // }
+    // Get start and end times
+    do {
+        try {
+            System.out.print("Enter start of availability in 'HH:MM' format: ");
+            String startInput = scanner.nextLine().trim();
+            startTime = LocalTime.parse(startInput, timeFormatter);
+
+            System.out.print("Enter end of availability in 'HH:MM' format: ");
+            String endInput = scanner.nextLine().trim();
+            endTime = LocalTime.parse(endInput, timeFormatter);
+
+            if (endTime.isAfter(startTime)) {
+                validInput = true;
+            } else {
+                System.out.println("End time must be after the start time. Please try again.");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid time format. Please use 'HH:MM' format.");
+        }
+    } while (!validInput);
+
+    // Store each hour slot between start and end times
+    AvailabilityCsvHelper availabilityHelper = new AvailabilityCsvHelper();
+    List<String[]> existingRecords = availabilityHelper.readCSV(); // Fetch all existing records
+
+    while (startTime.isBefore(endTime)) {
+        String dateStr = date.toString();
+        String timeStr = startTime.toString();
+
+        // Check if the slot already exists in the CSV
+        boolean slotExists = existingRecords.stream()
+            .anyMatch(record -> record[0].equals(doctorID) && record[1].equals(dateStr) && record[2].equals(timeStr));
+
+        if (slotExists) {
+            System.out.println("Appointment already available for " + dateStr + " at " + timeStr);
+        } else {
+            String[] availabilityEntry = {
+                    doctorID,
+                    dateStr,
+                    timeStr
+            };
+            availabilityHelper.addAvailability(availabilityEntry);
+            System.out.println("Slot added for " + dateStr + " at " + timeStr);
+        }
+
+        startTime = startTime.plusHours(1);
+    }
+
+    System.out.println("Availability set for Dr. " + doctorID);
+}
+
 
     private static Scanner scanner = new Scanner(System.in);
 

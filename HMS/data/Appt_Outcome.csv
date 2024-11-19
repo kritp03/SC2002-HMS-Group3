@@ -1,8 +1,1 @@
 ﻿ApptID,Patient ID,Dr ID,Date of Appt,Appt Time,Service,Medicine Name,Dosage,Notes
-AP001,P1001,D001,1/1/24,0800-0815,Vaccination,Paracetamol,2mg,May have fever
-AP002,P1002,D002,1/1/24,0900-1515,Surgery,-,-,No solid food
-AP003,P1003,D002,1/1/24,1000-1015,Consultation,-,-,Give MC
-AP004,P1001,D001,1/1/24,1100-1115,Imaging,-,-,Return next Friday
-AP002,P1002,D001,9/9/2024,0900-1000,surgery,paracetamol,1mg,none
-AP004,P1001,D001,2024-12-01,12:00,ns checkup,,,pes b
-AP004,P1001,D001,2024-12-01,12:00,ns,,,pes a

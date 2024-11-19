@@ -3,6 +3,7 @@ package HMS.src.user;
 import HMS.src.appointment.*;
 import HMS.src.io.*;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -106,13 +107,16 @@ public static void recordAppointmentOutcome(String appointmentID) {
         // Create the new record ID for this entry
         String newRecordID = getNextRecordID(medicalRecords);
 
+        // to create string variable for doctorID
+        String doctorID = appointment[2];
 
         // Create the new medical record with diagnosis and treatment plan
         String[] newRecord = new String[] {
             newRecordID,        // Generate new Record ID
             diagnosis,          // Diagnosis
             treatmentPlan,      // Treatment Plan
-            patientID           // Patient ID
+            patientID,    // Patient ID
+            doctorID
         };
 
         // Add the new record to the list
@@ -220,71 +224,46 @@ private static String getNextRecordID(List<String[]> medicalRecords) {
         }
     }
 
-    // public static void viewPatientMedicalRecords(String patientID) {
+ public static void viewPatientMedicalRecords(String patientID, String doctorID) {
+    // Initialize the CSV Helper to fetch medical records
+    MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+    List<String[]> medicalRecords = csvHelper.readCSV();
 
-    // // Initialize the CSV Helper to fetch medical records
-    // MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
-    // List<String[]> medicalRecords = csvHelper.readCSV();
+    System.out.println("Reading file from: " + csvHelper.getFilePath());
+    
+    // Check if records exist for the given patient ID and doctor ID
+    boolean recordFound = false;
 
-    // // Check if records exist for the given patient ID
-    // boolean recordFound = false;
-    // System.out.println("Medical Records for Patient ID: " + patientID);
-    // System.out.println("================================================================");
+    // Print the header
+    System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+    System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
+            "Record ID", "Diagnosis", "Treatment Plan", "PatientID", "DoctorID");
+    System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
 
-    // for (String[] record : medicalRecords) {
-    // // Ensure the CSV row is valid and belongs to the patient ID
-    // if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
-    // System.out.println("Record ID: " + record[0]);
-    // System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" :
-    // record[1]));
-    // System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" :
-    // record[2]));
-    // System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" :
-    // record[3]));
-    // System.out.println("----------------------------------------------------------------");
-    // recordFound = true;
-    // }
-    // }
-
-    // if (!recordFound) {
-    // System.out.println("No medical records found for patient ID: " + patientID);
-    // }
-    // }
-
-    public static void viewPatientMedicalRecords(String patientID) {
-        // Initialize the CSV Helper to fetch medical records
-        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
-        List<String[]> medicalRecords = csvHelper.readCSV();
-
-        // Check if records exist for the given patient ID
-        boolean recordFound = false;
-
-        // Print the header
-        System.out.println("+------------+---------------------+------------------------+--------------------+");
-        System.out.format("| %-10s | %-20s | %-22s | %-18s |\n",
-                "Record ID", "Diagnosis", "Treatment Plan", "Prescriptions");
-        System.out.println("+------------+---------------------+------------------------+--------------------+");
-
-        for (String[] record : medicalRecords) {
-            // Ensure the CSV row is valid and belongs to the patient ID
-            if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
-                System.out.format("| %-10s | %-20s | %-22s | %-18s |\n",
-                        record[0],
-                        (record[1].isEmpty() ? "N/A" : record[1]),
-                        (record[2].isEmpty() ? "N/A" : record[2]),
-                        (record[3].isEmpty() ? "N/A" : record[3]));
-                recordFound = true;
-            }
-        }
-
-        // Close the table or display a message if no records found
-        if (recordFound) {
-            System.out.println("+------------+---------------------+------------------------+--------------------+");
-        } else {
-            System.out.println("No medical records found for patient ID: " + patientID);
+    for (String[] record : medicalRecords) {
+        System.out.println("Processing record: " + Arrays.toString(record)); // Debug print
+        // Ensure the CSV row is valid and belongs to the patient ID and doctor ID
+        if (record.length >= 5 && record[3].equals(patientID) && record[4].equals(doctorID)) {
+            System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
+                    record[0],                                // Record ID
+                    (record[1].isEmpty() ? "N/A" : record[1]), // Diagnosis
+                    (record[2].isEmpty() ? "N/A" : record[2]), // Treatment Plan
+                    (record[3].isEmpty() ? "N/A" : record[3]), // PatientID
+                    record[4]);                                // Doctor ID
+            recordFound = true;
         }
     }
 
+    // Close the table or display a message if no records found
+    if (recordFound) {
+        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+    } else {
+        System.out.println("No medical records found for patient ID: " + patientID + " under doctor ID: " + doctorID);
+    }
+}
+
+    
+    
     public static boolean viewAllPending(String doctorID) {
         AppointmentCsvHelper csvHelper = new AppointmentCsvHelper();
         List<String[]> appList = csvHelper.readCSV();

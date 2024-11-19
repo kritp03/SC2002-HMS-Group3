@@ -3,7 +3,6 @@ package HMS.src.user;
 import HMS.src.appointment.*;
 import HMS.src.io.*;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -224,43 +223,42 @@ private static String getNextRecordID(List<String[]> medicalRecords) {
         }
     }
 
- public static void viewPatientMedicalRecords(String patientID, String doctorID) {
-    // Initialize the CSV Helper to fetch medical records
-    MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
-    List<String[]> medicalRecords = csvHelper.readCSV();
-
-    System.out.println("Reading file from: " + csvHelper.getFilePath());
+    public static void viewPatientMedicalRecords(String patientID, String doctorID) {
+        // Initialize the MedicalRecordCsvHelper to fetch medical records
+        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+        List<String[]> medicalRecords = csvHelper.readCSV();
     
-    // Check if records exist for the given patient ID and doctor ID
-    boolean recordFound = false;
-
-    // Print the header
-    System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
-    System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
-            "Record ID", "Diagnosis", "Treatment Plan", "PatientID", "DoctorID");
-    System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
-
-    for (String[] record : medicalRecords) {
-        System.out.println("Processing record: " + Arrays.toString(record)); // Debug print
-        // Ensure the CSV row is valid and belongs to the patient ID and doctor ID
-        if (record.length >= 5 && record[3].equals(patientID) && record[4].equals(doctorID)) {
-            System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
-                    record[0],                                // Record ID
-                    (record[1].isEmpty() ? "N/A" : record[1]), // Diagnosis
-                    (record[2].isEmpty() ? "N/A" : record[2]), // Treatment Plan
-                    (record[3].isEmpty() ? "N/A" : record[3]), // PatientID
-                    record[4]);                                // Doctor ID
-            recordFound = true;
+        // Check if records exist for the given patient ID and doctor ID
+        boolean recordFound = false;
+    
+        // Print the header for the table
+        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+        System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
+                "Record ID", "Diagnosis", "Treatment Plan", "Patient ID", "Doctor ID");
+        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+    
+        // Iterate through the medical records and check for the patient's records assigned to the doctor
+        for (String[] record : medicalRecords) {
+            // Ensure the record has valid data and matches the patient ID and doctor ID
+            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
+                System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
+                        record[0],                                // Record ID
+                        (record[1].isEmpty() ? "N/A" : record[1]), // Diagnosis
+                        (record[2].isEmpty() ? "N/A" : record[2]), // Treatment Plan
+                        (record[3].isEmpty() ? "N/A" : record[3]), // Patient ID
+                        record[4]);                                // Doctor ID
+                recordFound = true;
+            }
+        }
+    
+        // Close the table or display a message if no records found
+        if (recordFound) {
+            System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+        } else {
+            System.out.println("No medical records found for patient ID: " + patientID + " under doctor ID: " + doctorID);
         }
     }
-
-    // Close the table or display a message if no records found
-    if (recordFound) {
-        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
-    } else {
-        System.out.println("No medical records found for patient ID: " + patientID + " under doctor ID: " + doctorID);
-    }
-}
+    
 
     
     
@@ -362,47 +360,52 @@ private static String getNextRecordID(List<String[]> medicalRecords) {
         }
     }
 
-    public static void updatePatientMedicalRecord(String patientID, String diagnosis, String treatmentPlan,
-            String prescriptions) {
+    public static void updatePatientMedicalRecord(String patientID, String diagnosis, String treatmentPlan,String prescriptions, String doctorID) 
+    {
         System.out.println("Updating Medical Records for Patient ID: " + patientID);
 
-        // Initialize the CSV Helper to fetch and update medical records
+        // Initialize the MedicalRecordCsvHelper to fetch and update medical records
         MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
         List<String[]> medicalRecords = csvHelper.readCSV();
 
-        int highestRecordID = 0;
+        boolean recordUpdated = false;
 
-        // Find the highest existing RecordID
+        // Iterate through the records and update the matching one
         for (String[] record : medicalRecords) {
-            if (record.length >= 5) {
-                // Extract the numeric part of the RecordID and track the highest value
-                String recordID = record[0];
-                if (recordID.startsWith("R")) {
-                    int recordIDNum = Integer.parseInt(recordID.substring(1));
-                    highestRecordID = Math.max(highestRecordID, recordIDNum);
-                }
+            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
+                record[1] = diagnosis != null ? diagnosis : record[1];       // Update diagnosis
+                record[2] = treatmentPlan != null ? treatmentPlan : record[2]; // Update treatment plan
+                recordUpdated = true;
+                break;
             }
         }
 
-        // Generate the next RecordID for the new entry
-        String newRecordID = "R" + String.format("%03d", highestRecordID + 1);
-
-        // Create a new record for the patient
-        String[] newRecord = {
-                newRecordID, // RecordID
-                diagnosis != null ? diagnosis : "", // Diagnosis
-                treatmentPlan != null ? treatmentPlan : "", // Treatment Plan
-                prescriptions != null ? prescriptions : "", // Prescriptions
-                patientID // PatientID
-        };
-
-        // Append the new record to the list
-        medicalRecords.add(newRecord);
-        System.out.println("New medical record added with RecordID: " + newRecordID);
-
-        // Write updated records back to the CSV
-        csvHelper.updateMedicalRecords(medicalRecords);
-        System.out.println("Medical record updated successfully.");
+        if (recordUpdated) {
+            // Write the updated records back to the CSV
+            csvHelper.updateMedicalRecords(medicalRecords);
+            System.out.println("Medical record updated successfully.");
+        } else {
+            System.out.println("Error: No matching record found for Patient ID: " + patientID + " under Doctor ID: " + doctorID);
+        }
     }
+
+
+
+    public static boolean isPatientAssignedToDoctor(String patientID, String doctorID) 
+    {
+        // Initialize the MedicalRecordCsvHelper to fetch medical records
+        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
+        List<String[]> medicalRecords = csvHelper.readCSV();
+
+        // Iterate through the records and check for matching patient ID and doctor ID
+        for (String[] record : medicalRecords) {
+            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
+                return true; // The patient is assigned to the doctor
+            }
+        }
+        return false; // The patient is not assigned to the doctor
+    }
+
+    
 
 }

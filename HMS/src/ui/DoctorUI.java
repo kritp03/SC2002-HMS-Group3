@@ -110,20 +110,37 @@ public class DoctorUI {
      * Allows the doctor to update a patient's medical records with diagnosis, treatment, and prescription.
      */
 
-    private static void updatePatientMedicalRecords() {
+     private static void updatePatientMedicalRecords() {
         InputScanner.getInstance().nextLine(); // Clear the buffer after int input
-
         System.out.println("Update Patient Medical Records");
+    
+        // Get the doctor ID from the session
+        String doctorID = getDoctorID();
+    
+        // Prompt for the patient ID
         String patientID = validateString("Enter Patient ID: ");
-        String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + " : ");
-        String treatment = validateString("Enter the treatment for Patient " + patientID + " : ");
-        System.out.print("Enter the prescription for Patient " + patientID + " : ");
+    
+        // Check if the doctor has access to the patient's records
+        if (!DoctorManager.isPatientAssignedToDoctor(patientID, doctorID)) {
+            System.out.println("Error: You do not have access to update medical records for this patient.");
+            return;
+        }
+    
+        // Gather input for updating the medical record
+        String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + ": ");
+        String treatmentPlan = validateString("Enter the treatment for Patient " + patientID + ": ");
+        System.out.print("Enter the prescription for Patient " + patientID + ": ");
         String prescription = InputScanner.getInstance().nextLine().trim();
         if (prescription.isEmpty()) {
             prescription = null; // Set prescription to null if input is empty
         }
-        DoctorManager.updatePatientMedicalRecord(patientID, diagnosis, treatment, prescription);
+    
+        // Update the medical record using the DoctorManager
+        DoctorManager.updatePatientMedicalRecord(patientID, diagnosis, treatmentPlan, prescription, doctorID);
+        System.out.println("Medical record updated successfully.");
     }
+    
+    
 
     /**
      * Displays the doctor's personal schedule based on available and booked slots.

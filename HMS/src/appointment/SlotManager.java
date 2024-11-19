@@ -45,8 +45,8 @@ public class SlotManager {
             if (!apptDoctorID.equalsIgnoreCase(doctorID)) continue; // Skip if not this doctor
 
             try {
-                LocalDate date = LocalDate.parse(appointment[3], DateTimeFormatter.ofPattern("d/M/yyyy"));
-                LocalTime startTime = LocalTime.parse(appointment[4].split("-")[0], DateTimeFormatter.ofPattern("HHmm"));
+                LocalDate date = LocalDate.parse(appointment[3].trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                LocalTime startTime = LocalTime.parse(appointment[4].split("-")[0].trim(), DateTimeFormatter.ofPattern("HH:mm"));
                 LocalDateTime slotTime = LocalDateTime.of(date, startTime);
 
                 Slot slot = new Slot(slotTime);
@@ -129,34 +129,56 @@ public class SlotManager {
         }
 
         List<Slot> slots = doctorSlots.get(doctorID);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        System.out.println("Complete schedule for Dr. " + doctorID + ":");
+        System.out.println("\nComplete schedule for Dr. " + doctorID + ":");
+        String headerFormat = "+----------+-----------------+------------------+-----------------+";
+        System.out.println(headerFormat);
+        System.out.format("| %-8s | %-15s | %-16s | %-15s |\n", "Slot No.", "Date", "Time", "Status");
+        System.out.println(headerFormat);
+
         int slotNumber = 1;
-
-        List<String[]> appointments = appointmentCsvHelper.readCSV(); // Read from Appt_List.csv
+        List<String[]> appointments = appointmentCsvHelper.readCSV();
 
         for (Slot slot : slots) {
-            String date = slot.getDateTime().toLocalDate().format(dateFormatter);
-            String startTime = slot.getDateTime().toLocalTime().format(timeFormatter);
-            String endTime = slot.getEndDateTime().toLocalTime().format(timeFormatter);
-
-            String appointmentStatus = "AVAILABLE"; // Default status if no matching appointment is found
+            String date = slot.getDateTime().format(dateFormatter);
+            String startTime = slot.getDateTime().format(timeFormatter);
+            String endTime = slot.getEndDateTime().format(timeFormatter);
+            String timeSlot = startTime + "-" + endTime;
+            String appointmentStatus = "AVAILABLE";
 
             if (!slot.isAvailable()) {
                 for (String[] appointment : appointments) {
                     if (appointment.length >= 6 
                         && appointment[2].equals(doctorID) 
-                        && LocalDate.parse(appointment[3], DateTimeFormatter.ofPattern("d/M/yyyy")).equals(slot.getDateTime().toLocalDate())
+                        && LocalDate.parse(appointment[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).equals(slot.getDateTime().toLocalDate())
                         && appointment[4].split("-")[0].equals(startTime)) {
-                        appointmentStatus = appointment[5]; // Use the status from the CSV
+                        try {
+                            AppointmentStatus status = AppointmentStatus.valueOf(appointment[5]);
+                            appointmentStatus = status.showStatusByColor();
+                        } catch (IllegalArgumentException e) {
+                            appointmentStatus = appointment[5];
+                        }
                         break;
                     }
                 }
+            } else {
+                appointmentStatus = AppointmentStatus.PENDING.showStatusByColor();
             }
 
-            System.out.printf("Slot %d: %s %s-%s (%s)%n", slotNumber++, date, startTime, endTime, appointmentStatus);
+            String plainStatus = appointmentStatus.replaceAll("\u001B\\[[;\\d]*m", "");
+            int padding = 15 - plainStatus.length();
+            String paddedStatus = appointmentStatus + " ".repeat(Math.max(0, padding));
+
+            System.out.format("| %-8d | %-15s | %-16s | %-15s |\n",
+                slotNumber++,
+                date,
+                timeSlot,
+                paddedStatus
+            );
         }
+
+        System.out.println(headerFormat);
     }
 }

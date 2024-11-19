@@ -134,15 +134,16 @@ public class AdminUI {
     private static void manageMedicationInventory() {
         boolean back = false;
         do {
-            int inventoryChoice = validateIntRange("\nMedication Inventory:\n1. Add Medication\n2. View Inventory\n3. Update Stock Level\n4. Update Low Stock Alert\n5. Back to Main Menu\n", 1, 5);
+            int inventoryChoice = validateIntRange("\nMedication Inventory:\n1. View Inventory\n2. Add Medication\n3. Remove Medication\n4. Update Stock Level\n5. Update Low Stock Alert\n6. Back to Main Menu\n", 1, 6);
             InputScanner.getInstance().nextLine();
 
             switch (inventoryChoice) {
-                case 1 -> addMedication();
-                case 2 -> admin.viewMedicationInventory();
-                case 3 -> updateMedicationStock();
-                case 4 -> updateLowStockAlert();
-                case 5 -> back = true;
+                case 1 -> admin.viewMedicationInventory();
+                case 2 -> addMedication();
+                case 3 -> removeMedication();
+                case 4 -> updateMedicationStock();
+                case 5 -> updateLowStockAlert();
+                case 6 -> back = true;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (!back);
@@ -187,6 +188,16 @@ public class AdminUI {
 
         Medication medication = new Medication("", name, dosageForm, concentration, initialStock, lowStockThreshold);
         admin.addMedication(medication);
+    }
+
+    /**
+     * Removes a medication from the inventory based on its ID.
+     */
+    private static void removeMedication() {
+        System.out.println("\nRemoving a Medication");
+        
+        String medicineID = validateString("\nEnter ID of Medication to remove: ").toUpperCase();
+        admin.removeMedication(medicineID);
     }
 
     /**

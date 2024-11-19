@@ -364,4 +364,32 @@ public class AdministratorManager {
     public void viewScheduledAppointments(List<Appointment> appointments) {
         viewAppointments();
     }
+
+    /**
+     * Removes a medication from the inventory.
+     *
+     * @param medicineID The ID of the medication to remove.
+     */
+    public void removeMedication(String medicineID) {
+        List<String[]> currentMeds = medHelper.readCSV();
+        boolean removed = false;
+        boolean found = false;
+        
+        List<String[]> updatedMeds = new ArrayList<>();
+        for (String[] med : currentMeds) {
+            if (!med[0].equals(medicineID)) {
+                updatedMeds.add(med);
+            } else {
+                found = true;
+                removed = true;
+                System.out.println("Medication '" + med[1] + "' (ID: " + medicineID + ") has been removed from the inventory.");
+            }
+        }
+
+        if (removed) {
+            medHelper.updateMedications(updatedMeds);
+        } else if (!found) {
+            System.out.println("Medication not found with ID: " + medicineID);
+        }
+    }
 }

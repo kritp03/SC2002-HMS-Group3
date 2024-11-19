@@ -4,6 +4,7 @@ import HMS.src.app.App;
 import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.io.AvailabilityCsvHelper;
+import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
@@ -123,21 +124,37 @@ public class DoctorUI {
         // Check if the doctor has access to the patient's records
         if (!DoctorManager.isPatientAssignedToDoctor(patientID, doctorID)) {
             System.out.println("Error: You do not have access to update medical records for this patient.");
-            return;
-        }
+        } else {
+            // Display the patient's current medical records (this shows the history of records)
+            DoctorManager.viewPatientMedicalRecords(patientID, doctorID);
+            System.err.println("These are the current medical records of Patient " + patientID + ". You can now add a new entry to the patient's medical record.");
     
-        // Gather input for updating the medical record
-        String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + ": ");
-        String treatmentPlan = validateString("Enter the treatment for Patient " + patientID + ": ");
-        System.out.print("Enter the prescription for Patient " + patientID + ": ");
-        String prescription = InputScanner.getInstance().nextLine().trim();
-        if (prescription.isEmpty()) {
-            prescription = null; // Set prescription to null if input is empty
+            // Gather input for the new medical record
+            String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + ": ");
+            String treatmentPlan = validateString("Enter the treatment for Patient " + patientID + ": ");
+            System.out.print("Enter the prescription for Patient " + patientID + ": ");
+            String prescription = InputScanner.getInstance().nextLine().trim();
+            if (prescription.isEmpty()) {
+                prescription = null; // Set prescription to null if input is empty
+            }
+             MedicalRecordCsvHelper medicalrecCsvHelper = new MedicalRecordCsvHelper();
+            List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
+            String RecordID = DoctorManager.getNextRecordID(medicalRecords);
+
+            String[] newRecord = new String[] {
+                RecordID,        // Generate new Record ID
+                diagnosis,          // Diagnosis
+                treatmentPlan,      // Treatment Plan
+                patientID,    // Patient ID
+                doctorID
+            };       
+            medicalRecords.add(newRecord);
+            medicalrecCsvHelper.updateMedicalRecords(medicalRecords);
+            System.out.println("New medical record added successfully.");
+
+        
+        
         }
-    
-        // Update the medical record using the DoctorManager
-        DoctorManager.updatePatientMedicalRecord(patientID, diagnosis, treatmentPlan, prescription, doctorID);
-        System.out.println("Medical record updated successfully.");
     }
     
     

@@ -129,7 +129,7 @@ public static void recordAppointmentOutcome(String appointmentID) {
 
 
 // Helper method to find the next available Record ID
-private static String getNextRecordID(List<String[]> medicalRecords) {
+public static String getNextRecordID(List<String[]> medicalRecords) {
     int highestRecordID = 0;
 
     // Iterate over all records and find the highest Record ID that starts with "R"
@@ -359,36 +359,6 @@ private static String getNextRecordID(List<String[]> medicalRecords) {
             System.out.println("You do not have any confirmed appointments!");
         }
     }
-
-    public static void updatePatientMedicalRecord(String patientID, String diagnosis, String treatmentPlan,String prescriptions, String doctorID) 
-    {
-        System.out.println("Updating Medical Records for Patient ID: " + patientID);
-
-        // Initialize the MedicalRecordCsvHelper to fetch and update medical records
-        MedicalRecordCsvHelper csvHelper = new MedicalRecordCsvHelper();
-        List<String[]> medicalRecords = csvHelper.readCSV();
-
-        boolean recordUpdated = false;
-
-        // Iterate through the records and update the matching one
-        for (String[] record : medicalRecords) {
-            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
-                record[1] = diagnosis != null ? diagnosis : record[1];       // Update diagnosis
-                record[2] = treatmentPlan != null ? treatmentPlan : record[2]; // Update treatment plan
-                recordUpdated = true;
-                break;
-            }
-        }
-
-        if (recordUpdated) {
-            // Write the updated records back to the CSV
-            csvHelper.updateMedicalRecords(medicalRecords);
-            System.out.println("Medical record updated successfully.");
-        } else {
-            System.out.println("Error: No matching record found for Patient ID: " + patientID + " under Doctor ID: " + doctorID);
-        }
-    }
-
 
 
     public static boolean isPatientAssignedToDoctor(String patientID, String doctorID) 

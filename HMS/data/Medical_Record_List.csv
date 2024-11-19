@@ -3,5 +3,4 @@ R1,sick,sick,P1001,D002
 R2,fever,fever,P1001,D001
 R3,sick,sick,P1002,D002
 R3,sick,sick,P1001,D001
-R004,sick,rest,P1002,D001
-R005,sick,sick,P1002,D001
+R004,sick,sick,P1001,D001

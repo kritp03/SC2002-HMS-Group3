@@ -55,26 +55,28 @@ public class PatientManager {
     public void displayMedicalRecords() {
         String patientID = getPatientID(); // Fetch patientID dynamically
         List<String[]> medicalRecords = medicalRecordCsvHelper.readCSV();
-
+    
         boolean recordFound = false;
         System.out.println("Medical Records for Patient ID: " + patientID);
         System.out.println("================================================================");
-
+    
         for (String[] record : medicalRecords) {
-            if (record.length >= 5 && record[4].equalsIgnoreCase(patientID)) {
+            // Check if the record belongs to the patient by comparing PatientID
+            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID)) {
                 System.out.println("Record ID: " + record[0]);
                 System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
                 System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
-                System.out.println("Prescriptions: " + (record[3].isEmpty() ? "N/A" : record[3]));
+                System.out.println("Doctor ID: " + record[4]); // Display the doctor ID
                 System.out.println("----------------------------------------------------------------");
                 recordFound = true;
             }
         }
-
+    
         if (!recordFound) {
-            System.out.println("No medical records found for patient ID: " + patientID);
+            System.out.println("No medical records found for Patient ID: " + patientID);
         }
     }
+    
 
     public void showPatientAndRecords() {
         try {

@@ -1,5 +1,6 @@
 package HMS.src.ui;
 
+import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
@@ -24,50 +25,53 @@ public class PatientUI {
     /**
      * Displays the main menu for the patient and handles user inputs for various options.
      */
-    public static void displayOptions() {
-        System.out.println("=====================================");
-        System.out.println("|                Menu                |");
-        System.out.println("|          Welcome Patient!          |");
-        System.out.println("=====================================");
+    public static void displayOptions() throws Exception{
+    System.out.println("=====================================");
+    System.out.println("|                Menu                |");
+    System.out.println("|          Welcome Patient!          |");
+    System.out.println("=====================================");
 
-        boolean quit = false;
-        do {
-            int patientChoice = validateIntRange(
-                    """
-                    Please select an option:
-                    1. View Medical Record
-                    2. Update Personal Information
-                    3. View Available Appointment Slots
-                    4. Schedule an Appointment
-                    5. Reschedule an Appointment
-                    6. Cancel an Appointment
-                    7. View Scheduled Appointments
-                    8. View Past Appointment Outcome Records
-                    9. Reset Password
-                    10. Logout
-                    """,
-                    1, 10);
-            System.out.println();
+    boolean quit = false;
+    do {
+        int patientChoice = validateIntRange(
+                """
+                Please select an option:
+                1. View Medical Record
+                2. Update Personal Information
+                3. View Available Appointment Slots
+                4. Schedule an Appointment
+                5. Reschedule an Appointment
+                6. Cancel an Appointment
+                7. View Scheduled Appointments
+                8. View Past Appointment Outcome Records
+                9. Reset Password
+                10. Logout
+                """,
+                1, 10);
+        System.out.println();
 
-            switch (patientChoice) {
-                case 1 -> viewMedicalRecords();
-                case 2 -> updatePersonalInformation();
-                case 3 -> viewAvailableSlots();
-                case 4 -> scheduleAppointment();
-                case 5 -> rescheduleAppointment();
-                case 6 -> cancelAppointment();
-                case 7 -> viewScheduledAppointments();
-                case 8 -> viewPastAppointmentOutcomeRecords();
-                case 9 -> passwordManager.changePassword();
-                case 10 -> {
-                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
-                    quit = true;
-                    SessionManager.logoutUser();
-                }
-                default -> System.out.println("Invalid choice. Please try again.");
+        switch (patientChoice) {
+            case 1 -> viewMedicalRecords();
+            case 2 -> updatePersonalInformation();
+            case 3 -> viewAvailableSlots();
+            case 4 -> scheduleAppointment();
+            case 5 -> rescheduleAppointment();
+            case 6 -> cancelAppointment();
+            case 7 -> viewScheduledAppointments();
+            case 8 -> viewPastAppointmentOutcomeRecords();
+            case 9 -> passwordManager.changePassword();
+            case 10 -> {
+                System.out.println("Logging out...\nRedirecting to Main Menu...");
+                quit = true; // Exit loop
+                SessionManager.logoutUser();
+                App.main(null); // Redirect to main menu
+                return; // Explicitly exit the method after redirection
             }
-        } while (!quit);
-    }
+            default -> System.out.println("Invalid choice. Please try again.");
+        }
+    } while (!quit);
+}
+
 
     /**
      * Retrieves the current patient's ID from the session.

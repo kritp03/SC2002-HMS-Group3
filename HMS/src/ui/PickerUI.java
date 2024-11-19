@@ -127,7 +127,12 @@ public class PickerUI {
                 role = "Patient";
                 System.out.println("\nLogging in as Patient...");
                 SessionManager.loginUser(role, id);
-                PatientUI.displayOptions();
+                try {
+                    PatientUI.displayOptions();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             case 3 -> {
                 role = "Pharmacist";

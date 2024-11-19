@@ -55,7 +55,7 @@ public class DoctorUI {
                     5. Accept/Decline Appointment Requests
                     6. View Upcoming Appointments
                     7. Record Appointment Outcome
-                    8. Reset Password
+                    8. Change Password
                     9. Logout
                     Enter your choice: """,
                     1, 10);
@@ -132,12 +132,7 @@ public class DoctorUI {
             // Gather input for the new medical record
             String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + ": ");
             String treatmentPlan = validateString("Enter the treatment for Patient " + patientID + ": ");
-            System.out.print("Enter the prescription for Patient " + patientID + ": ");
-            String prescription = InputScanner.getInstance().nextLine().trim();
-            if (prescription.isEmpty()) {
-                prescription = null; // Set prescription to null if input is empty
-            }
-             MedicalRecordCsvHelper medicalrecCsvHelper = new MedicalRecordCsvHelper();
+            MedicalRecordCsvHelper medicalrecCsvHelper = new MedicalRecordCsvHelper();
             List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
             String RecordID = DoctorManager.getNextRecordID(medicalRecords);
 

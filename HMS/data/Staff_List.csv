@@ -2,6 +2,5 @@ Staff ID,Name,Role,Gender,Age,Email
 D001,John Smith,Doctor,Male,45,js@gmail.com
 A001,Sarah Lee,Administrator,Female,40,sl@gmail.com
 D002,Emily Clarke,Doctor,Female,38,ec@gmail.com
-A002,Admin Test,ADMINISTRATOR,MALE,32,adm@gmail.com
 P001,Mark Lee,Pharmacist,Male,29,ml@gmail.com
 D003,Sally Lim,DOCTOR,FEMALE,22,slee@gmail.com

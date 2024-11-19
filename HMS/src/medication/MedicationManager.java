@@ -194,4 +194,128 @@ public class MedicationManager {
         confirmSubmitRequest(medicineName, replenishAmt);
     }
 
+    /**
+     * Gets the medicine ID by its name.
+     * @param medicineName The name of the medicine
+     * @return The medicine ID if found, null otherwise
+     */
+    public String getMedicineIDByName(String medicineName) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[1].equalsIgnoreCase(medicineName)) {
+                return meds.get(i)[0];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the medicine name by its ID.
+     * @param medicineID The ID of the medicine
+     * @return The medicine name if found, null otherwise
+     */
+    public String getMedicineNameByID(String medicineID) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                return meds.get(i)[1];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the initial stock of a medicine.
+     * @param medicineID The ID of the medicine
+     * @return The initial stock if found, 0 otherwise
+     */
+    public int getInitialStock(String medicineID) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                return Integer.parseInt(meds.get(i)[2]);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Gets the low stock alert threshold of a medicine.
+     * @param medicineID The ID of the medicine
+     * @return The low stock alert threshold if found, 0 otherwise
+     */
+    public int getLowStockAlert(String medicineID) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                return Integer.parseInt(meds.get(i)[3]);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Gets the current stock of a medicine.
+     * @param medicineID The ID of the medicine
+     * @return The current stock if found, 0 otherwise
+     */
+    public int getCurrentStock(String medicineID) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                return Integer.parseInt(meds.get(i)[4]);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Updates the stock of a medicine.
+     * @param medicineID The ID of the medicine
+     * @param newStock The new stock value
+     * @return true if update successful, false otherwise
+     */
+    public boolean updateMedicationStock(String medicineID, int newStock) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        boolean updated = false;
+        
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                meds.get(i)[4] = String.valueOf(newStock);
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            medCsvHelper.updateMedications(meds);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Updates the low stock alert threshold of a medicine.
+     * @param medicineID The ID of the medicine
+     * @param newThreshold The new low stock alert threshold
+     * @return true if update successful, false otherwise
+     */
+    public boolean updateLowStockAlert(String medicineID, int newThreshold) {
+        List<String[]> meds = medCsvHelper.readCSV();
+        boolean updated = false;
+        
+        for (int i = 1; i < meds.size(); i++) {
+            if (meds.get(i)[0].equals(medicineID)) {
+                meds.get(i)[3] = String.valueOf(newThreshold);
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            medCsvHelper.updateMedications(meds);
+            return true;
+        }
+        return false;
+    }
 }

@@ -1,9 +1,9 @@
 ﻿requestID,medicineName,quantity,dateOfRequest,status,approvedBy,dateOfApproval
 R001,Paracetamol,10,2024-11-1,APPROVED,Sarah Lee,2024-11-16
 R002,Amoxillin,20,2024-11-3,APPROVED,Sarah Lee,2024-11-16
-R003,ibuprofen,90,2024-11-15,APPROVED,Sarah Lee,2024-11-19
-R004,paracetamol,8,2024-11-15,APPROVED,Sarah Lee,2024-11-19
-R005,paracetamol,33,2024-11-15,APPROVED,Sarah Lee,2024-11-19
-R006,ibuprofen,6,2024-11-15,APPROVED,Sarah Lee,2024-11-19
+R003,ibuprofen,90,2024-11-15,APPROVED,Sarah Lee,2024-11-20
+R004,paracetamol,8,2024-11-15,APPROVED,Sarah Lee,2024-11-20
+R005,paracetamol,33,2024-11-15,APPROVED,Sarah Lee,2024-11-20
+R006,ibuprofen,6,2024-11-15,APPROVED,Sarah Lee,2024-11-20
 R007,paracetamol,80,2024-11-16,APPROVED,Sarah Lee,2024-11-16
-R008,ibuprofen,90,2024-11-16,PENDING,,
+R008,ibuprofen,90,2024-11-16,REJECTED,Sarah Lee,2024-11-20

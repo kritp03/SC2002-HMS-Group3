@@ -124,13 +124,72 @@ public class ValidationHelper {
             try {
                 System.out.print(msg);
                 String input = sc.nextLine().trim();
-                date = LocalDate.parse(input, formatter); // Parse input to LocalDate
-                success = true; // Exit loop if no exception
+                date = LocalDate.parse(input, formatter);
+                success = true;
             } catch (DateTimeParseException e) {
                 System.out.println("Invalid date format. Please enter the date in 'yyyy-MM-dd' format.");
             }
         } while (!success);
 
         return date;
+    }
+
+    /**
+     * Validates and returns a valid email address.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return A valid email address entered by the user.
+     */
+    public static String validateEmail(String msg) {
+        InputScanner sc = InputScanner.getInstance();
+        String email;
+        boolean isValid = false;
+
+        do {
+            System.out.print(msg);
+            email = sc.nextLine().trim();
+            
+            if (email == null || email.isEmpty()) {
+                System.out.println("Email cannot be empty. Please try again.");
+                continue;
+            }
+            
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.(com)$";
+            if (!email.matches(emailRegex)) {
+                System.out.println("Invalid email format. Please enter a valid email address with a proper domain (e.g., .com).");
+                continue;
+            }
+            
+            isValid = true;
+        } while (!isValid);
+        
+        return email;
+    }
+
+    /**
+     * Validates and returns an age input between 18 and 100 inclusive.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return A valid age between 18 and 100.
+     */
+    public static int validateAge(String msg) {
+        InputScanner sc = InputScanner.getInstance();
+        boolean success = false;
+        int age = 0;
+        do {
+            try {
+                System.out.print(msg);
+                age = sc.nextInt();
+                if (age >= 18 && age <= 100) {
+                    success = true;
+                } else {
+                    System.out.println("Age must be between 18 and 100 years old.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid integer.\n");
+                sc.nextLine();
+            }
+        } while (!success);
+        return age;
     }
 }

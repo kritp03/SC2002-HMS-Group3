@@ -58,9 +58,6 @@ public class PharmacistUI {
         System.out.println("|         Welcome Pharmacist!        |");
         System.out.println("=====================================");
 
-        // File paths for medication and appointment data
-        String medFilePath = medicationCsvHelper.getFilePath();
-        String apptFilePath = apptCsvHelper.getFilePath();
 
         boolean quit = false;
         do {

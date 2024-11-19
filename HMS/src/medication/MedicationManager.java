@@ -1,8 +1,10 @@
 package HMS.src.medication;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -30,16 +32,28 @@ public class MedicationManager {
      * Fetches all medicine names from the CSV file.
      * @return A set of all medicine names in the inventory.
      */
-    public Set<String> getAllMedicineNames() {
-        List<String[]> data = medCsvHelper.readCSV();
-        Set<String> medicineNames = new HashSet<>();
-        for (int i = 1; i < data.size(); i++) {
-            if (data.get(i).length > 0) {
-                medicineNames.add(data.get(i)[0].toLowerCase());
-            }
+    // public Set<String> getAllMedicineNames() {
+    //     List<String[]> data = medCsvHelper.readCSV();
+    //     Set<String> medicineNames = new HashSet<>();
+    //     for (int i = 1; i < data.size(); i++) {
+    //         if (data.get(i).length > 0) {
+    //             medicineNames.add(data.get(i)[0].toLowerCase());
+    //         }
+    //     }
+    //     return medicineNames;
+    // }
+
+    public Map<String, String> getAllMedicineNames() {
+    List<String[]> data = medCsvHelper.readCSV();
+    Map<String, String> medicineDetails = new HashMap<>();
+    for (int i = 1; i < data.size(); i++) { 
+        String[] row = data.get(i);
+        if (row.length > 1) { 
+            medicineDetails.put(row[0], row[1]); 
         }
-        return medicineNames;
     }
+    return medicineDetails;
+}
 
     /**
      * Fetches the highest request ID from the CSV and returns the next ID incremented by one.
@@ -68,19 +82,17 @@ public class MedicationManager {
             System.out.println("No data found in CSV file.");
             return;
         }
-        System.out.println("+----------------------+---------------+-------------+--------------+");
-        System.out.format("| %-20s | %-12s | %-11s | %-12s |\n", "Medicine Name", "Initial Stock", "Stock Left",
-                "Stock Status");
-        System.out.println("+----------------------+---------------+-------------+--------------+");
-        for (int i = 1; i < data.size(); i++) {
+        System.out.println("+-------------+----------------------+----------------+----------------+----------------+");
+        System.out.format("| %-11s | %-20s | %-14s | %-14s | %-14s |\n", "Medicine ID", "Medicine Name", "Initial Stock", "Stock Left", "Stock Status");
+        System.out.println("+-------------+----------------------+----------------+----------------+----------------+");
+        for (int i = 1; i < data.size(); i++) { // Assuming the first row is headers
             String[] row = data.get(i);
-            if (row.length >= 4) {
-                String stockStatus = determineStockStatus(Integer.parseInt(row[1]), Integer.parseInt(row[2]),
-                        Integer.parseInt(row[3]));
-                System.out.format("| %-20s | %-13s | %-11s | %-21s |\n", row[0], row[1], row[3], stockStatus);
+            if (row.length >= 6) { // Ensure there are enough elements in the row to avoid ArrayIndexOutOfBoundsException
+                String stockStatus = determineStockStatus(Integer.parseInt(row[2]),Integer.parseInt(row[3]), Integer.parseInt(row[4])); // Adjust to correct indices for low stock alert and stock left
+                System.out.format("| %-11s | %-20s | %-14s | %-14s | %-23s |\n", row[0], row[1], row[2], row[4], stockStatus); // Adjust indices and formats to include medicine ID
             }
         }
-        System.out.println("+----------------------+---------------+-------------+--------------+\n");
+        System.out.println("+-------------+----------------------+----------------+----------------+----------------+\n");
     }
 
     /**
@@ -106,14 +118,17 @@ public class MedicationManager {
      * @param allMedicines A set of all medicine names in the inventory.
      * @return The name of the medicine to replenish.
      */
-    private String promptForMedicineName(Set<String> allMedicines) {
+    private String promptForMedicineName(Map<String, String> allMedicines) {
+        Scanner scanner = new Scanner(System.in);
+        viewMedicationInventory();
         while (true) {
-            System.out.print("Enter the name of the medicine you wish to replenish: "); 
-            String medicineName = scanner.nextLine().toLowerCase();
-            if (allMedicines.contains(medicineName)) {
-                return medicineName;
+            System.out.print("Enter the ID of the medicine you wish to replenish: ");
+            String medicineID = scanner.nextLine().trim().toUpperCase();  
+            
+            if (allMedicines.containsKey(medicineID)) {  // Check if the map contains the key
+                return allMedicines.get(medicineID);  // Return the corresponding medicine name
             } else {
-                System.out.println("Medicine not found in inventory. Please check the name and try again."); // This still prints on a new line for clarity.
+                System.out.println("Medicine not found in inventory. Please check the name and try again.");
             }
         }
     }
@@ -188,7 +203,7 @@ public class MedicationManager {
      * Submits a replenishment request for a medicine.
      */
     public void submitReplenishmentRequest() {
-        Set<String> allMedicines = getAllMedicineNames();
+        Map<String, String> allMedicines = getAllMedicineNames();
         String medicineName = promptForMedicineName(allMedicines);
         int replenishAmt = promptForReplenishmentAmount();
         confirmSubmitRequest(medicineName, replenishAmt);

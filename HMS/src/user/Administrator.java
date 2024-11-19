@@ -71,6 +71,17 @@ public class Administrator extends User {
         manager.addMedication(medication);
     }
 
+    
+    /**
+     * Removes a medication from the inventory.
+     *
+     * @param medicineID The ID of the medication to be removed.
+     */
+    public void removeMedication(String medicineID) {
+        manager.removeMedication(medicineID);
+    }
+
+
     /**
      * Updates the stock level of an existing medication.
      *

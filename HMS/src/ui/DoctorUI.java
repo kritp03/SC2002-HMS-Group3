@@ -102,7 +102,8 @@ public class DoctorUI {
         InputScanner.getInstance().nextLine(); // Clear the buffer after int input
         System.out.println("View Patient Medical Records");
         String patientID = validateString("Enter Patient ID: ");
-        DoctorManager.viewPatientMedicalRecords(patientID);
+        String doctorID = getDoctorID();
+        DoctorManager.viewPatientMedicalRecords(patientID,doctorID);
     }
 
     /**

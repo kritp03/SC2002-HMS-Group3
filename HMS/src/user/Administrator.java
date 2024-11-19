@@ -77,25 +77,27 @@ public class Administrator extends User {
      * @param medicationName The name of the medication.
      * @param newStock       The new stock level.
      */
-    public void updateMedicationStock(String medicationName, int newStock) {
-        manager.updateMedicationStock(medicationName, newStock);
+    public void updateMedicationStock(String medicineID, int newStock) {
+        manager.updateMedicationStock(medicineID, newStock);
     }
+
+    
+    /**
+     * Updates the low stock alert threshold of a medication.
+     *
+     * @param medicineID The ID of the medication.
+     * @param newLowStock The new low stock alert threshold.
+     */
+    public void updateLowStockAlert(String medicineID, int newLowStock) {
+        manager.updateLowStockAlert(medicineID, newLowStock);
+    }
+
 
     /**
      * Views the current medication inventory.
      */
     public void viewMedicationInventory() {
         manager.viewMedicationInventory();
-    }
-
-    /**
-     * Approves or rejects a replenishment request.
-     *
-     * @param request The replenishment request to process.
-     * @param approve true to approve, false to reject.
-     */
-    public void approveReplenishmentRequest(ReplenishmentRequest request, boolean approve) {
-        manager.approveReplenishmentRequest(request, approve);
     }
 
     /**
@@ -117,13 +119,13 @@ public class Administrator extends User {
     }
 
     /**
-     * Processes a specific replenishment request by approving or rejecting it.
+     * Approves a specific replenishment request by approving or rejecting it.
      *
      * @param requestID The ID of the replenishment request.
-     * @param approve   true to approve, false to reject.
+     * @param approve true to approve, false to reject.
      */
-    public void processReplenishmentRequest(String requestID, boolean approve) {
-        manager.processReplenishmentRequest(requestID, approve, this);
+    public void approveReplenishmentRequest(String requestID, boolean approve) {
+        manager.approveReplenishmentRequest(requestID, approve, this);
     }
 
     /**

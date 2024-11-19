@@ -192,11 +192,11 @@ public class PatientManager {
     
         // Prompt the patient to select a slot
         int selectedSlot = -1;
-        while (selectedSlot < 1 || selectedSlot > availabilityData.size() - 1) { // Adjust for header
+        while (selectedSlot < 1 || selectedSlot > availabilityData.size()) { // Adjust for header
             System.out.print("Enter the slot number to schedule an appointment: ");
             try {
                 selectedSlot = Integer.parseInt(scanner.nextLine().trim());
-                if (selectedSlot < 1 || selectedSlot > availabilityData.size() - 1) {
+                if (selectedSlot < 1 || selectedSlot > availabilityData.size()) {
                     System.out.println("Invalid slot number. Please try again.");
                 }
             } catch (NumberFormatException e) {

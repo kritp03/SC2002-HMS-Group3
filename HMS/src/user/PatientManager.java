@@ -141,71 +141,74 @@ public class PatientManager {
 
     public void viewAvailableSlots() {
         List<String[]> availabilityData = availabilityCsvHelper.readCSV();
-
-        if (availabilityData.isEmpty()) {
+    
+        if (availabilityData.size() <= 1) { // Check if there's only a header or empty data
             System.out.println("No available slots found.");
             return;
         }
-
+    
         System.out.println("+----------+----------------------+---------------+-------------+");
         System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor ID", "Date", "Time Slot");
         System.out.println("+----------+----------------------+---------------+-------------+");
-
+    
         int slotNumber = 1; // Initialize slot number
-        for (String[] row : availabilityData) {
+        for (int i = 1; i < availabilityData.size(); i++) { // Start from the second row
+            String[] row = availabilityData.get(i);
             if (row.length >= 3) { // Ensure row has at least doctorID, date, and time
                 System.out.format("| %-8d | %-20s | %-12s | %-11s |\n", 
                                   slotNumber++, row[0], row[1], row[2]);
             }
         }
-
+    
         System.out.println("+----------+----------------------+---------------+-------------+\n");
     }
+    
 
     public void scheduleAppointment(String patientID) {
         List<String[]> availabilityData = availabilityCsvHelper.readCSV();
-
-        if (availabilityData.isEmpty()) {
+    
+        if (availabilityData.size() <= 1) { // Check if there's only a header or empty data
             System.out.println("No available slots found.");
             return;
         }
-
+    
         // Display available slots in tabular format
         System.out.println("+----------+----------------------+---------------+-------------+");
         System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor ID", "Date", "Time Slot");
         System.out.println("+----------+----------------------+---------------+-------------+");
-
+    
         int slotNumber = 1; // Initialize slot number
-        for (String[] row : availabilityData) {
+        for (int i = 1; i < availabilityData.size(); i++) { // Start from the second row
+            String[] row = availabilityData.get(i);
             if (row.length >= 3) { // Ensure row has at least doctorID, date, and time
-                System.out.format("| %-8d | %-20s | %-12s | %-11s |\n",
+                System.out.format("| %-8d | %-20s | %-12s | %-11s |\n", 
                                   slotNumber++, row[0], row[1], row[2]);
             }
         }
-
+    
         System.out.println("+----------+----------------------+---------------+-------------+\n");
-
+    
         // Prompt the patient to select a slot
         int selectedSlot = -1;
-        while (selectedSlot < 1 || selectedSlot > availabilityData.size()) {
+        while (selectedSlot < 1 || selectedSlot > availabilityData.size() - 1) { // Adjust for header
             System.out.print("Enter the slot number to schedule an appointment: ");
             try {
                 selectedSlot = Integer.parseInt(scanner.nextLine().trim());
-                if (selectedSlot < 1 || selectedSlot > availabilityData.size()) {
+                if (selectedSlot < 1 || selectedSlot > availabilityData.size() - 1) {
                     System.out.println("Invalid slot number. Please try again.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
             }
         }
-
-        // Retrieve the selected slot data
-        String[] selectedSlotData = availabilityData.get(selectedSlot - 1);
-
+    
+        // Retrieve the selected slot data (adjust index for header)
+        String[] selectedSlotData = availabilityData.get(selectedSlot);
+    
         // Remove the selected slot from Availability_List.csv
-        availabilityData.remove(selectedSlot - 1);
+        availabilityData.remove(selectedSlot);
         availabilityCsvHelper.writeEntries(availabilityData);
-
+    
         // Add the appointment to Appt_List.csv as PENDING
         String[] appointmentEntry = {
             "AP" + String.format("%03d", appointmentCsvHelper.readCSV().size()), // Generate unique appointment ID
@@ -217,12 +220,13 @@ public class PatientManager {
             ""                   // Outcome
         };
         appointmentCsvHelper.addAppointment(appointmentEntry);
-
+    
         System.out.println("Appointment successfully scheduled!");
         System.out.println("Doctor: " + selectedSlotData[0]);
         System.out.println("Date: " + selectedSlotData[1]);
         System.out.println("Time: " + selectedSlotData[2]);
     }
+    
 
     public void viewScheduledAppointments(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();

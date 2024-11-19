@@ -1,7 +1,9 @@
 recordID,diagnosis,treatmentPlan,prescriptions,Patient ID
 R001,injection,,pk,P1002
 R002,injection,,pk,P1001
-R003,sick,rest,P1002
-R003,fever,sleep,P1001
-R003,sl,s,P1001
-R003,dengue,drip,P1002
+R004,sick,rest,,P1002
+R005,fever,sleep,,P1001
+R006,sl,s,,P1001
+R007,dengue,drip,,P1002
+R008,Cancer,Chemo,,P1001
+R009,Flu,Bed Rest,,P1001

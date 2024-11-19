@@ -3,19 +3,29 @@ package HMS.src.io;
 import java.io.File;
 import java.util.List;
 
-public class AvailabilityCsvHelper extends BaseCsvHelper
-{
-    // The specific CSV file name for unavailability records
+/**
+ * Helper class for managing availability records in a CSV file.
+ * Provides methods for reading, writing, updating, and removing availability data.
+ */
+public class AvailabilityCsvHelper extends BaseCsvHelper {
+
+    /**
+     * The specific CSV file name for availability records.
+     */
     protected String FILE_NAME = "Availability_List.csv";
 
+    /**
+     * Returns the name of the CSV file.
+     * @return The name of the CSV file as a String.
+     */
     @Override
     protected String getFileName() {
         return FILE_NAME;
     }
 
     /**
-     * Reads all unavailability records from the CSV file.
-     * @return List of String arrays containing unavailability data
+     * Reads all availability records from the CSV file.
+     * @return A list of String arrays containing availability data.
      */
     public List<String[]> readCSV() {
         return readEntries();
@@ -23,7 +33,7 @@ public class AvailabilityCsvHelper extends BaseCsvHelper
 
     /**
      * Gets the complete file path for the CSV file.
-     * @return String representing the full file path
+     * @return A String representing the full file path.
      */
     @Override
     public String getFilePath() {
@@ -31,40 +41,31 @@ public class AvailabilityCsvHelper extends BaseCsvHelper
     }
 
     /**
-     * Adds a new unavailability record to the CSV file.
-     * @param unavailability The unavailability data to add
-     */
-    public void addUnavailability(String[] unavailability) {
-        addEntry(unavailability);
-    }
-
-    /**
-     * Adds a new unavailability record to the CSV file.
-     * @param unavailability The unavailability data to add
+     * Adds a new availability record to the CSV file.
+     * @param availability The availability data to add as a String array.
      */
     public void addAvailability(String[] availability) {
         addEntry(availability);
     }
 
-
     /**
-     * Removes an unavailability record by doctor ID and date.
-     * @param doctorID The doctor ID to identify the record
-     * @param date The date to identify the record
+     * Removes an availability record by doctor ID and date.
+     * @param doctorID The doctor ID used to identify the record.
+     * @param date The date used to identify the record.
      */
-    public void removeUnavailability(String doctorID, String date) {
+    public void removeAvailability(String doctorID, String date) {
         List<String[]> entries = readEntries();
-        entries.removeIf(entry -> entry[0].equals(doctorID) && entry[1].equals(date)); // Assumes columns: doctorID, date, time
+        entries.removeIf(entry -> entry[0].equals(doctorID) && entry[1].equals(date));
         writeEntries(entries);
     }
 
     /**
-     * Updates an unavailability record for a specific doctor and date.
-     * @param doctorID The doctor ID to identify the record
-     * @param date The date to identify the record
-     * @param newEntry The updated unavailability data
+     * Updates an availability record for a specific doctor and date.
+     * @param doctorID The doctor ID used to identify the record.
+     * @param date The date used to identify the record.
+     * @param newEntry The updated availability data as a String array.
      */
-    public void updateUnavailability(String doctorID, String date, String[] newEntry) {
+    public void updateAvailability(String doctorID, String date, String[] newEntry) {
         List<String[]> entries = readEntries();
         for (int i = 0; i < entries.size(); i++) {
             String[] entry = entries.get(i);
@@ -77,11 +78,12 @@ public class AvailabilityCsvHelper extends BaseCsvHelper
     }
 
     /**
-     * Retrieves all unavailability records for a specific doctor.
-     * @param doctorID The doctor ID to filter records
-     * @return List of String arrays containing unavailability data for the doctor
+     * Retrieves all availability records for a specific doctor.
+     * @param doctorID The doctor ID to filter records.
+     * @return A list of String arrays containing availability data for the doctor.
      */
-    public List<String[]> getUnavailabilityByDoctor(String doctorID) {
+    public List<String[]> getAvailabilityByDoctor(String doctorID) {
         return getEntriesByFilter(entry -> entry[0].equals(doctorID));
     }
 }
+

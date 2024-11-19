@@ -7,53 +7,78 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manages medical records for patients, allowing for record creation, retrieval, and updates.
+ */
 public class MedicalRecordManager {
-    private static final Map<String, List<MedicalRecord>> records = new HashMap<>();
+    private static final Map<String, List<MedicalRecord>> records = new HashMap<>(); // Stores medical records by patient ID
 
-    // Add a new medical record for a patient
+    /**
+     * Adds a new medical record for a specific patient.
+     *
+     * @param patientID The ID of the patient.
+     * @param record    The medical record to add.
+     */
     public static void addMedicalRecord(String patientID, MedicalRecord record) {
         records.putIfAbsent(patientID, new ArrayList<>());
         records.get(patientID).add(record);
     }
 
-    // Retrieve all medical records for a patient
+    /**
+     * Retrieves all medical records for a specific patient.
+     *
+     * @param patientID The ID of the patient.
+     * @return A list of medical records for the patient, or an empty list if no records exist.
+     */
     public static List<MedicalRecord> getMedicalRecords(String patientID) {
         return records.getOrDefault(patientID, new ArrayList<>());
     }
 
-
-    // Check if a patient exists
+    /**
+     * Checks if a patient has any medical records.
+     *
+     * @param patientID The ID of the patient.
+     * @return True if the patient has records, false otherwise.
+     */
     public static boolean patientExists(String patientID) {
         return records.containsKey(patientID);
     }
 
-    // Add a new entry with diagnosis and treatment to a patient's medical record
+    /**
+     * Adds a new entry with diagnosis and treatment to the latest medical record for a patient.
+     *
+     * @param patientID The ID of the patient.
+     * @param diagnosis The diagnosis to add.
+     * @param treatment The treatment to add.
+     */
     public static void addEntryToRecord(String patientID, String diagnosis, String treatment) {
-        List<MedicalRecord> record = getMedicalRecords(patientID);
-        if (record != null) {
+        List<MedicalRecord> recordList = getMedicalRecords(patientID);
+        if (recordList != null && !recordList.isEmpty()) {
             MedicalEntry entry = new MedicalEntry(diagnosis, treatment);
-            ((MedicalRecord) record).addEntry(entry);
+            recordList.get(recordList.size() - 1).addEntry(entry); // Add entry to the latest record
             System.out.println("Added new entry to medical record for patient ID: " + patientID);
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
     }
 
-    // Initialize medical records for patients without existing records
-    public static void initializeMedicalRecordsForPatients() 
-    {
+    /**
+     * Initializes medical records for all patients without existing records.
+     * Pulls patient data from the Database class.
+     */
+    public static void initializeMedicalRecordsForPatients() {
         for (String patientID : Database.getPatientData().keySet()) {
             records.putIfAbsent(patientID, new ArrayList<>());
         }
         System.out.println("Medical records initialized for patients.");
     }
 
-
-    // Get all patient IDs with medical records
+    /**
+     * Retrieves the IDs of all patients with medical records.
+     *
+     * @return A set of patient IDs with medical records.
+     */
     public static Set<String> getAllPatientIDs() {
         return records.keySet();
     }
-
-
 }
-

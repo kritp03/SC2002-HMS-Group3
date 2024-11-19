@@ -5,11 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Manages appointments in the system, including viewing appointment outcomes and managing appointment records.
+ */
 public class AppointmentManager {
     ApptCsvHelper apptCsvHelper = new ApptCsvHelper();
+    private static final Map<String, Appointment> allAppointments = new HashMap<>();
 
     /**
-     * View appointment outcome record
+     * Views all appointment outcome records from the CSV file.
+     * Prints each record in a formatted structure if data exists.
      */
     public void viewApptOutcomeRecord() {
         List<String[]> apptOutcome = apptCsvHelper.readCSV();
@@ -18,12 +23,10 @@ public class AppointmentManager {
             System.out.println("No appointment outcomes found.");
             return;
         }
-        
 
+        // Loop through and print each outcome record
         for (int i = 1; i < apptOutcome.size(); i++) {
             String[] row = apptOutcome.get(i);
-            // String coloredStatus =
-            // PrescriptionStatus.valueOf(row[8]).showStatusByColor();
             System.out.println("Appointment ID: " + row[0]);
             System.out.println("--------------------");
             System.out.println("Patient ID: " + row[1]);
@@ -38,15 +41,22 @@ public class AppointmentManager {
         }
     }
 
-    private static final Map<String, Appointment> allAppointments = new HashMap<>();
-
-    // Method to add an appointment to the system
+    /**
+     * Adds a new appointment to the system.
+     * 
+     * @param appointment The {@link Appointment} object representing the appointment to add.
+     */
     public static void addAppointment(Appointment appointment) {
         allAppointments.put(appointment.getAppointmentID(), appointment);
     }
 
-    // Method to get appointment by ID
+    /**
+     * Retrieves an appointment by its ID.
+     * 
+     * @param appointmentID The unique identifier of the appointment.
+     * @return The {@link Appointment} object if found, otherwise null.
+     */
     public static Appointment getAppointmentByID(String appointmentID) {
-        return allAppointments.get(appointmentID);  // Return null if not found
+        return allAppointments.get(appointmentID);
     }
 }

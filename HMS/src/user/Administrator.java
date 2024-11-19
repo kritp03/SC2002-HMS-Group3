@@ -5,64 +5,132 @@ import HMS.src.medication.Medication;
 import HMS.src.medication.ReplenishmentRequest;
 import java.util.List;
 
+/**
+ * Represents an Administrator in the Hospital Management System.
+ * The Administrator is responsible for managing staff, appointments, and medication inventory,
+ * as well as approving or rejecting replenishment requests.
+ */
 public class Administrator extends User {
+
+    /**
+     * Instance of the AdministratorManager to handle administrative operations.
+     */
     private AdministratorManager manager = new AdministratorManager();
 
+    /**
+     * Constructor for creating an Administrator object.
+     *
+     * @param userID  Unique ID of the Administrator.
+     * @param name    Name of the Administrator.
+     * @param emailId Email ID of the Administrator.
+     * @param age     Age of the Administrator.
+     * @param gender  Gender of the Administrator.
+     */
     public Administrator(String userID, String name, String emailId, int age, Gender gender) {
         super(userID, name, Role.ADMINISTRATOR, emailId, age, gender);
     }
 
-    // Manage Staff
+    /**
+     * Adds a staff member to the system.
+     *
+     * @param staff The staff member to be added.
+     */
     public void addStaff(User staff) {
         manager.addStaff(staff);
     }
 
+    /**
+     * Removes a staff member from the system by their ID.
+     *
+     * @param staffID The ID of the staff member to be removed.
+     */
     public void removeStaff(String staffID) {
         manager.removeStaff(staffID);
     }
 
+    /**
+     * Views all staff members in the system.
+     */
     public void viewStaff() {
         manager.viewStaff();
     }
 
-    // View Appointments
+    /**
+     * Views all appointments in the system.
+     */
     public void viewAppointments() {
         manager.viewAppointments();
     }
 
-    // Manage Medication Inventory
+    /**
+     * Adds a new medication to the inventory.
+     *
+     * @param medication The medication to be added.
+     */
     public void addMedication(Medication medication) {
         manager.addMedication(medication);
     }
 
+    /**
+     * Updates the stock level of an existing medication.
+     *
+     * @param medicationName The name of the medication.
+     * @param newStock       The new stock level.
+     */
     public void updateMedicationStock(String medicationName, int newStock) {
         manager.updateMedicationStock(medicationName, newStock);
     }
 
+    /**
+     * Views the current medication inventory.
+     */
     public void viewMedicationInventory() {
         manager.viewMedicationInventory();
     }
 
-    // Approve or Reject Replenishment Requests
+    /**
+     * Approves or rejects a replenishment request.
+     *
+     * @param request The replenishment request to process.
+     * @param approve true to approve, false to reject.
+     */
     public void approveReplenishmentRequest(ReplenishmentRequest request, boolean approve) {
         manager.approveReplenishmentRequest(request, approve);
     }
 
-    // Method to view scheduled appointments
+    /**
+     * Views all scheduled appointments.
+     *
+     * @param appointments The list of scheduled appointments to be viewed.
+     */
     public void viewScheduledAppointments(List<Appointment> appointments) {
         manager.viewScheduledAppointments(appointments);
     }
 
-    // Method to get pending replenishment requests
+    /**
+     * Retrieves all pending replenishment requests.
+     *
+     * @return A list of pending replenishment requests.
+     */
     public List<String[]> getPendingReplenishmentRequests() {
         return manager.getPendingReplenishmentRequests();
     }
 
-    // Method to process a replenishment request
+    /**
+     * Processes a specific replenishment request by approving or rejecting it.
+     *
+     * @param requestID The ID of the replenishment request.
+     * @param approve   true to approve, false to reject.
+     */
     public void processReplenishmentRequest(String requestID, boolean approve) {
         manager.processReplenishmentRequest(requestID, approve, this);
     }
 
+    /**
+     * Returns a string representation of the Administrator.
+     *
+     * @return A string containing the Administrator's details.
+     */
     @Override
     public String toString() {
         return String.format("Administrator[ID=%s, Name=%s, Email=%s, Age=%d, Gender=%s]",

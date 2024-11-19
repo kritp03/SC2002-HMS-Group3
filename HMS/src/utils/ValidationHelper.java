@@ -1,63 +1,23 @@
-// package HMS.src.utils;
-
-// import java.util.InputMismatchException;
-
-// import HMS.src.exceptions.InvalidValueException;
-
-// public class ValidationHelper {
-
-//     public static int validateInt(String msg) {
-//         InputScanner sc = InputScanner.getInstance();
-//         boolean success = false;
-//         int input = 0;
-//         do {
-//             try {
-//                 System.out.print(msg);
-//                 input = sc.nextInt();
-//                 if (input >= 0)
-//                     success = true;
-//                 else
-//                     System.out.println("Negative values are invalid.");
-//             } catch (InputMismatchException e) {
-//                 System.out.println("Please enter a valid integer.\n");
-//                 sc.nextLine();
-//             }
-//         } while (!success);
-//         return input;
-//     }
-
-//     public static int validateIntRange(String msg, int start, int end) {
-//         InputScanner sc = InputScanner.getInstance();
-//         boolean success = false;
-//         int input = 0;
-//         do {
-//             try {
-//                 input = validateInt(msg);
-//                 if (start <= input && input <= end) {
-//                     success = true;
-//                 } else {
-//                     throw new InvalidValueException("Invalid range! Please re-enter.\n");
-//                 }
-//             } catch (InvalidValueException e) {
-//                 System.out.println(e.getMessage());
-//                 sc.nextLine();
-//             }
-//         } while (!success);
-//         return input;
-//     }
-
-// }
-
 package HMS.src.utils;
+
 import HMS.src.exceptions.InvalidValueException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 
+/**
+ * Utility class for input validation.
+ * Provides methods to validate various types of user inputs, including integers, strings, booleans, and dates.
+ */
 public class ValidationHelper {
 
-    // Method to validate integer input with a prompt
+    /**
+     * Validates and returns a positive integer input from the user.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return A valid positive integer entered by the user.
+     */
     public static int validateInt(String msg) {
         InputScanner sc = InputScanner.getInstance();
         boolean success = false;
@@ -66,10 +26,11 @@ public class ValidationHelper {
             try {
                 System.out.print(msg);
                 input = sc.nextInt();
-                if (input >= 0)
+                if (input >= 0) {
                     success = true;
-                else
+                } else {
                     System.out.println("Negative values are invalid.");
+                }
             } catch (InputMismatchException e) {
                 System.out.println("Please enter a valid integer.\n");
                 sc.nextLine();
@@ -78,7 +39,14 @@ public class ValidationHelper {
         return input;
     }
 
-    // Method to validate integer input within a range
+    /**
+     * Validates and returns an integer input within a specified range.
+     *
+     * @param msg   The message to prompt the user for input.
+     * @param start The start of the valid range (inclusive).
+     * @param end   The end of the valid range (inclusive).
+     * @return A valid integer within the specified range.
+     */
     public static int validateIntRange(String msg, int start, int end) {
         InputScanner sc = InputScanner.getInstance();
         boolean success = false;
@@ -99,7 +67,12 @@ public class ValidationHelper {
         return input;
     }
 
-    // New Method to validate string input (non-empty)
+    /**
+     * Validates and returns a non-empty string input from the user.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return A valid non-empty string entered by the user.
+     */
     public static String validateString(String msg) {
         InputScanner sc = InputScanner.getInstance();
         String input;
@@ -113,7 +86,12 @@ public class ValidationHelper {
         return input;
     }
 
-    // New Method to validate boolean input (Y/N)
+    /**
+     * Validates and returns a boolean input from the user, interpreted as "Y" for true and "N" for false.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return {@code true} if the user inputs "Y", {@code false} if the user inputs "N".
+     */
     public static boolean validateBoolean(String msg) {
         InputScanner sc = InputScanner.getInstance();
         String input;
@@ -130,6 +108,12 @@ public class ValidationHelper {
         } while (true);
     }
 
+    /**
+     * Validates and returns a date input from the user in the "yyyy-MM-dd" format.
+     *
+     * @param msg The message to prompt the user for input.
+     * @return A valid {@link LocalDate} entered by the user.
+     */
     public static LocalDate validateDate(String msg) {
         InputScanner sc = InputScanner.getInstance();
         LocalDate date = null;
@@ -149,33 +133,4 @@ public class ValidationHelper {
 
         return date;
     }
-
-    // public static LocalDateTime validateDateTime(String msg) {
-    //     InputScanner sc = InputScanner.getInstance();
-    //     LocalDateTime dateTime = null;
-    //     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"); // Correct format
-    //     boolean success = false;
-    
-    //     do {
-    //         try {
-    //             sc.nextLine(); // Flush the buffer before reading input
-    //             System.out.print(msg + " "); // Display the prompt
-    //             String input = sc.nextLine().trim(); // Read user input
-                
-    //             // Debugging input
-    //             System.out.println("Debug: Prompt displayed: '" + msg + "'");
-    //             System.out.println("Debug: Input received: '" + input + "'");
-    
-    //             // Attempt to parse the input
-    //             dateTime = LocalDateTime.parse(input, formatter);
-    //             success = true; // Exit the loop if successful
-    //         } catch (DateTimeParseException e) {
-    //             System.out.println("Invalid date and time format. Please enter in 'DD-MM-YYYY HH:MM' format.");
-    //         }
-    //     } while (!success);
-    
-    //     return dateTime;
-    // }
-    
-    
 }

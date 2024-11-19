@@ -5,10 +5,25 @@ import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 
+/**
+ * The PatientUI class provides an interface for patients to manage their appointments,
+ * view medical records, and update personal information.
+ */
 public class PatientUI {
+
+    /**
+     * Instance of PatientManager to handle patient-related operations.
+     */
     private static final PatientManager patientManager = new PatientManager();
+
+    /**
+     * Instance of PasswordManager for resetting patient passwords.
+     */
     private static final PasswordManager passwordManager = new PasswordManager();
 
+    /**
+     * Displays the main menu for the patient and handles user inputs for various options.
+     */
     public static void displayOptions() {
         System.out.println("=====================================");
         System.out.println("|                Menu                |");
@@ -54,6 +69,10 @@ public class PatientUI {
         } while (!quit);
     }
 
+    /**
+     * Retrieves the current patient's ID from the session.
+     * @return the patient ID if logged in
+     */
     private static String getPatientID() {
         if (!SessionManager.isUserLoggedIn() || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
             System.out.println("User not logged in as Patient. Redirecting to login.");
@@ -72,6 +91,9 @@ public class PatientUI {
         return patientID;
     }
 
+    /**
+     * Allows the patient to view their medical records.
+     */
     private static void viewMedicalRecords() {
         String patientID = getPatientID();
 
@@ -80,9 +102,14 @@ public class PatientUI {
             return;
         }
 
+        System.out.println("Viewing Medical Records for Patient" + patientID);
+
         patientManager.showPatientAndRecords();
     }
 
+    /**
+     * Allows the patient to update their personal information.
+     */
     private static void updatePersonalInformation() {
         String patientID = getPatientID();
 
@@ -90,63 +117,84 @@ public class PatientUI {
             System.out.println("Error: Cannot update information. Invalid Patient ID.");
             return;
         }
+
+        System.out.println("Updating " + patientID +"'s Personal Information");
         patientManager.updatePatientContactInfo();
     }
 
-    private static void viewAvailableSlots() 
-    {
+    /**
+     * Displays available appointment slots for the patient.
+     */
+    private static void viewAvailableSlots() {
+        System.out.println("Displaying Available Slots");
         patientManager.viewAvailableSlots();
     }
 
-    private static void scheduleAppointment() 
-    {
+    /**
+     * Allows the patient to schedule a new appointment.
+     */
+    private static void scheduleAppointment() {
         String patientID = getPatientID();
-    
+
         if (patientID == null) {
             System.out.println("Error: Cannot schedule an appointment. Invalid Patient ID.");
             return;
         }
+
+        System.out.println("Scheduling an appointment:");
         patientManager.scheduleAppointment(patientID);
     }
 
-    private static void viewScheduledAppointments() 
-    {
+    /**
+     * Allows the patient to view their scheduled appointments.
+     */
+    private static void viewScheduledAppointments() {
         String patientID = getPatientID();
-    
+
         if (patientID == null) {
             System.out.println("Error: Cannot view appointments. Invalid Patient ID.");
             return;
         }
+
+        System.out.println("Viewing Scheduled appointments for " + patientID);
         patientManager.viewScheduledAppointments(patientID);
     }
 
-    private static void cancelAppointment() 
-    {
+    /**
+     * Allows the patient to cancel one of their scheduled appointments.
+     */
+    private static void cancelAppointment() {
         String patientID = getPatientID();
-    
+
         if (patientID == null) {
             System.out.println("Error: Cannot cancel appointment. Invalid Patient ID.");
             return;
         }
+        System.out.println("Choose which appointment to cancel: ");
         patientManager.cancelAppointment();
     }
 
-    private static void rescheduleAppointment()
-    {
+    /**
+     * Allows the patient to reschedule an existing appointment by canceling
+     * and rebooking a new one.
+     */
+    private static void rescheduleAppointment() {
         String patientID = getPatientID();
-    
+
         if (patientID == null) {
             System.out.println("Error: Cannot reschedule appointment. Invalid Patient ID.");
             return;
         }
+
+        System.out.println("Choose which appointment to reschedule: ");
         int appointmentToReschedule = patientManager.getAppointmentToReschedule(patientID);
-    
+
         if (appointmentToReschedule == -1) {
             System.out.println("Error: No appointment selected to reschedule.");
             return;
         }
         boolean rescheduled = patientManager.rescheduleAppointment(appointmentToReschedule);
-    
+
         if (rescheduled) {
             System.out.println("Appointment successfully canceled and added back to available slots.");
             patientManager.scheduleAppointment(patientID);
@@ -155,18 +203,24 @@ public class PatientUI {
         }
     }
 
+    /**
+     * Allows the patient to view past appointment outcome records.
+     */
     private static void viewPastAppointmentOutcomeRecords() {
         String patientID = getPatientID();
-    
+
         if (patientID == null) {
             System.out.println("Error: Cannot view appointment outcomes. Invalid Patient ID.");
             return;
         }
+        System.out.println("View Appointment Records: ");
         patientManager.viewPastAppointmentOutcomes(patientID);
     }
-    
-    
-    
+
+    /**
+     * Entry point for the PatientUI.
+     * @param args Command-line arguments
+     */
     public static void main(String[] args) {
         try {
             displayOptions();
@@ -176,3 +230,4 @@ public class PatientUI {
         }
     }
 }
+

@@ -9,15 +9,23 @@ import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+/**
+ * The DoctorUI class provides an interface for doctors to manage their schedule,
+ * handle patient appointments, and update medical records.
+ */
 public class DoctorUI {
-
+    /**
+     * Instance of PasswordManager for resetting doctor passwords.
+     */
     private static final PasswordManager passwordManager = new PasswordManager();
+    /**
+     * Displays the main menu for the doctor and handles user inputs for various options.
+     * @throws Exception if an error occurs while executing options
+     */
 
     public static void displayOptions() throws Exception {
         System.out.println("=====================================");
@@ -71,6 +79,10 @@ public class DoctorUI {
             }
         } while (!quit);
     }
+    /**
+     * Retrieves the current doctor's ID from the session.
+     * @return the doctor ID if logged in
+     */
 
     private static String getDoctorID() {
         if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
@@ -81,12 +93,20 @@ public class DoctorUI {
         return SessionManager.getCurrentUserID();
     }
 
+    /**
+     * Allows the doctor to view the medical records of a specific patient.
+     */
+
     private static void viewPatientMedicalRecords() {
         InputScanner.getInstance().nextLine(); // Clear the buffer after int input
         System.out.println("View Patient Medical Records");
         String patientID = validateString("Enter Patient ID: ");
         DoctorManager.viewPatientMedicalRecords(patientID);
     }
+
+    /**
+     * Allows the doctor to update a patient's medical records with diagnosis, treatment, and prescription.
+     */
 
     private static void updatePatientMedicalRecords() {
         InputScanner.getInstance().nextLine(); // Clear the buffer after int input
@@ -103,12 +123,19 @@ public class DoctorUI {
         DoctorManager.updatePatientMedicalRecord(patientID, diagnosis, treatment, prescription);
     }
 
+    /**
+     * Displays the doctor's personal schedule based on available and booked slots.
+     */
     private static void viewPersonalSchedule() {
         System.out.println("View Personal Schedule");
         String doctorID = getDoctorID();
         SlotManager.initializeDoctorSlotsFromCSV(doctorID);
         SlotManager.printFullSchedule(doctorID); // Reuse doctorID
     }
+
+    /**
+     * Allows the doctor to set their availability for appointments by specifying date and time.
+     */
 
     private static void setAvailabilityForAppointments() {
 
@@ -172,17 +199,11 @@ public class DoctorUI {
         System.out.println("Availability set for Dr. " + doctorID);
     }
 
-    // private static void acceptAppointmentRequests() {
-    // DoctorManager.viewAllAppts(getDoctorID());
-    // // InputScanner.getInstance().nextLine(); // Clear the buffer after int input
-    // System.out.println("Accept Appointment Requests");
-    // String apptID = validateString("Enter Appointment ID: ");
-    // String doctorID = getDoctorID();
-    // DoctorManager.acceptAppointment(apptID, doctorID); // Reuse doctorID
-    // }
-
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Handles accepting or declining appointment requests from patients.
+     */
     public static void acceptDeclineAppointment() {
         String doctorID = getDoctorID();
         boolean hasPending = DoctorManager.viewAllPending(doctorID); // This will return true if there are pending
@@ -211,6 +232,10 @@ public class DoctorUI {
         }
     }
 
+    /**
+     * Records the outcome of an appointment by entering details about diagnosis, treatment, and notes.
+     */
+
     private static void recordAppointmentOutcome() {
         DoctorManager.viewAllConfirmed(getDoctorID());
         System.out.print("Enter Appointment ID to proceed: ");
@@ -222,9 +247,17 @@ public class DoctorUI {
         DoctorManager.recordAppointmentOutcome(apptID);
     }
 
+    /**
+     * Displays all confirmed and pending appointments for the doctor.
+     */
+
     private static void viewUpcomingAppointments() {
         DoctorManager.viewAllConfirmedAndPending(getDoctorID());
     }
+
+    /**
+     * Displays all confirmed and pending appointments for the doctor.
+     */
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

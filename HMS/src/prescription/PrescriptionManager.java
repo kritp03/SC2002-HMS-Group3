@@ -1,19 +1,24 @@
 package HMS.src.prescription;
 
-import java.util.List;
-import java.util.Scanner;
-
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.PrescriptionCsvHelper;
 import HMS.src.utils.SessionManager;
-
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Scanner;
 
+/**
+ * Manages the processing, updating, and displaying of prescription records.
+ */
 public class PrescriptionManager {
-    private Scanner scanner = new Scanner(System.in);
-    private PrescriptionCsvHelper prescriptionCsvHelper = new PrescriptionCsvHelper();
-    private MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper();
+    private final Scanner scanner = new Scanner(System.in); // Scanner for user input
+    private final PrescriptionCsvHelper prescriptionCsvHelper = new PrescriptionCsvHelper(); // Helper for managing prescriptions in CSV
+    private final MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper(); // Helper for managing medications in CSV
 
+    /**
+     * Runs the prescription update process, allowing the user to view and modify
+     * prescriptions.
+     */
     public void runPrescriptionUpdateProcess() {
         List<String[]> prescriptions = showAllPrescriptions();
         String prescriptionId = getPrescriptionId();
@@ -23,6 +28,11 @@ public class PrescriptionManager {
         processStatusUpdate(prescriptions, prescriptionId);
     }
 
+    /**
+     * Displays all prescriptions and returns the list of prescription data.
+     *
+     * @return List of prescription records from the CSV.
+     */
     private List<String[]> showAllPrescriptions() {
         List<String[]> data = prescriptionCsvHelper.readCSV();
         if (data.size() <= 1) {
@@ -33,6 +43,11 @@ public class PrescriptionManager {
         return data;
     }
 
+    /**
+     * Prompts the user to input a prescription ID to edit.
+     *
+     * @return The prescription ID entered by the user.
+     */
     private String getPrescriptionId() {
         System.out.print("Enter the Prescription ID to edit or 'B' to go back: ");
         String prescriptionId = scanner.nextLine().trim();
@@ -43,6 +58,12 @@ public class PrescriptionManager {
         return prescriptionId;
     }
 
+    /**
+     * Processes the status update for a specific prescription.
+     *
+     * @param prescriptions List of prescriptions.
+     * @param prescriptionId The ID of the prescription to update.
+     */
     private void processStatusUpdate(List<String[]> prescriptions, String prescriptionId) {
         String[] prescription = prescriptionCsvHelper.getPrescriptionById(prescriptionId);
         if (prescription == null) {
@@ -56,6 +77,11 @@ public class PrescriptionManager {
         updatePrescriptionStatus(prescription);
     }
 
+    /**
+     * Updates the status of a prescription.
+     *
+     * @param prescription The prescription data to update.
+     */
     private void updatePrescriptionStatus(String[] prescription) {
         String newStatus = getNewStatus();
         if ("D".equalsIgnoreCase(newStatus)) {
@@ -69,8 +95,7 @@ public class PrescriptionManager {
             prescription[3] = "CANCELLED";
             prescriptionCsvHelper.updatePrescriptionById(prescription[0], prescription);
             System.out.println("Prescription has been cancelled.");
-
-        }else if ("B".equalsIgnoreCase(newStatus)) {
+        } else if ("B".equalsIgnoreCase(newStatus)) {
             return;
         } else {
             System.out.println("Invalid input. No changes made.");
@@ -78,6 +103,11 @@ public class PrescriptionManager {
         showAllPrescriptions();
     }
 
+    /**
+     * Decrements the stock of a specific medication.
+     *
+     * @param medicineName The name of the medicine to decrement.
+     */
     private void decrementStock(String medicineName) {
         List<String[]> allMedicines = medicationCsvHelper.readCSV();
         boolean isUpdated = false;
@@ -96,13 +126,23 @@ public class PrescriptionManager {
         }
     }
 
+    /**
+     * Prompts the user to enter a new status for the prescription.
+     *
+     * @return The new status entered by the user.
+     */
     private String getNewStatus() {
         System.out.print("Enter 'D' to dispense, 'C' to cancel or 'B' to go back: ");
         return scanner.nextLine().trim().toUpperCase();
     }
 
+    /**
+     * Prints the list of prescriptions in a tabular format.
+     *
+     * @param data List of prescription records.
+     * @param skipHeader Whether to skip the header row in the data.
+     */
     private void printPrescriptions(List<String[]> data, boolean skipHeader) {
-        // Extended table format to accommodate the new column
         System.out.println(
                 "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
         System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s | %-14s |\n",
@@ -117,10 +157,17 @@ public class PrescriptionManager {
                 String status = row[3].trim().toUpperCase();
                 String coloredStatus = PrescriptionStatus.valueOf(status).showStatusByColor();
                 System.out.format("| %-14s | %-14s | %-7s | %-8s | %-14s | %-16s | %-12s | %-14s | %-14s |\n",
-                        row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7], row[8]); // Assuming the last element is "Approved by"
+                        row[0], row[1], row[2], coloredStatus, row[4], row[5], row[6], row[7], row[8]);
             }
         }
         System.out.println(
                 "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
+    }
+
+    /**
+     * Closes the scanner to prevent resource leaks.
+     */
+    public void closeScanner() {
+        scanner.close();
     }
 }

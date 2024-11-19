@@ -193,7 +193,7 @@ public class PatientUI {
             System.out.println("Error: No appointment selected to reschedule.");
             return;
         }
-        boolean rescheduled = patientManager.rescheduleAppointment(appointmentToReschedule);
+        boolean rescheduled = patientManager.rescheduleAppointment(patientID, appointmentToReschedule);
 
         if (rescheduled) {
             System.out.println("Appointment successfully canceled and added back to available slots.");

@@ -232,7 +232,7 @@ public class MedicationManager {
     public String getMedicineNameByID(String medicineID) {
         List<String[]> meds = medCsvHelper.readCSV();
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 return meds.get(i)[1];
             }
         }
@@ -247,7 +247,7 @@ public class MedicationManager {
     public int getInitialStock(String medicineID) {
         List<String[]> meds = medCsvHelper.readCSV();
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 return Integer.parseInt(meds.get(i)[2]);
             }
         }
@@ -262,7 +262,7 @@ public class MedicationManager {
     public int getLowStockAlert(String medicineID) {
         List<String[]> meds = medCsvHelper.readCSV();
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 return Integer.parseInt(meds.get(i)[3]);
             }
         }
@@ -277,7 +277,7 @@ public class MedicationManager {
     public int getCurrentStock(String medicineID) {
         List<String[]> meds = medCsvHelper.readCSV();
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 return Integer.parseInt(meds.get(i)[4]);
             }
         }
@@ -295,7 +295,7 @@ public class MedicationManager {
         boolean updated = false;
         
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 meds.get(i)[4] = String.valueOf(newStock);
                 updated = true;
                 break;
@@ -320,7 +320,7 @@ public class MedicationManager {
         boolean updated = false;
         
         for (int i = 1; i < meds.size(); i++) {
-            if (meds.get(i)[0].equals(medicineID)) {
+            if (meds.get(i)[0].equalsIgnoreCase(medicineID)) {
                 meds.get(i)[3] = String.valueOf(newThreshold);
                 updated = true;
                 break;

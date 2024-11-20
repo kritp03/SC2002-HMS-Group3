@@ -60,18 +60,14 @@ public static void recordAppointmentOutcome(String appointmentID) {
         String treatmentPlan = scanner.nextLine();
         System.out.print("Enter the medicine name (if any): ");
         String medicine = scanner.nextLine().trim();
-        System.out.print("Enter the dosage (if any): ");
-        String dosage = scanner.nextLine().trim();
         System.out.print("Enter any notes: ");
         String notes = scanner.nextLine().trim();
 
-        // Debug: Print out diagnosis and treatmentPlan
         System.out.println("Diagnosis: " + diagnosis);
         System.out.println("Treatment Plan: " + treatmentPlan);
 
         // Combine medicine and dosage for prescriptions
-        String prescriptions = (medicine != null && !medicine.isEmpty() ? medicine : "N/A") + 
-                               (dosage != null && !dosage.isEmpty() ? ", " + dosage : "");
+        String prescriptions = (medicine != null && !medicine.isEmpty() ? medicine : "N/A");
 
         // Create the outcome entry for the appointment outcome CSV (with service)
         String[] newOutcome = new String[] {
@@ -82,6 +78,7 @@ public static void recordAppointmentOutcome(String appointmentID) {
                 appointment[4],  // Appointment Time
                 service,         // Service Type (Service Provided)
                 prescriptions,   // Prescriptions (medicine and dosage)
+                "PENDING",       // Status (PENDING by default)
                 notes            // Notes
         };
 
@@ -92,7 +89,8 @@ public static void recordAppointmentOutcome(String appointmentID) {
                 appointment[2],  // Doctor ID
                 appointment[3],  // Date of Appointment
                 appointment[4],  // Appointment Time
-                "COMPLETED"      // Status
+                "COMPLETED"    ,  // Status
+                appointment[6]   // Outcome ID
         };
 
         // Add the outcome entry to the appointment outcome CSV

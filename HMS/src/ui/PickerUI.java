@@ -156,6 +156,7 @@ public class PickerUI {
     
         if (authenticateUser(id, password, expectedRole)) {
             handleLogin(domain, id);
+            //
         } else {
             System.out.println("Invalid credentials or role mismatch, please try again.");
             displayLoginOptions();

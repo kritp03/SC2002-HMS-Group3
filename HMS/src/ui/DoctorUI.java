@@ -152,7 +152,6 @@ public class DoctorUI {
         }
     }
     
-    
 
     /**
      * Displays the doctor's personal schedule based on available and booked slots.

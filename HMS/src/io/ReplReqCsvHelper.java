@@ -47,7 +47,7 @@ public class ReplReqCsvHelper extends BaseCsvHelper{
     public void updateRequest(String requestID, String status, String approverName, String approvalDate) {
         List<String[]> requests = readCSV();
         for (String[] request : requests) {
-            if (request[0].equals(requestID)) {
+            if (request[0].equalsIgnoreCase(requestID)) {
                 request[4] = status;
                 request[5] = approverName;
                 request[6] = approvalDate;

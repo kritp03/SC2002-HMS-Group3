@@ -121,10 +121,16 @@ public class PickerUI {
      * 
      * @return A hashed password string.
      */
-    private String getUserPassword() {
-        return passwordManager.hashPassword(passwordManager.getPassword("Please enter your password: "));
-    }
+    // public String getUserPassword() {
+    //     return passwordManager.hashPassword(passwordManager.getPassword("Please enter your password: "));
+    // }
 
+    public String getUserPassword() {
+        System.out.print("Please enter your password: ");
+        String inputPassword = scanner.nextLine();
+        System.out.println("hashedpw: " + passwordManager.hashPassword(inputPassword));
+        return passwordManager.hashPassword(inputPassword);
+    }
     /**
      * Authenticates the user by verifying their ID and hashed password against
      * stored credentials.

@@ -202,7 +202,6 @@ public class DoctorManager {
                     newRecordID, // Generate new Record ID
                     diagnosis, // Diagnosis
                     treatmentPlan, // Treatment Plan
-                    patientBloodType,
                     patientID, // Patient ID
                     doctorID
             };
@@ -213,6 +212,7 @@ public class DoctorManager {
             medicalrecCsvHelper.updateMedicalRecords(medicalRecords);
 
             System.out.println("Updated appointment details and added new medical record successfully.");
+            
         }
     }
 

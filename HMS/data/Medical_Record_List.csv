@@ -1,14 +1,18 @@
-recordID,diagnosis,treatmentPlan,PatientID, DoctorID
-R001,sick,sick,P1001,D002
-R002,fever,fever,P1001,D001
-R003,sick,sick,P1002,D002
-R004,sick,sick,P1001,D001
-R005,,Good,P1002,D001
-R006,,,P1002,D001
-R007,fracture,cast,P1002,D001
-R008,cough,xx,p1001,D001
-R009,pes a,none,P1001,D001
+recordID,diagnosis,treatmentPlan,PatientID," DoctorID",
+R001,sick,sick,P1001,D002,
+R002,fever,fever,P1001,D001,
+R003,sick,sick,P1002,D002,
+R004,sick,sick,P1001,D001,
+R005,,Good,P1002,D001,
+R006,,,P1002,D001,
+R007,fracture,cast,P1002,D001,
+R008,cough,xx,p1001,D001,
+R009,pes a,none,P1001,D001,
 R010,pes c,panadol,B+,P1002,D001
 R011,fever,paracetamol,B+,P1002,D001
 R012,fever,rest,A+,P1001,D001
 R013,fever,rest,B+,P1002,D001
+R014,chicken pox,rest,p1001,D001,
+R015,ns,rest,B+,P1002,D001
+R016,rash,rest,p1001,D001,
+R017,fever,rest,A+,P1001,D001

@@ -10,3 +10,6 @@ R008,cough,xx,p1001,D001
 R009,pes a,none,P1001,D001
 R010,l,l,P1001,D001
 R011,a,a,P1001,D001
+R012,fever,medicine,p1001,D001
+R013,fever,rest,p1001,D001
+R014,fever,rest,P1002,D001

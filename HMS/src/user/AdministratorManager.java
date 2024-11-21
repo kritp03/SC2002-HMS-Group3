@@ -435,7 +435,8 @@ public class AdministratorManager {
         }
 
         String adminName = getAdminNameByID(adminID);
-        replReqHelper.updateRequest(requestID, status, adminName, LocalDate.now().toString());
+        String dateToday = LocalDate.now().toString();
+        replReqHelper.updateRequest(requestID, status, adminName, dateToday);
         System.out.println("Request " + requestID + " has been " + status.toLowerCase() + ".");
     }
     /**

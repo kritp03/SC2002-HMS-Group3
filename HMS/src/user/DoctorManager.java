@@ -178,6 +178,7 @@ public class DoctorManager {
             medicalrecCsvHelper.updateMedicalRecords(medicalRecords);
 
             System.out.println("Updated appointment details and added new medical record successfully.");
+            
         }
     }
 

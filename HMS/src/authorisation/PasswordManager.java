@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import HMS.src.io.PasswordCsvHelper;
 import HMS.src.utils.SessionManager;
-
+import HMS.src.ui.PickerUI;
 /**
  * Implementation of IPasswordManager interface responsible for managing user passwords
  * in the Hospital Management System.
@@ -59,6 +59,7 @@ public class PasswordManager implements IPasswordManager {
         String storedHash = userData[1];
         return hashedPassword.equals(storedHash);
     }
+
 
     /**
      * Prompts the user to enter the new password and confirms it.
@@ -130,3 +131,4 @@ public class PasswordManager implements IPasswordManager {
         }
     }
 }
+

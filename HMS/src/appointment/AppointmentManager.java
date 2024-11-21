@@ -18,27 +18,69 @@ public class AppointmentManager {
      */
     public void viewApptOutcomeRecord() {
         List<String[]> apptOutcome = apptCsvHelper.readCSV();
-
-        if (apptOutcome.isEmpty()) {
+    
+        if (apptOutcome.isEmpty() || apptOutcome.size() == 1) { // Check if only header or completely empty
             System.out.println("No appointment outcomes found.");
             return;
         }
-
-        // Loop through and print each outcome record
+    
+        // Define headers and determine the width of each column based on content
+        String[] headers = { "Appointment ID", "Patient ID", "Dr ID", "Date of Appointment", "Appointment Time", "Service", "Medicine Name", "Dosage", "Notes" };
+        int[] maxWidths = new int[headers.length];
+    
+        // Set initial column widths based on header lengths
+        for (int i = 0; i < headers.length; i++) {
+            maxWidths[i] = headers[i].length();
+        }
+    
+        // Adjust column widths based on data
         for (int i = 1; i < apptOutcome.size(); i++) {
             String[] row = apptOutcome.get(i);
-            System.out.println("Appointment ID: " + row[0]);
-            System.out.println("--------------------");
-            System.out.println("Patient ID: " + row[1]);
-            System.out.println("Dr ID: " + row[2]);
-            System.out.println("Date of Appointment: " + row[3]);
-            System.out.println("Appointment Time: " + row[4]);
-            System.out.println("Service: " + row[5]);
-            System.out.println("Medicine Name: " + row[6]);
-            System.out.println("Dosage: " + row[7]);
-            System.out.println("Notes: " + row[8]);
+            for (int j = 0; j < row.length; j++) {
+                if (row[j] != null && maxWidths[j] < row[j].length()) {
+                    maxWidths[j] = row[j].length();
+                }
+            }
+        }
+    
+        // Print table header line
+        System.out.print("+");
+        for (int width : maxWidths) {
+            System.out.print("-".repeat(width + 2) + "+");
+        }
+        System.out.println();
+    
+        // Print header row
+        System.out.print("|");
+        for (int i = 0; i < headers.length; i++) {
+            System.out.printf(" %-" + maxWidths[i] + "s |", headers[i]);
+        }
+        System.out.println();
+    
+        // Print header underlining
+        System.out.print("+");
+        for (int width : maxWidths) {
+            System.out.print("-".repeat(width + 2) + "+");
+        }
+        System.out.println();
+    
+        // Print each data row
+        for (int i = 1; i < apptOutcome.size(); i++) {
+            System.out.print("|");
+            String[] row = apptOutcome.get(i);
+            for (int j = 0; j < row.length; j++) {
+                String toPrint = (row[j] == null ? "" : row[j]);
+                System.out.printf(" %-" + maxWidths[j] + "s |", toPrint);
+            }
             System.out.println();
         }
+    
+        // End table with a line
+        System.out.print("+");
+        for (int width : maxWidths) {
+            System.out.print("-".repeat(width + 2) + "+");
+        }
+        System.out.println();
     }
 
     /**

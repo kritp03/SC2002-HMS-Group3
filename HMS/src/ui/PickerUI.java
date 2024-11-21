@@ -8,6 +8,7 @@ import HMS.src.io.StaffCsvHelper;
 import HMS.src.utils.SessionManager;
 import HMS.src.utils.ValidationHelper;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,10 +127,27 @@ public class PickerUI {
      * 
      * @return A hashed password string.
      */
-    private String getUserPassword() {
-        return passwordManager.hashPassword(passwordManager.getPassword("Please enter your password: "));
-    }
 
+    /**
+     * Prompts the user to enter their password, hashes it, and masks the input.
+     * 
+     * @return A hashed password string.
+     */
+    public String getUserPassword() {
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("No console available. Please run from a command line that supports password masking.");
+            return null; // Or handle more gracefully
+        } else {
+            char[] passwordArray = console.readPassword("Please enter your password: ");
+            if (passwordArray == null) {
+                System.out.println("No password entered.");
+                return null; // Or handle more gracefully
+            }
+            String inputPassword = new String(passwordArray);
+            return passwordManager.hashPassword(inputPassword);
+        }
+    }
     /**
      * Authenticates the user by verifying their ID and hashed password against
      * stored credentials.

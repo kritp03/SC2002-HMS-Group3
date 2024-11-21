@@ -146,7 +146,7 @@ public class AdministratorManager {
         
         // First check if staff exists and is not an administrator
         for (String[] staff : currentStaff) {
-            if (staff[0].equals(staffID)) {
+            if (staff[0].equalsIgnoreCase(staffID)) {
                 found = true;
                 if (staff[2].equalsIgnoreCase("Administrator")) {
                     System.out.println("Error: Administrators cannot be removed from the system.");
@@ -380,13 +380,17 @@ public class AdministratorManager {
      * @return A string representing the stock status, color-coded for terminal display.
      */
     private String determineStockStatus(int initialStock, int lowStockAlert, int stockLeft) {
-        int highThreshold = (int) (lowStockAlert + 0.2 * initialStock);
-        if (stockLeft > highThreshold) {
-            return ANSI_GREEN + "High" + ANSI_RESET;
-        } else if (stockLeft > lowStockAlert && stockLeft <= highThreshold) {
-            return ANSI_YELLOW + "Moderate" + ANSI_RESET;
+        // Define thresholds for clarity
+        int highThreshold = (int) (initialStock * 0.8); 
+        int moderateThreshold = lowStockAlert;         
+    
+        // Determine stock status based on thresholds
+        if (stockLeft >= highThreshold) {
+            return ANSI_GREEN + "High" + ANSI_RESET;       
+        } else if (stockLeft >= moderateThreshold && stockLeft < highThreshold) {
+            return ANSI_YELLOW + "Moderate" + ANSI_RESET;   
         } else {
-            return ANSI_RED + "Low" + ANSI_RESET;
+            return ANSI_RED + "Low" + ANSI_RESET;          
         }
     }
     /**

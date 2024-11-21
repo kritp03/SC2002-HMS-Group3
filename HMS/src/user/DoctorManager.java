@@ -5,9 +5,6 @@ import HMS.src.io.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import HMS.src.ui.DoctorUI;
-import HMS.src.ui.PatientUI;
-import HMS.src.prescription.PrescriptionManager;
 
 /**
  * The DoctorManager class provides functionalities for doctors to manage
@@ -286,7 +283,7 @@ public class DoctorManager {
         for (String[] appointment : appointments) {
             if (appointment[0].equalsIgnoreCase(appointmentID) && appointment[2].equalsIgnoreCase(doctorID)
                     && "PENDING".equalsIgnoreCase(appointment[5])) {
-                appointment[5] = "DECLINED"; // Update the status to CONFIRMED
+                appointment[5] = "DECLINED"; // Update the status to DECLINED
                 updatedAppointment = appointment; // This holds the full updated appointment row
                 found = true;
                 break;

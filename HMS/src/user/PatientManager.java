@@ -1,5 +1,6 @@
 package HMS.src.user;
 
+import HMS.src.appointment.AppointmentStatus;
 import HMS.src.io.AppointmentCsvHelper;
 import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.AvailabilityCsvHelper;
@@ -363,50 +364,66 @@ public class PatientManager {
      */
     public void viewScheduledAppointments(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
-
+    
         if (appointments.isEmpty()) {
             System.out.println("No appointments found.");
             return;
         }
-
+    
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
         System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
                       "Appt ID", "Status", "Doctor ID", "Date", "Time Slot", "Outcome");
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
+    
         boolean foundAppointments = false;
-
+    
         for (String[] appointment : appointments) {
             try {
                 // Ensure each row has the required fields and matches the patient ID
                 if (appointment.length >= 7 && appointment[1].equalsIgnoreCase(patientID)) {
-                    foundAppointments = true;
-
-                    // Default handling for empty fields
-                    String status = appointment[5].isEmpty() ? "N/A" : appointment[5];
-                    String outcome = appointment[6].isEmpty() ? "N/A" : appointment[6];
-
-                    System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
-                                  appointment[0], // Appointment ID
-                                  status,         // Status (Pending/Confirmed)
-                                  appointment[2], // Doctor ID
-                                  appointment[3], // Date
-                                  appointment[4], // Time Slot
-                                  outcome         // Outcome
-                    );
+                    // Get the appointment status
+                    String statusRaw = appointment[5].isEmpty() ? "N/A" : appointment[5];
+                    AppointmentStatus status;
+                    try {
+                        status = AppointmentStatus.valueOf(statusRaw.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        continue; // Skip invalid statuses
+                    }
+    
+                    // Only display PENDING or CONFIRMED appointments
+                    if (status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED) {
+                        foundAppointments = true;
+    
+                        // Use the status color coding
+                        String statusColor = status.showStatusByColor();
+    
+                        // Default handling for empty outcome
+                        String outcome = appointment[6].isEmpty() ? "N/A" : appointment[6];
+    
+                        System.out.format("| %-8s | %-10s | %-20s | %-12s | %-11s | %-11s |\n", 
+                                          appointment[0], // Appointment ID
+                                          statusColor,    // Color-coded Status
+                                          appointment[2], // Doctor ID
+                                          appointment[3], // Date
+                                          appointment[4], // Time Slot
+                                          outcome         // Outcome
+                        );
+                    }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error processing row: " + String.join(", ", appointment));
                 System.out.println("Details: " + e.getMessage());
             }
         }
-
+    
         if (!foundAppointments) {
-            System.out.println("No appointments found for Patient ID: " + patientID);
+            System.out.println("No pending or confirmed appointments found for Patient ID: " + patientID);
         }
-
+    
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
     }
+    
+    
     /**
      * Allows the patient to cancel one of their scheduled appointments.
      * The canceled slot is added back to the availability list.
@@ -415,40 +432,85 @@ public class PatientManager {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
         List<String[]> availabilitySlots = availabilityCsvHelper.readCSV();
         String patientID = getPatientID();
-
-        // Filter appointments for the logged-in patient
-        List<String[]> patientAppointments = new ArrayList<>();
+    
+        // Filter appointments for the logged-in patient with status PENDING or CONFIRMED
+        List<String[]> cancelableAppointments = new ArrayList<>();
         for (String[] appointment : appointments) {
-            if (appointment.length >= 7 && appointment[1].trim().equalsIgnoreCase(patientID)) {
-                patientAppointments.add(appointment);
+            if (appointment.length >= 6 && appointment[1].trim().equalsIgnoreCase(patientID)) {
+                AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+                if (status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED) {
+                    cancelableAppointments.add(appointment);
+                }
             }
         }
-
-        if (patientAppointments.isEmpty()) {
-            System.out.println("You have no appointments to cancel.");
+    
+        if (cancelableAppointments.isEmpty()) {
+            System.out.println("You have no appointments that can be cancelled.");
             return;
         }
-
-        // Print the appointments with an extra "Slot Number" column
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-        System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", 
-                      "Slot No.", "Appt ID", "Doctor ID", "Date", "Time Slot", "Status");
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
-        for (int i = 0; i < patientAppointments.size(); i++) {
-            String[] appointment = patientAppointments.get(i);
-            System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n", 
-                          i + 1, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
+    
+        // Define column headers
+        String[] headers = {"Slot No.", "Appt ID", "Doctor ID", "Date", "Time Slot", "Status"};
+    
+        // Determine column widths dynamically using plain text (no ANSI codes)
+        int[] columnWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length(); // Start with header length
         }
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
-
+    
+        for (int i = 0; i < cancelableAppointments.size(); i++) {
+            String[] appointment = cancelableAppointments.get(i);
+    
+            AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+            String plainStatus = status.toString(); // Use plain text for width calculation
+    
+            columnWidths[0] = Math.max(columnWidths[0], String.valueOf(i + 1).length()); // Slot No.
+            columnWidths[1] = Math.max(columnWidths[1], appointment[0].length());       // Appt ID
+            columnWidths[2] = Math.max(columnWidths[2], appointment[2].length());       // Doctor ID
+            columnWidths[3] = Math.max(columnWidths[3], appointment[3].length());       // Date
+            columnWidths[4] = Math.max(columnWidths[4], appointment[4].length());       // Time Slot
+            columnWidths[5] = Math.max(columnWidths[5], plainStatus.length());          // Status
+        }
+    
+        // Build the separator line
+        StringBuilder separator = new StringBuilder("+");
+        for (int width : columnWidths) {
+            separator.append("-".repeat(width + 2)).append("+");
+        }
+    
+        // Print header
+        System.out.println(separator);
+        System.out.print("|");
+        for (int i = 0; i < headers.length; i++) {
+            System.out.printf(" %-"+columnWidths[i]+"s |", headers[i]);
+        }
+        System.out.println();
+        System.out.println(separator);
+    
+        // Print rows with color-coded status
+        for (int i = 0; i < cancelableAppointments.size(); i++) {
+            String[] appointment = cancelableAppointments.get(i);
+            AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+            String coloredStatus = status.showStatusByColor(); // Get color-coded status
+    
+            System.out.print("|");
+            System.out.printf(" %-"+columnWidths[0]+"d |", i + 1);                       // Slot No.
+            System.out.printf(" %-"+columnWidths[1]+"s |", appointment[0]);             // Appt ID
+            System.out.printf(" %-"+columnWidths[2]+"s |", appointment[2]);             // Doctor ID
+            System.out.printf(" %-"+columnWidths[3]+"s |", appointment[3]);             // Date
+            System.out.printf(" %-"+columnWidths[4]+"s |", appointment[4]);             // Time Slot
+            System.out.printf(" %-"+columnWidths[5]+"s |", coloredStatus);              // Status
+            System.out.println();
+        }
+        System.out.println(separator);
+    
         // Get valid slot number using ValidationHelper
-        int slotNumber = validationHelper.validateIntRange("Enter the slot number of the appointment you wish to cancel: ", 1, patientAppointments.size());
-
+        int slotNumber = validationHelper.validateIntRange("Enter the slot number of the appointment you wish to cancel: ", 1, cancelableAppointments.size());
+    
         // Get the appointment to cancel
-        String[] canceledAppointment = patientAppointments.get(slotNumber - 1); // Adjust for 0-based index
+        String[] canceledAppointment = cancelableAppointments.get(slotNumber - 1); // Adjust for 0-based index
         appointments.removeIf(app -> app[0].equals(canceledAppointment[0])); // Remove by matching appointment ID
-
+    
         // Add the canceled slot back to availability
         String[] newSlot = {
             canceledAppointment[2], // Doctor ID
@@ -456,13 +518,14 @@ public class PatientManager {
             canceledAppointment[4]  // Time
         };
         availabilitySlots.add(newSlot);
-
+    
         // Update the CSV files
         appointmentCsvHelper.writeEntries(appointments);
         availabilityCsvHelper.writeEntries(availabilitySlots);
-
-        System.out.println("Appointment " + canceledAppointment[0] + " has been successfully canceled.");
+    
+        System.out.println("Appointment " + canceledAppointment[0] + " has been successfully cancelled.");
     }
+    
 
     /**
      * Retrieves the slot number of an appointment the patient wishes to reschedule.
@@ -472,35 +535,78 @@ public class PatientManager {
      */
     public int getAppointmentToReschedule(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
-        List<String[]> patientAppointments = new ArrayList<>();
-
-        // Filter appointments belonging to the patient
+        List<String[]> reschedulableAppointments = new ArrayList<>();
+    
+        // Filter appointments that are reschedulable (PENDING or CONFIRMED)
         for (String[] appointment : appointments) {
-            if (appointment.length >= 2 && appointment[1].equalsIgnoreCase(patientID)) {
-                patientAppointments.add(appointment);
+            if (appointment.length >= 6 && appointment[1].equalsIgnoreCase(patientID)) {
+                AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+                if (status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED) {
+                    reschedulableAppointments.add(appointment);
+                }
             }
         }
-
-        if (patientAppointments.isEmpty()) {
-            System.out.println("No scheduled appointments found for patient ID: " + patientID);
+    
+        if (reschedulableAppointments.isEmpty()) {
+            System.out.println("You have no appointments to reschedule.");
             return -1;
         }
-
-        // Display appointments in tabular format
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-        System.out.format("| %-8s | %-10s | %-20s | %-13s | %-11s | %-11s |\n", "Slot No.", "Appt ID", "Doctor ID", "Date", "Time", "Status");
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
-        int slotNumber = 1;
-        for (String[] appointment : patientAppointments) {
-            System.out.format("| %-8d | %-10s | %-20s | %-13s | %-11s | %-11s |\n",
-                slotNumber++, appointment[0], appointment[2], appointment[3], appointment[4], appointment[5]);
+    
+        // Define column headers
+        String[] headers = {"Slot No.", "Appt ID", "Doctor ID", "Date", "Time", "Status"};
+    
+        // Determine column widths dynamically
+        int[] columnWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length(); // Start with header length
         }
-        System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
-
-        int selectedSlot = validationHelper.validateIntRange("Enter the slot number of the appointment to reschedule: ", 1, patientAppointments.size());
-        return selectedSlot;
+        for (String[] appointment : reschedulableAppointments) {
+            AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+            String plainStatus = status.toString(); // For width calculation
+            columnWidths[0] = Math.max(columnWidths[0], String.valueOf(reschedulableAppointments.indexOf(appointment) + 1).length()); // Slot No.
+            columnWidths[1] = Math.max(columnWidths[1], appointment[0].length()); // Appt ID
+            columnWidths[2] = Math.max(columnWidths[2], appointment[2].length()); // Doctor ID
+            columnWidths[3] = Math.max(columnWidths[3], appointment[3].length()); // Date
+            columnWidths[4] = Math.max(columnWidths[4], appointment[4].length()); // Time
+            columnWidths[5] = Math.max(columnWidths[5], plainStatus.length()); // Status
+        }
+    
+        // Print table header
+        StringBuilder separator = new StringBuilder("+");
+        for (int width : columnWidths) {
+            separator.append("-".repeat(width + 2)).append("+");
+        }
+        System.out.println(separator);
+        System.out.print("|");
+        for (int i = 0; i < headers.length; i++) {
+            System.out.printf(" %-"+columnWidths[i]+"s |", headers[i]);
+        }
+        System.out.println();
+        System.out.println(separator);
+    
+        // Print table rows
+        for (int i = 0; i < reschedulableAppointments.size(); i++) {
+            String[] appointment = reschedulableAppointments.get(i);
+            AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+            String coloredStatus = status.showStatusByColor(); // Colored status
+            System.out.print("|");
+            System.out.printf(" %-"+columnWidths[0]+"d |", i + 1); // Slot No.
+            System.out.printf(" %-"+columnWidths[1]+"s |", appointment[0]); // Appt ID
+            System.out.printf(" %-"+columnWidths[2]+"s |", appointment[2]); // Doctor ID
+            System.out.printf(" %-"+columnWidths[3]+"s |", appointment[3]); // Date
+            System.out.printf(" %-"+columnWidths[4]+"s |", appointment[4]); // Time
+            System.out.printf(" %-"+columnWidths[5]+"s |", coloredStatus); // Status
+            System.out.println();
+        }
+        System.out.println(separator);
+    
+        // Get user input for slot selection
+        int selectedSlot = validationHelper.validateIntRange("Enter the slot number of the appointment to reschedule: ", 1, reschedulableAppointments.size());
+    
+        return selectedSlot ; // Return zero-based index
     }
+    
+
     /**
      * Reschedules an appointment for the patient by canceling the selected appointment 
      * and adding it back to the availability list.
@@ -511,22 +617,25 @@ public class PatientManager {
      */
     public boolean rescheduleAppointment(String patientID, int selectedSlot) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
-        List<String[]> patientAppointments = new ArrayList<>();
+        List<String[]> reschedulableAppointments = new ArrayList<>();
     
-        // Filter appointments belonging to the patient
+        // Filter appointments that are reschedulable (PENDING or CONFIRMED)
         for (String[] appointment : appointments) {
-            if (appointment.length >= 2 && appointment[1].equalsIgnoreCase(patientID)) {
-                patientAppointments.add(appointment);
+            if (appointment.length >= 6 && appointment[1].equalsIgnoreCase(patientID)) {
+                AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+                if (status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED) {
+                    reschedulableAppointments.add(appointment);
+                }
             }
         }
     
-        if (selectedSlot < 1 || selectedSlot > patientAppointments.size()) {
+        if (selectedSlot < 1 || selectedSlot > reschedulableAppointments.size()) {
             System.out.println("Error: Invalid slot number.");
             return false;
         }
     
-        // Get the appointment to reschedule based on the slot number
-        String[] appointmentToReschedule = patientAppointments.get(selectedSlot - 1);
+        // Get the appointment to reschedule based on the selected slot
+        String[] appointmentToReschedule = reschedulableAppointments.get(selectedSlot - 1); // Adjust for 0-based index
     
         // Remove the appointment from the main appointments list
         appointments.removeIf(appointment -> appointment[0].equals(appointmentToReschedule[0]));
@@ -547,6 +656,7 @@ public class PatientManager {
         System.out.println("Appointment " + appointmentToReschedule[0] + " has been successfully canceled and added back to available slots.");
         return true;
     }
+    
     /**
      * Displays the outcomes of past appointments for the currently logged-in patient.
      *
@@ -626,5 +736,4 @@ public class PatientManager {
         }
         System.out.println(separator);
     }
-    
 }

@@ -131,33 +131,55 @@ public class AdministratorManager {
 
     /**
      * Removes a staff member from the system.
+     * Also removes their corresponding password entry from the password list.
      * 
      * @param staffID The ID of the staff member to remove
      */
     public void removeStaff(String staffID) {
         List<String[]> currentStaff = staffHelper.readCSV();
+        List<String[]> currentPasswords = passwordHelper.readCSV();
         boolean removed = false;
         boolean found = false;
         
         List<String[]> updatedStaff = new ArrayList<>();
+        List<String[]> updatedPasswords = new ArrayList<>();
+        
+        // First check if staff exists and is not an administrator
         for (String[] staff : currentStaff) {
-            if (!staff[0].equals(staffID)) {
-                updatedStaff.add(staff);
-            } else {
+            if (staff[0].equals(staffID)) {
                 found = true;
                 if (staff[2].equalsIgnoreCase("Administrator")) {
                     System.out.println("Error: Administrators cannot be removed from the system.");
                     return;
                 }
+            }
+        }
+
+        if (!found) {
+            System.out.println("Staff member not found with ID: " + staffID);
+            return;
+        }
+
+        // Remove from staff list
+        for (String[] staff : currentStaff) {
+            if (!staff[0].equalsIgnoreCase(staffID)) {
+                updatedStaff.add(staff);
+            } else {
                 removed = true;
+            }
+        }
+
+        // Remove from password list
+        for (String[] password : currentPasswords) {
+            if (!password[0].equalsIgnoreCase(staffID)) {
+                updatedPasswords.add(password);
             }
         }
 
         if (removed) {
             staffHelper.updateMedications(updatedStaff);
+            passwordHelper.updatePasswords(updatedPasswords);
             System.out.println("Staff member removed with ID: " + staffID);
-        } else if (!found) {
-            System.out.println("Staff member not found with ID: " + staffID);
         }
     }
 
@@ -249,7 +271,21 @@ public class AdministratorManager {
             }
         }
 
-        String medID = "M" + String.format("%03d", currentMeds.size());
+        int highestId = 0;
+        for (String[] med : currentMeds) {
+            if (med[0].startsWith("M")) {
+                try {
+                    int currentId = Integer.parseInt(med[0].substring(1));
+                    if (currentId > highestId) {
+                        highestId = currentId;
+                    }
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+            }
+        }
+
+        String medID = "M" + String.format("%03d", highestId + 1);
         medication.setMedicationID(medID);
 
         String dosageForm = medication.getDosageForm().toString();

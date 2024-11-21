@@ -325,7 +325,7 @@ public class DoctorManager {
          // Loop through all rows (skipping the header)
          for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
              String[] row = patientRec.get(i);
-             if (row[0].equals(patientID)) {
+             if (row[0].equalsIgnoreCase(patientID)) {
                  patientName = row[1];
                  patientGender = row[3];
                  patientBloodType = row[4];
@@ -379,21 +379,29 @@ public class DoctorManager {
                     && "pending".equalsIgnoreCase(appointment[5])) {
                 if (!hasPending) {
                     // Print headers only if there's at least one pending appointment
-                    System.out.println("+-----------+-----------+------------+------------+-----------+");
-                    System.out.println("| Appt ID   | Patient ID | Date       | Time       | Status    |");
-                    System.out.println("+-----------+-----------+------------+------------+-----------+");
+                    String line = "+------------+------------+---------------+-------------+------------+";
+                    System.out.println(line);
+                    System.out.format("| %-10s | %-10s | %-13s | %-11s | %-10s |%n",
+                            "Appt ID", "Patient ID", "Date", "Time", "Status");
+                    System.out.println(line);
                     hasPending = true;
                 }
-                System.out.format("| %-9s | %-10s | %-11s | %-11s | %-9s |\n",
-                        appointment[0], // Appointment ID
-                        appointment[1], // Patient ID
-                        appointment[3], // Date
-                        appointment[4], // Time
-                        appointment[5]); // Status
+                
+                AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+                String coloredStatus = padColoredString(status.showStatusByColor(), 10);
+                
+                System.out.format("| %-10s | %-10s | %-13s | %-11s | %s |%n",
+                        appointment[0],    // Appointment ID
+                        appointment[1],    // Patient ID
+                        appointment[3],    // Date
+                        appointment[4],    // Time
+                        coloredStatus      // Status with color and padding
+                );
             }
         }
+
         if (hasPending) {
-            System.out.println("+-----------+------------+------------+-----------+");
+            System.out.println("+------------+------------+---------------+-------------+------------+");
         } else {
             System.out.println("You do not have any pending appointments!");
         }
@@ -418,22 +426,29 @@ public class DoctorManager {
                     && ("CONFIRMED".equalsIgnoreCase(appointment[5]) || "PENDING".equalsIgnoreCase(appointment[5]))) {
                 if (!hasAppointments) {
                     // Print headers only if there's at least one confirmed or pending appointment
-                    System.out.println("+-----------+-----------+------------+------------+-----------+");
-                    System.out.println("| Appt ID   | Patient ID | Date       | Time       | Status    |");
-                    System.out.println("+-----------+-----------+------------+------------+-----------+");
+                    String line = "+------------+------------+---------------+-------------+------------+";
+                    System.out.println(line);
+                    System.out.format("| %-10s | %-10s | %-13s | %-11s | %-10s |%n",
+                            "Appt ID", "Patient ID", "Date", "Time", "Status");
+                    System.out.println(line);
                     hasAppointments = true;
                 }
-                String statusColored = AppointmentStatus.valueOf(appointment[5].toUpperCase()).showStatusByColor();
-                System.out.format("| %-9s | %-10s | %-11s | %-11s | %-9s |\n",
-                        appointment[0], // Appointment ID
-                        appointment[1], // Patient ID
-                        appointment[3], // Date
-                        appointment[4], // Time
-                        statusColored); // Status
+
+                AppointmentStatus status = AppointmentStatus.valueOf(appointment[5].toUpperCase());
+                String coloredStatus = padColoredString(status.showStatusByColor(), 10);
+
+                System.out.format("| %-10s | %-10s | %-13s | %-11s | %s |%n",
+                        appointment[0],    // Appointment ID
+                        appointment[1],    // Patient ID
+                        appointment[3],    // Date
+                        appointment[4],    // Time
+                        coloredStatus      // Status with color and padding
+                );
             }
         }
+
         if (hasAppointments) {
-            System.out.println("+-----------+-----------+------------+------------+-----------+\n");
+            System.out.println("+------------+------------+---------------+-------------+------------+\n");
         } else {
             System.out.println("You do not have any confirmed or pending appointments!\n");
         }
@@ -497,5 +512,24 @@ public class DoctorManager {
             }
         }
         return false; // The patient is not assigned to the doctor
+    }
+
+    /**
+     * Pads a colored string to a specific width, accounting for ANSI color codes.
+     * 
+     * @param str The colored string containing ANSI codes
+     * @param width The desired width of the visible text
+     * @return The padded string with proper spacing
+     */
+    private static String padColoredString(String str, int width) {
+        String plainText = str.replaceAll("\u001B\\[[;\\d]*m", "");
+        int padding = width - plainText.length();
+        int lastResetIndex = str.lastIndexOf("\u001B[0m");
+        
+        if (lastResetIndex >= 0) {
+            return str.substring(0, lastResetIndex) + " ".repeat(padding) + str.substring(lastResetIndex);
+        } else {
+            return String.format("%-" + width + "s", str);
+        }
     }
 }

@@ -101,22 +101,7 @@ public static void recordAppointmentOutcome(String appointmentID) {
         List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
         String patientID = appointment[1];
 
-        //read patient blood type
-        PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
-        List<String[]> patientRec = patientCsvHelper.readCSV();
-        int COLUMN_INDEX_FOR_ID = 0; // Patient ID column
-        int COLUMN_INDEX_FOR_BLOOD_TYPE = 4; // Blood Type column
-        
-        String patientBloodType = null;
-        
-        // Loop through all rows (skipping the header)
-        for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
-            String[] row = patientRec.get(i);
-            if (row[COLUMN_INDEX_FOR_ID].equals(patientID)) {
-                patientBloodType = row[COLUMN_INDEX_FOR_BLOOD_TYPE];
-                break; // Exit the loop once a match is found
-            }
-        }        
+             
         
         // Create the new record ID for this entry
         String newRecordID = getNextRecordID(medicalRecords);
@@ -129,7 +114,6 @@ public static void recordAppointmentOutcome(String appointmentID) {
             newRecordID,        // Generate new Record ID
             diagnosis,          // Diagnosis
             treatmentPlan,      // Treatment Plan
-            patientBloodType,
             patientID,    // Patient ID
             doctorID
         };
@@ -245,13 +229,34 @@ public static String getNextRecordID(List<String[]> medicalRecords) {
     
         // Check if records exist for the given patient ID and doctor ID
         boolean recordFound = false;
+         //read patient blood type
+         PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
+         List<String[]> patientRec = patientCsvHelper.readCSV();
+         String patientName = null;
+         String patientGender = null;
+         String patientBloodType = null;
+ 
+ 
+         // Loop through all rows (skipping the header)
+         for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
+             String[] row = patientRec.get(i);
+             if (row[0].equals(patientID)) {
+                 patientName = row[1];
+                 patientGender = row[3];
+                 patientBloodType = row[4];
+                 break; // Exit the loop once a match is found
+             }
+         }   
     
         // Print the header for the table
+        System.out.println("\nPatient Name: " + patientName + " | Gender: "+ patientGender + " | Blood Type: " + patientBloodType);
         System.out.println("+------------+----------------------+--------------------------+");
         System.out.format("| %-10s | %-20s | %-24s |\n",
                 "Record ID", "Diagnosis", "Treatment Plan");
         System.out.println("+------------+----------------------+--------------------------+");
-    
+        
+        
+       
         // Iterate through the medical records and check for the patient's records assigned to the doctor
         for (String[] record : medicalRecords) {
             // Ensure the record has valid data and matches the patient ID and doctor ID
@@ -301,7 +306,7 @@ public static String getNextRecordID(List<String[]> medicalRecords) {
             }
         }
         if (hasPending) {
-            System.out.println("+-----------+-----------+------------+------------+-----------+");
+            System.out.println("+-----------+------------+------------+-----------+");
         } else {
             System.out.println("You do not have any pending appointments!");
         }

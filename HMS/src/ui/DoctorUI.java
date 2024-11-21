@@ -146,12 +146,9 @@ public class DoctorUI {
             medicalRecords.add(newRecord);
             medicalrecCsvHelper.updateMedicalRecords(medicalRecords);
             System.out.println("New medical record added successfully.");
-
-        
         
         }
     }
-    
     
 
     /**

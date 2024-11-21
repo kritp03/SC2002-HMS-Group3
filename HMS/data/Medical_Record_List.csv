@@ -4,3 +4,7 @@ R002,fever,fever,P1001,D001
 R003,sick,sick,P1002,D002
 R004,sick,sick,P1001,D001
 R005,,Good,P1002,D001
+R006,,,P1002,D001
+R007,fracture,cast,P1002,D001
+R008,cough,xx,p1001,D001
+R009,pes a,none,P1001,D001

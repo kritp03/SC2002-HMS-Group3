@@ -60,18 +60,14 @@ public static void recordAppointmentOutcome(String appointmentID) {
         String treatmentPlan = scanner.nextLine();
         System.out.print("Enter the medicine name (if any): ");
         String medicine = scanner.nextLine().trim();
-        System.out.print("Enter the dosage (if any): ");
-        String dosage = scanner.nextLine().trim();
         System.out.print("Enter any notes: ");
         String notes = scanner.nextLine().trim();
 
-        // Debug: Print out diagnosis and treatmentPlan
         System.out.println("Diagnosis: " + diagnosis);
         System.out.println("Treatment Plan: " + treatmentPlan);
 
         // Combine medicine and dosage for prescriptions
-        String prescriptions = (medicine != null && !medicine.isEmpty() ? medicine : "N/A") + 
-                               (dosage != null && !dosage.isEmpty() ? ", " + dosage : "");
+        String prescriptions = (medicine != null && !medicine.isEmpty() ? medicine : "N/A");
 
         // Create the outcome entry for the appointment outcome CSV (with service)
         String[] newOutcome = new String[] {
@@ -82,6 +78,7 @@ public static void recordAppointmentOutcome(String appointmentID) {
                 appointment[4],  // Appointment Time
                 service,         // Service Type (Service Provided)
                 prescriptions,   // Prescriptions (medicine and dosage)
+                "PENDING",       // Status (PENDING by default)
                 notes            // Notes
         };
 
@@ -92,7 +89,8 @@ public static void recordAppointmentOutcome(String appointmentID) {
                 appointment[2],  // Doctor ID
                 appointment[3],  // Date of Appointment
                 appointment[4],  // Appointment Time
-                "COMPLETED"      // Status
+                "COMPLETED"    ,  // Status
+                appointment[6]   // Outcome ID
         };
 
         // Add the outcome entry to the appointment outcome CSV
@@ -103,6 +101,23 @@ public static void recordAppointmentOutcome(String appointmentID) {
         List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
         String patientID = appointment[1];
 
+        //read patient blood type
+        PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
+        List<String[]> patientRec = patientCsvHelper.readCSV();
+        int COLUMN_INDEX_FOR_ID = 0; // Patient ID column
+        int COLUMN_INDEX_FOR_BLOOD_TYPE = 4; // Blood Type column
+        
+        String patientBloodType = null;
+        
+        // Loop through all rows (skipping the header)
+        for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
+            String[] row = patientRec.get(i);
+            if (row[COLUMN_INDEX_FOR_ID].equals(patientID)) {
+                patientBloodType = row[COLUMN_INDEX_FOR_BLOOD_TYPE];
+                break; // Exit the loop once a match is found
+            }
+        }        
+        
         // Create the new record ID for this entry
         String newRecordID = getNextRecordID(medicalRecords);
 
@@ -114,6 +129,7 @@ public static void recordAppointmentOutcome(String appointmentID) {
             newRecordID,        // Generate new Record ID
             diagnosis,          // Diagnosis
             treatmentPlan,      // Treatment Plan
+            patientBloodType,
             patientID,    // Patient ID
             doctorID
         };
@@ -150,7 +166,6 @@ public static String getNextRecordID(List<String[]> medicalRecords) {
 }
 
 
-   
 
     // View available slots for the doctor
     public void viewAvailableSlots(String doctorID) {
@@ -232,28 +247,27 @@ public static String getNextRecordID(List<String[]> medicalRecords) {
         boolean recordFound = false;
     
         // Print the header for the table
-        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
-        System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
-                "Record ID", "Diagnosis", "Treatment Plan", "Patient ID", "Doctor ID");
-        System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+        System.out.println("+------------+----------------------+--------------------------+");
+        System.out.format("| %-10s | %-20s | %-24s |\n",
+                "Record ID", "Diagnosis", "Treatment Plan");
+        System.out.println("+------------+----------------------+--------------------------+");
     
         // Iterate through the medical records and check for the patient's records assigned to the doctor
         for (String[] record : medicalRecords) {
             // Ensure the record has valid data and matches the patient ID and doctor ID
             if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
-                System.out.format("| %-10s | %-20s | %-24s | %-20s | %-10s |\n",
+                System.out.format("| %-10s | %-20s | %-24s |\n",
                         record[0],                                // Record ID
                         (record[1].isEmpty() ? "N/A" : record[1]), // Diagnosis
-                        (record[2].isEmpty() ? "N/A" : record[2]), // Treatment Plan
-                        (record[3].isEmpty() ? "N/A" : record[3]), // Patient ID
-                        record[4]);                                // Doctor ID
+                        (record[2].isEmpty() ? "N/A" : record[2]) // Treatment Plan
+                        );
                 recordFound = true;
             }
         }
     
         // Close the table or display a message if no records found
         if (recordFound) {
-            System.out.println("+------------+----------------------+--------------------------+----------------------+------------+");
+            System.out.println("+------------+----------------------+--------------------------+");
         } else {
             System.out.println("No medical records found for patient ID: " + patientID + " under doctor ID: " + doctorID);
         }

@@ -243,7 +243,7 @@ public class AdministratorManager {
         List<String[]> currentMeds = medHelper.readCSV();
         
         for (String[] med : currentMeds) {
-            if (med[0].equalsIgnoreCase(medication.getName())) {
+            if (med[1].equalsIgnoreCase(medication.getName())) {
                 System.out.println("Medication already exists. Use update stock function to modify stock levels.");
                 return;
             }

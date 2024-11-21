@@ -24,8 +24,8 @@ public class AppointmentManager {
             return;
         }
     
-        // Define headers and determine the width of each column based on content
-        String[] headers = { "Appointment ID", "Patient ID", "Dr ID", "Date of Appointment", "Appointment Time", "Service", "Medicine Name", "Dosage", "Notes" };
+        // Define headers excluding the 'Dosage' column
+        String[] headers = { "Appointment ID", "Patient ID", "Dr ID", "Date of Appointment", "Appointment Time", "Service", "Medicine Name", "Notes" };
         int[] maxWidths = new int[headers.length];
     
         // Set initial column widths based on header lengths
@@ -36,9 +36,10 @@ public class AppointmentManager {
         // Adjust column widths based on data
         for (int i = 1; i < apptOutcome.size(); i++) {
             String[] row = apptOutcome.get(i);
-            for (int j = 0; j < row.length; j++) {
-                if (row[j] != null && maxWidths[j] < row[j].length()) {
-                    maxWidths[j] = row[j].length();
+            for (int j = 0; j < headers.length; j++) {
+                int dataIndex = (j < 7) ? j : j + 1; // Adjust index to skip 'Dosage'
+                if (row[dataIndex] != null && maxWidths[j] < row[dataIndex].length()) {
+                    maxWidths[j] = row[dataIndex].length();
                 }
             }
         }
@@ -64,12 +65,13 @@ public class AppointmentManager {
         }
         System.out.println();
     
-        // Print each data row
+        // Print each data row, skipping the dosage column
         for (int i = 1; i < apptOutcome.size(); i++) {
             System.out.print("|");
             String[] row = apptOutcome.get(i);
-            for (int j = 0; j < row.length; j++) {
-                String toPrint = (row[j] == null ? "" : row[j]);
+            for (int j = 0; j < headers.length; j++) {
+                int dataIndex = (j < 7) ? j : j + 1; // Adjust index to skip 'Dosage'
+                String toPrint = (row[dataIndex] == null ? "" : row[dataIndex]);
                 System.out.printf(" %-" + maxWidths[j] + "s |", toPrint);
             }
             System.out.println();

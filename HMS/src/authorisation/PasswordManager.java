@@ -8,9 +8,10 @@ import HMS.src.io.PasswordCsvHelper;
 import HMS.src.utils.SessionManager;
 
 /**
- * PasswordManager class is responsible for changing the password of the currently logged in user.
+ * Implementation of IPasswordManager interface responsible for managing user passwords
+ * in the Hospital Management System.
  */
-public class PasswordManager {
+public class PasswordManager implements IPasswordManager {
     private Scanner scanner;
     private PasswordCsvHelper passwordCsvHelper = new PasswordCsvHelper();
     String userId = SessionManager.getCurrentUserID();

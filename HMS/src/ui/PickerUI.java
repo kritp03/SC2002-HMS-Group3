@@ -1,6 +1,7 @@
 package HMS.src.ui;
 
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.PasswordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.io.StaffCsvHelper;
@@ -44,7 +45,7 @@ public class PickerUI {
     /**
      * Manager for password hashing and authentication.
      */
-    private PasswordManager passwordManager = new PasswordManager();
+    private IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Set to store all valid user IDs for authentication.

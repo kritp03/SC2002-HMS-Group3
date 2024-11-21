@@ -3,6 +3,7 @@ package HMS.src.ui;
 import HMS.src.app.App;
 import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.StaffCsvHelper;
@@ -24,7 +25,7 @@ public class DoctorUI {
     /**
      * Instance of PasswordManager for resetting doctor passwords.
      */
-    private static final PasswordManager passwordManager = new PasswordManager();
+    private static final IPasswordManager passwordManager = new PasswordManager();
     /**
      * Displays the main menu for the doctor and handles user inputs for various options.
      * @throws Exception if an error occurs while executing options

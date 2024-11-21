@@ -317,7 +317,8 @@ public class AdminUI {
         } while (!choice.equals("A") && !choice.equals("R"));
 
         boolean approve = choice.equals("A");
-        admin.approveReplenishmentRequest(requestID, approve);
+        String adminID = SessionManager.getCurrentUserID();
+        admin.approveReplenishmentRequest(requestID, approve, adminID);
     }
 
     /**

@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+/**
+ * 
+ */
 public class StaffCsvHelper extends BaseCsvHelper{
 
     protected String FILE_NAME = "Staff_List.csv";
@@ -44,6 +45,19 @@ public class StaffCsvHelper extends BaseCsvHelper{
         return new File(basePath, FILE_NAME).getAbsolutePath();
     }
 
-    
+    /**
+     * Finds a staff member by their full name (case insensitive).
+     * @param fullName The full name of the staff member to find
+     * @return The staff entry as a String array, or null if not found
+     */
+    public String[] findStaffByName(String fullName) {
+        List<String[]> entries = readEntries();
+        for (String[] entry : entries) {
+            if (entry.length > 1 && entry[1].equalsIgnoreCase(fullName)) {
+                return entry;
+            }
+        }
+        return null;
+    }
 
 }

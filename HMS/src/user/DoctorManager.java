@@ -128,43 +128,27 @@ public class DoctorManager {
 
             // Create the outcome entry for the appointment outcome CSV (with service)
             String[] newOutcome = new String[] {
-                    appointment[0], // Appointment ID
-                    appointment[1], // Patient ID
-                    appointment[2], // Doctor ID
-                    appointment[3], // Date of Appointment
-                    appointment[4], // Appointment Time
-                    service, // Service Type (Service Provided)
-                    prescriptions, // Prescriptions (medicine and dosage)
-                    "PENDING", // Status (PENDING by default)
-                    notes // Notes
+                    appointment[0],  // Appointment ID
+                    appointment[1],  // Patient ID
+                    appointment[2],  // Doctor ID
+                    appointment[3],  // Date of Appointment
+                    appointment[4],  // Appointment Time
+                    service,         // Service Type (Service Provided)
+                    prescriptions,   // Prescriptions (medicine and dosage)
+                    "PENDING",       // Status (PENDING by default)
+                    notes            // Notes
             };
 
             // Prepare the updated appointment status (set to "COMPLETED")
             String[] updatedAppointment = new String[] {
-                    appointment[0], // Appointment ID
-                    appointment[1], // Patient ID
-                    appointment[2], // Doctor ID
-                    appointment[3], // Date of Appointment
-                    appointment[4], // Appointment Time
-                    "COMPLETED", // Status
-                    appointment[6] // Outcome ID
+                    appointment[0],  // Appointment ID
+                    appointment[1],  // Patient ID
+                    appointment[2],  // Doctor ID
+                    appointment[3],  // Date of Appointment
+                    appointment[4],  // Appointment Time
+                    "COMPLETED"    ,  // Status
+                    appointment[6]   // Outcome ID
             };
-
-            List<String[]> prescriptionRecords = prescriptionCsvHelper.readCSV();
-            String patientName = getPatientNameByID(appointment[1]);
-            String doctorName = getDrNameByID(appointment[2]);
-            String[] newPrescription = new String[] {
-                    PrescriptionManager.getNextRecordID(prescriptionRecords), // PRESCR ID
-                    medicine, // medicine
-                    "PENDING", // status
-                    patientName,
-                    doctorName,
-                    LocalDate.now().toString(), // today's date
-                    "",
-                    ""
-            };
-            // add new entry into prescription csv
-            prescriptionCsvHelper.addNewPrescription(newPrescription);
 
             // Add the outcome entry to the appointment outcome CSV
             apptCsvHelper.addNewOutcome(newOutcome);
@@ -174,22 +158,7 @@ public class DoctorManager {
             List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
             String patientID = appointment[1];
 
-            // read patient blood type
-            PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
-            List<String[]> patientRec = patientCsvHelper.readCSV();
-            int COLUMN_INDEX_FOR_ID = 0; // Patient ID column
-            int COLUMN_INDEX_FOR_BLOOD_TYPE = 4; // Blood Type column
 
-            String patientBloodType = null;
-
-            // Loop through all rows (skipping the header)
-            for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
-                String[] row = patientRec.get(i);
-                if (row[COLUMN_INDEX_FOR_ID].equals(patientID)) {
-                    patientBloodType = row[COLUMN_INDEX_FOR_BLOOD_TYPE];
-                    break; // Exit the loop once a match is found
-                }
-            }
 
             // Create the new record ID for this entry
             String newRecordID = getNextRecordID(medicalRecords);
@@ -199,12 +168,11 @@ public class DoctorManager {
 
             // Create the new medical record with diagnosis and treatment plan
             String[] newRecord = new String[] {
-                    newRecordID, // Generate new Record ID
-                    diagnosis, // Diagnosis
-                    treatmentPlan, // Treatment Plan
-                    patientBloodType,
-                    patientID, // Patient ID
-                    doctorID
+                newRecordID,        // Generate new Record ID
+                diagnosis,          // Diagnosis
+                treatmentPlan,      // Treatment Plan
+                patientID,    // Patient ID
+                doctorID
             };
 
             // Add the new record to the list
@@ -348,14 +316,33 @@ public class DoctorManager {
         // Check if records exist for the given patient ID and doctor ID
         boolean recordFound = false;
 
+         //read patient blood type
+         PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
+         List<String[]> patientRec = patientCsvHelper.readCSV();
+         String patientName = null;
+         String patientGender = null;
+         String patientBloodType = null;
+ 
+ 
+         // Loop through all rows (skipping the header)
+         for (int i = 1; i < patientRec.size(); i++) { // Start from 1 to skip the header row
+             String[] row = patientRec.get(i);
+             if (row[0].equals(patientID)) {
+                 patientName = row[1];
+                 patientGender = row[3];
+                 patientBloodType = row[4];
+                 break; // Exit the loop once a match is found
+             }
+         }   
+
         // Print the header for the table
+        System.out.println("\nPatient Name: " + patientName + " | Gender: "+ patientGender + " | Blood Type: " + patientBloodType);
         System.out.println("+------------+----------------------+--------------------------+");
         System.out.format("| %-10s | %-20s | %-24s |\n",
                 "Record ID", "Diagnosis", "Treatment Plan");
-        System.out.println("+------------+----------------------+--------------------------+");
-
-        // Iterate through the medical records and check for the patient's records
-        // assigned to the doctor
+        System.out.println("+------------+----------------------+--------------------------+");        
+       
+        // Iterate through the medical records and check for the patient's records assigned to the doctor
         for (String[] record : medicalRecords) {
             // Ensure the record has valid data and matches the patient ID and doctor ID
             if (record.length >= 5 && record[3].equalsIgnoreCase(patientID) && record[4].equalsIgnoreCase(doctorID)) {
@@ -408,7 +395,7 @@ public class DoctorManager {
             }
         }
         if (hasPending) {
-            System.out.println("+-----------+-----------+------------+------------+-----------+");
+            System.out.println("+-----------+------------+------------+-----------+");
         } else {
             System.out.println("You do not have any pending appointments!");
         }

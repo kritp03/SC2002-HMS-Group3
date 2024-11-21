@@ -5,6 +5,7 @@ import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.utils.SessionManager;
 import HMS.src.utils.ValidationHelper;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PatientManager {
     private final MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
     private final AvailabilityCsvHelper availabilityCsvHelper = new AvailabilityCsvHelper();
     private final AppointmentCsvHelper appointmentCsvHelper = new AppointmentCsvHelper();
+    private static StaffCsvHelper staffCsvHelper = new StaffCsvHelper();
     private final Scanner scanner = new Scanner(System.in);
 
     /**
@@ -217,6 +219,22 @@ public class PatientManager {
         System.out.println("\nContact information updated successfully!");
         displayPatientInfo(); // Display updated patient info
     }
+
+    /**
+     * Gets the dr name by its ID.
+     * @param doctorID The ID of the medicine
+     * @return The doctor name if found, null otherwise
+     */
+    public static String getDrNameByID(String doctorID) {
+        List<String[]> staff = staffCsvHelper.readCSV();
+        for (int i = 1; i < staff.size(); i++) {
+            if (staff.get(i)[0].equalsIgnoreCase(doctorID)) {
+                return staff.get(i)[1];
+            }
+        }
+        return null;
+    }
+
     /**
      * Displays available appointment slots for scheduling.
      */
@@ -229,7 +247,7 @@ public class PatientManager {
         }
     
         System.out.println("+----------+----------------------+---------------+-------------+");
-        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor ID", "Date", "Time Slot");
+        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor Name", "Date", "Time Slot");
         System.out.println("+----------+----------------------+---------------+-------------+");
     
         int slotNumber = 1; // Initialize slot number
@@ -237,7 +255,7 @@ public class PatientManager {
             String[] row = availabilityData.get(i);
             if (row.length >= 3) { // Ensure row has at least doctorID, date, and time
                 System.out.format("| %-8d | %-20s | %-12s | %-11s |\n", 
-                                  slotNumber++, row[0], row[1], row[2]);
+                                  slotNumber++, getDrNameByID(row[0]), row[1], row[2]);
             }
         }
     
@@ -258,7 +276,7 @@ public class PatientManager {
     
         // Display available slots in tabular format
         System.out.println("+----------+----------------------+---------------+-------------+");
-        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor ID", "Date", "Time Slot");
+        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor Name", "Date", "Time Slot");
         System.out.println("+----------+----------------------+---------------+-------------+");
     
         int slotNumber = 1; // Initialize slot number
@@ -266,7 +284,7 @@ public class PatientManager {
             String[] row = availabilityData.get(i);
             if (row.length >= 3) { // Ensure row has at least doctorID, date, and time
                 System.out.format("| %-8d | %-20s | %-12s | %-11s |\n", 
-                                  slotNumber++, row[0], row[1], row[2]);
+                                  slotNumber++, getDrNameByID(row[0]), row[1], row[2]);
             }
         }
     
@@ -309,7 +327,7 @@ public class PatientManager {
         appointmentCsvHelper.addAppointment(appointmentEntry);
     
         System.out.println("Appointment successfully scheduled!");
-        System.out.println("Doctor: " + selectedSlotData[0]);
+        System.out.println("Doctor: " + getDrNameByID(selectedSlotData[0]));
         System.out.println("Date: " + selectedSlotData[1]);
         System.out.println("Time: " + selectedSlotData[2]);
     }
@@ -551,26 +569,31 @@ public class PatientManager {
             return;
         }
     
-        // Define column headers (excluding "Status")
+        // Define column headers without 'Dosage'
         String[] headers = {
             "Appt ID", "Patient ID", "Dr ID", "Date", "Time", 
             "Service", "Medicine Name", "Notes"
         };
     
-        // Determine column widths dynamically
+        // Determine column widths dynamically, except for 'Dosage'
         int[] columnWidths = new int[headers.length];
         for (int i = 0; i < headers.length; i++) {
             columnWidths[i] = headers[i].length(); // Start with header length
         }
         for (String[] record : patientOutcomes) {
-            for (int i = 0; i < headers.length; i++) { // Adjust for reduced headers
-                // Skip the "Status" column (index 7 in the original CSV)
-                if (i < 7) {
+            for (int i = 0; i < record.length; i++) {
+                // Ensure we skip dosage which is typically at index 7 in the original setup
+                if (i < 7) { // Skip dosage
                     columnWidths[i] = Math.max(columnWidths[i], record[i].length());
-                } else {
-                    columnWidths[i] = Math.max(columnWidths[i], record[i + 1].length());
+                } else if (i > 7) { // Adjust for shifting left due to skipping 'Dosage'
+                    columnWidths[i - 1] = Math.max(columnWidths[i - 1], record[i].length());
                 }
             }
+        }
+    
+        // Adjust column widths for empty values
+        for (int i = 0; i < columnWidths.length; i++) {
+            columnWidths[i] = Math.max(columnWidths[i], 2); // Minimum width for "-"
         }
     
         // Print header
@@ -586,17 +609,17 @@ public class PatientManager {
         System.out.println();
         System.out.println(separator);
     
-        // Print rows (excluding "Status")
+        // Print rows
         for (String[] record : patientOutcomes) {
             System.out.print("|");
             for (int i = 0; i < headers.length; i++) {
-                String value;
-                if (i < 7) { // Before "Status" column
-                    value = record[i];
-                } else { // After "Status" column
-                    value = record[i + 1];
+                String value = "-";
+                if (i < 7 && i < record.length) { // Skip dosage
+                    value = record[i].isEmpty() ? "-" : record[i];
+                } else if (i >= 7 && i + 1 < record.length) { // Adjust for shifting left due to skipping 'Dosage'
+                    value = record[i + 1].isEmpty() ? "-" : record[i + 1];
                 }
-                System.out.printf(" %-"+columnWidths[i]+"s |", value.isEmpty() ? "-" : value);
+                System.out.printf(" %-"+columnWidths[i]+"s |", value);
             }
             System.out.println();
         }

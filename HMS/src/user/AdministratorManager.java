@@ -5,6 +5,7 @@ import HMS.src.appointment.AppointmentStatus;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.AppointmentCsvHelper;
+import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.PasswordCsvHelper;
 import HMS.src.io.ReplReqCsvHelper;
@@ -34,10 +35,16 @@ public class AdministratorManager {
      */
     private ReplReqCsvHelper replReqHelper = new ReplReqCsvHelper();
     /**
-     * Manager for handling medication-related operations.
+     * Manager for handling appointment-related operations.
      */
     private AppointmentCsvHelper apptHelper = new AppointmentCsvHelper();
-
+    /**
+     * Helper for managing appointment outcomes stored in the appointment CSV.
+     */
+    private ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
+    /**
+     * Manager for handling medication-related operations.
+     */
     private MedicationManager medicationManager = new MedicationManager();
     /**
      * Helper for managing passwords stored in the password CSV.
@@ -447,33 +454,52 @@ public class AdministratorManager {
     }
     /**
      * Displays all appointments in the system in a tabular format.
-     * Includes details like appointment ID, patient ID, doctor ID, date, time, status, and outcome.
+     * Includes details like appointment ID, patient ID, doctor ID, date, time, status,
+     * and additional details from the appointment outcome for completed appointments.
      */
     public void viewAppointments() {
         List<String[]> appointments = apptHelper.readCSV();
+        List<String[]> outcomes = apptOutcomeHelper.readCSV();
+
         if (appointments.isEmpty()) {
             System.out.println("No appointments found.");
             return;
         }
 
         System.out.println("\nAll Appointments:");
-        String line = "+------------+------------+------------+------------+------------+------------+------------+";
+        String line = "+------------+------------+------------+------------+------------+------------+----------------------+----------------------+----------------------+";
         System.out.println(line);
-        System.out.format("| %-10s | %-10s | %-10s | %-10s | %-10s | %-10s | %-10s |%n",
-            "Appt ID", "Patient ID", "Doctor ID", "Date", "Time", "Status", "Outcome");
+        System.out.format("| %-10s | %-10s | %-10s | %-10s | %-10s | %-10s | %-20s | %-20s | %-20s |%n",
+            "Appt ID", "Patient ID", "Doctor ID", "Date", "Time", "Status", "Service", "Medicine Name", "Notes");
         System.out.println(line);
 
         for (int i = 1; i < appointments.size(); i++) {
             String[] appt = appointments.get(i);
             String status = padColoredString(AppointmentStatus.valueOf(appt[5].toUpperCase()).showStatusByColor(), 10);
             
-            System.out.format("| %-10s | %-10s | %-10s | %-10s | %-10s | %s | %-10s |%n",
+            // Default values for additional columns
+            String service = "-";
+            String medicineName = "-";
+            String notes = "-";
+
+            // If the appointment is completed, fetch additional details from outcome
+            if (appt[5].equalsIgnoreCase("COMPLETED")) {
+                for (String[] outcome : outcomes) {
+                    if (outcome[0].equalsIgnoreCase(appt[0])) {
+                        service = outcome[5].isEmpty() ? "-" : outcome[5];
+                        medicineName = outcome[6].isEmpty() ? "-" : outcome[6];
+                        notes = outcome[8].isEmpty() ? "-" : outcome[8];
+                        break;
+                    }
+                }
+            }
+            
+            System.out.format("| %-10s | %-10s | %-10s | %-10s | %-10s | %s | %-20s | %-20s | %-20s |%n",
                 appt[0], appt[1], appt[2], appt[3], appt[4], status,
-                (appt.length > 6 && appt[6] != null) ? appt[6] : "");
+                service, medicineName, notes);
         }
         System.out.println(line);
     }
-
     /**
      * Pads a colored string to a specific width, accounting for ANSI color codes.
      * 

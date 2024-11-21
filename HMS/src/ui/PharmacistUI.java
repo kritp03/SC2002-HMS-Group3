@@ -11,7 +11,7 @@ import HMS.src.prescription.PrescriptionManager;
 import HMS.src.user.Gender;
 import HMS.src.user.Pharmacist;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.utils.ValidationHelper;
 import java.util.List;
 
 /**
@@ -52,6 +52,11 @@ public class PharmacistUI {
     private static IPasswordManager passwordManager = new PasswordManager();
 
     /**
+     * Helper class for validating user input.
+     */
+    private static ValidationHelper validationHelper = new ValidationHelper();
+
+    /**
      * Displays the main menu for the pharmacist and processes user input.
      * Options include viewing appointment outcomes, updating prescription statuses,
      * managing medication inventory, and submitting replenishment requests.
@@ -65,7 +70,7 @@ public class PharmacistUI {
 
         boolean quit = false;
         do {
-            int pharmacistChoice = validateIntRange(
+            int pharmacistChoice = validationHelper.validateIntRange(
                 """
                 Please select option:
                 1. View Appointment Outcome Record

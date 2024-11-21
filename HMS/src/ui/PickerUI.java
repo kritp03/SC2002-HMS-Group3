@@ -6,7 +6,7 @@ import HMS.src.io.PasswordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.io.StaffCsvHelper;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.utils.ValidationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +46,11 @@ public class PickerUI {
      * Manager for password hashing and authentication.
      */
     private IPasswordManager passwordManager = new PasswordManager();
+
+    /**
+     * Helper class for validating user input.
+     */
+    private ValidationHelper validationHelper = new ValidationHelper();
 
     /**
      * Set to store all valid user IDs for authentication.
@@ -103,7 +108,7 @@ public class PickerUI {
         System.out.println("\nRoles");
         System.out.println("=====");
         System.out.println("1. Doctor\n2. Patient\n3. Pharmacist\n4. Admin");
-        return validateIntRange("Please select your role (1-4): ", 1, 4);
+        return validationHelper.validateIntRange("Please select your role (1-4): ", 1, 4);
     }
 
     /**

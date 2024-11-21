@@ -10,7 +10,7 @@ import HMS.src.io.StaffCsvHelper;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.*;
+import HMS.src.utils.ValidationHelper;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +26,12 @@ public class DoctorUI {
      * Instance of PasswordManager for resetting doctor passwords.
      */
     private static final IPasswordManager passwordManager = new PasswordManager();
+
+    /**
+     * Helper class for validating user input.
+     */
+    private static ValidationHelper validationHelper = new ValidationHelper();
+
     /**
      * Displays the main menu for the doctor and handles user inputs for various options.
      * @throws Exception if an error occurs while executing options
@@ -40,7 +46,7 @@ public class DoctorUI {
 
         boolean quit = false;
         do {
-            int doctorChoice = validateIntRange(
+            int doctorChoice = validationHelper.validateIntRange(
                 """
                 Please select an option:
                 1. View Patient Medical Record
@@ -118,7 +124,7 @@ public class DoctorUI {
     private static void viewPatientMedicalRecords() {
         InputScanner.getInstance().nextLine(); // Clear the buffer after int input
         System.out.println("View Patient Medical Records");
-        String patientID = validateString("Enter Patient ID: ");
+        String patientID = validationHelper.validateString("Enter Patient ID: ");
         String doctorID = getDoctorID();
         DoctorManager.viewPatientMedicalRecords(patientID,doctorID);
     }
@@ -135,7 +141,7 @@ public class DoctorUI {
         String doctorID = getDoctorID();
     
         // Prompt for the patient ID
-        String patientID = validateString("Enter Patient ID: ");
+        String patientID = validationHelper.validateString("Enter Patient ID: ");
     
         // Check if the doctor has access to the patient's records
         if (!DoctorManager.isPatientAssignedToDoctor(patientID, doctorID)) {
@@ -146,8 +152,8 @@ public class DoctorUI {
             System.err.println("These are the current medical records of Patient " + patientID + ". You can now add a new entry to the patient's medical record.");
     
             // Gather input for the new medical record
-            String diagnosis = validateString("Enter the diagnosis for Patient " + patientID + ": ");
-            String treatmentPlan = validateString("Enter the treatment for Patient " + patientID + ": ");
+            String diagnosis = validationHelper.validateString("Enter the diagnosis for Patient " + patientID + ": ");
+            String treatmentPlan = validationHelper.validateString("Enter the treatment for Patient " + patientID + ": ");
             MedicalRecordCsvHelper medicalrecCsvHelper = new MedicalRecordCsvHelper();
             List<String[]> medicalRecords = medicalrecCsvHelper.readCSV();
             String RecordID = DoctorManager.getNextRecordID(medicalRecords);

@@ -5,7 +5,7 @@ import HMS.src.utils.InputScanner;
 import HMS.src.authorisation.IDRecoveryHelper;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.authorisation.IPasswordManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.utils.ValidationHelper;
 import java.util.InputMismatchException;
 
 /**
@@ -26,6 +26,7 @@ public class App {
         PickerUI pickerUI = new PickerUI();
         IDRecoveryHelper idRecovery = new IDRecoveryHelper();
         IPasswordManager passwordManager = new PasswordManager();
+        ValidationHelper validationHelper = new ValidationHelper();
 
         int choice = 0;
         do {
@@ -35,7 +36,7 @@ public class App {
                 System.out.println("==================================");
                 
                 // Prompt the user to select an option
-                choice = validateIntRange("Please select an option: \n1. Login\n2. Forget ID\n3. Exit\n", 1, 3);
+                choice = validationHelper.validateIntRange("Please select an option: \n1. Login\n2. Forget ID\n3. Exit\n", 1, 3);
                 System.out.println();
 
                 // Process the user's choice

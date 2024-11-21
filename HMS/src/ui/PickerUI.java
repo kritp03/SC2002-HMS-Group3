@@ -142,11 +142,11 @@ public class PickerUI {
     private boolean authenticateUser(String id, String password, String expectedRole) {
         List<String[]> allUsers = loadAllUserDetails();
         for (String[] user : allUsers) {
-            if (user[0].equalsIgnoreCase(id) && passwordManager.authenticate(id, user[2])) {
-                return user[1].equalsIgnoreCase(expectedRole);
+            if (user[0].equalsIgnoreCase(id) && password.equals(user[2]) && user[1].equalsIgnoreCase(expectedRole)) {
+                return true;
             }
         }
-        return false; // Return false if no matching ID is found or role does not match.
+        return false;
     }
 
     /**

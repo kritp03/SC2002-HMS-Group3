@@ -49,13 +49,15 @@ public class PasswordManager implements IPasswordManager {
 
     /**
      * Authenticates the user with the given userId and hashed password.
-     * @param userId
-     * @param hashedPassword
-     * @return
+     * @param userId The user ID to authenticate
+     * @param hashedPassword The hashed password to verify
+     * @return true if authentication successful, false otherwise
      */
     public boolean authenticate(String userId, String hashedPassword) {
         String[] userData = passwordCsvHelper.getCredsById(userId);
-        return userData != null && hashedPassword.equals(userData[1]);
+        if (userData == null) return false;
+        String storedHash = userData[1];
+        return hashedPassword.equals(storedHash);
     }
 
     /**

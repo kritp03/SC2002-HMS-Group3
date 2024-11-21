@@ -2,9 +2,11 @@ package HMS.src.ui;
 
 import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.io.PatientCsvHelper;
 import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+import java.util.List;
 
 /**
  * The PatientUI class provides an interface for patients to manage their appointments,
@@ -25,14 +27,15 @@ public class PatientUI {
     /**
      * Displays the main menu for the patient and handles user inputs for various options.
      */
-    public static void displayOptions() throws Exception{
-    System.out.println("=====================================");
-    System.out.println("|                Menu                |");
-    System.out.println("|          Welcome Patient!          |");
-    System.out.println("=====================================");
+    public static void displayOptions() throws Exception {
+        String patientName = getLoggedInPatientName(); // Retrieve the logged-in patient's name
 
-    boolean quit = false;
-    do {
+        System.out.println("=====================================");
+        System.out.printf("|          Hello %s!          |\n", patientName); // Display name
+        System.out.println("=====================================");
+
+        boolean quit = false;
+        do {
         int patientChoice = validateIntRange(
                 """
                 Please select an option:
@@ -48,31 +51,50 @@ public class PatientUI {
                 10. Logout
                 """,
                 1, 10);
-        System.out.println();
+            System.out.println();
 
-        switch (patientChoice) {
-            case 1 -> viewMedicalRecords();
-            case 2 -> updatePersonalInformation();
-            case 3 -> viewAvailableSlots();
-            case 4 -> scheduleAppointment();
-            case 5 -> rescheduleAppointment();
-            case 6 -> cancelAppointment();
-            case 7 -> viewScheduledAppointments();
-            case 8 -> viewPastAppointmentOutcomeRecords();
-            case 9 -> passwordManager.changePassword();
-            case 10 -> {
-                System.out.println("Logging out...\nRedirecting to Main Menu...");
-                quit = true; // Exit loop
-                SessionManager.logoutUser();
-                App.main(null); // Redirect to main menu
-                return; // Explicitly exit the method after redirection
+            switch (patientChoice) {
+                case 1 -> viewMedicalRecords();
+                case 2 -> updatePersonalInformation();
+                case 3 -> viewAvailableSlots();
+                case 4 -> scheduleAppointment();
+                case 5 -> rescheduleAppointment();
+                case 6 -> cancelAppointment();
+                case 7 -> viewScheduledAppointments();
+                case 8 -> viewPastAppointmentOutcomeRecords();
+                case 9 -> passwordManager.changePassword();
+                case 10 -> {
+                    System.out.println("Logging out...\nRedirecting to Main Menu...");
+                    quit = true; // Exit loop
+                    SessionManager.logoutUser();
+                    App.main(null); // Redirect to main menu
+                    return; // Explicitly exit the method after redirection
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
             }
-            default -> System.out.println("Invalid choice. Please try again.");
+        } while (!quit);
+    }
+
+/**
+ * Retrieves the logged-in patient's name.
+ * @return the patient's name if logged in, or "Patient" if not logged in.
+ */
+private static String getLoggedInPatientName() {
+    if (!SessionManager.isUserLoggedIn() || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+        return "Patient"; // Default to "Patient" if no one is logged in
+    }
+
+    String patientID = SessionManager.getCurrentUserID(); // Retrieve logged-in patient's ID
+    List<String[]> patients = new PatientCsvHelper().readCSV(); // Read from Patient_List.csv
+
+    for (String[] patient : patients) {
+        if (patient.length > 1 && patient[0].equalsIgnoreCase(patientID)) {
+            return patient[1]; // Return the patient's name
         }
-    } while (!quit);
+    }
+
+    return "Patient"; // Fallback if no match is found
 }
-
-
     /**
      * Retrieves the current patient's ID from the session.
      * @return the patient ID if logged in

@@ -46,8 +46,20 @@ public class AdministratorManager {
      * ANSI color codes for terminal text formatting.
      */
     private static final String ANSI_RED = "\u001B[31m";
+    
+    /**
+     * ANSI color code for green text
+     */
     private static final String ANSI_GREEN = "\u001B[32m";
+    
+    /**
+     * ANSI color code for yellow text
+     */
     private static final String ANSI_YELLOW = "\u001B[33m";
+    
+    /**
+     * ANSI color code to reset text color
+     */
     private static final String ANSI_RESET = "\u001B[0m";
     /**
      * Adds a new staff member to the system.
@@ -116,28 +128,49 @@ public class AdministratorManager {
      */
     public void removeStaff(String staffID) {
         List<String[]> currentStaff = staffHelper.readCSV();
+        List<String[]> currentPasswords = passwordHelper.readCSV();
         boolean removed = false;
         boolean found = false;
         
         List<String[]> updatedStaff = new ArrayList<>();
+        List<String[]> updatedPasswords = new ArrayList<>();
+        
+        // First check if staff exists and is not an administrator
         for (String[] staff : currentStaff) {
-            if (!staff[0].equals(staffID)) {
-                updatedStaff.add(staff);
-            } else {
+            if (staff[0].equals(staffID)) {
                 found = true;
                 if (staff[2].equalsIgnoreCase("Administrator")) {
                     System.out.println("Error: Administrators cannot be removed from the system.");
                     return;
                 }
+            }
+        }
+
+        if (!found) {
+            System.out.println("Staff member not found with ID: " + staffID);
+            return;
+        }
+
+        // Remove from staff list
+        for (String[] staff : currentStaff) {
+            if (!staff[0].equalsIgnoreCase(staffID)) {
+                updatedStaff.add(staff);
+            } else {
                 removed = true;
+            }
+        }
+
+        // Remove from password list
+        for (String[] password : currentPasswords) {
+            if (!password[0].equalsIgnoreCase(staffID)) {
+                updatedPasswords.add(password);
             }
         }
 
         if (removed) {
             staffHelper.updateMedications(updatedStaff);
+            passwordHelper.updatePasswords(updatedPasswords);
             System.out.println("Staff member removed with ID: " + staffID);
-        } else if (!found) {
-            System.out.println("Staff member not found with ID: " + staffID);
         }
     }
     /**
@@ -229,7 +262,21 @@ public class AdministratorManager {
             }
         }
 
-        String medID = "M" + String.format("%03d", currentMeds.size());
+        int highestId = 0;
+        for (String[] med : currentMeds) {
+            if (med[0].startsWith("M")) {
+                try {
+                    int currentId = Integer.parseInt(med[0].substring(1));
+                    if (currentId > highestId) {
+                        highestId = currentId;
+                    }
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+            }
+        }
+
+        String medID = "M" + String.format("%03d", highestId + 1);
         medication.setMedicationID(medID);
 
         String dosageForm = medication.getDosageForm().toString();
@@ -425,7 +472,8 @@ public class AdministratorManager {
     }
 
     /**
-     * Pads a colored string to a specific width, accounting for ANSI color codes
+     * Pads a colored string to a specific width, accounting for ANSI color codes.
+     * 
      * @param str The colored string containing ANSI codes
      * @param width The desired width of the visible text
      * @return The padded string with proper spacing
@@ -442,14 +490,19 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Displays a list of scheduled appointments.
+     * 
+     * @param appointments The list of appointments to display
+     */
     public void viewScheduledAppointments(List<Appointment> appointments) {
         viewAppointments();
     }
 
     /**
      * Removes a medication from the inventory.
-     *
-     * @param medicineID The ID of the medication to remove.
+     * 
+     * @param medicineID The ID of the medication to remove
      */
     public void removeMedication(String medicineID) {
         List<String[]> currentMeds = medHelper.readCSV();

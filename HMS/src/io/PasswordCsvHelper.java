@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+/**
+ * 
+ * @author 
+ */
 public class PasswordCsvHelper extends BaseCsvHelper{
 
     protected String FILE_NAME = "Password_List.csv";
@@ -56,6 +58,14 @@ public class PasswordCsvHelper extends BaseCsvHelper{
 
     public String[] getCredsById(String id){
         return getEntryById(id);
+    }
+
+    /**
+     * Updates the entire password list with new entries.
+     * @param passwords A List of String arrays where each array represents a password entry.
+     */
+    public void updatePasswords(List<String[]> passwords) {
+        writeEntries(passwords);
     }
 
 }

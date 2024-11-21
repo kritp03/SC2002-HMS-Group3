@@ -151,7 +151,7 @@ public class SlotManager {
             if (!slot.isAvailable()) {
                 for (String[] appointment : appointments) {
                     if (appointment.length >= 6 
-                        && appointment[2].equals(doctorID) 
+                        && appointment[2].equalsIgnoreCase(doctorID) 
                         && LocalDate.parse(appointment[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).equals(slot.getDateTime().toLocalDate())
                         && appointment[4].split("-")[0].equals(startTime)) {
                         try {

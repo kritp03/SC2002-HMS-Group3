@@ -4,6 +4,7 @@ import HMS.src.ui.PickerUI;
 import HMS.src.utils.InputScanner;
 import HMS.src.authorisation.IDRecoveryHelper;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
 import java.util.InputMismatchException;
 
@@ -24,7 +25,7 @@ public class App {
         InputScanner sc = InputScanner.getInstance();
         PickerUI pickerUI = new PickerUI();
         IDRecoveryHelper idRecovery = new IDRecoveryHelper();
-        PasswordManager passwordManager = new PasswordManager();
+        IPasswordManager passwordManager = new PasswordManager();
 
         int choice = 0;
         do {
@@ -70,7 +71,7 @@ public class App {
      * @param idRecovery The ID recovery helper instance
      * @param passwordManager The password manager instance for secure password input
      */
-    private static void handleForgotID(InputScanner sc, IDRecoveryHelper idRecovery, PasswordManager passwordManager) {
+    private static void handleForgotID(InputScanner sc, IDRecoveryHelper idRecovery, IPasswordManager passwordManager) {
         System.out.println("=== ID Recovery ===");
         
         // Clear any leftover newline characters

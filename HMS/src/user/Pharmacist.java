@@ -2,6 +2,7 @@ package HMS.src.user;
 
 import HMS.src.appointment.AppointmentManager;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.Prescription;
 import HMS.src.prescription.PrescriptionManager;
@@ -18,7 +19,7 @@ public class Pharmacist extends User {
     private AppointmentManager appointmentManager = new AppointmentManager(); // Manages appointments
     private MedicationManager medicationManager = new MedicationManager(); // Manages medications
     private PrescriptionManager prescriptionManager = new PrescriptionManager(); // Manages prescriptions
-    private PasswordManager passwordManager = new PasswordManager(); // Manages passwords
+    private IPasswordManager passwordManager = new PasswordManager(); // Manages passwords
 
     /**
      * Constructs a new {@code Pharmacist} object with the specified details.

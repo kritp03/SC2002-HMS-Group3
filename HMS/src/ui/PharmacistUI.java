@@ -2,6 +2,7 @@ package HMS.src.ui;
 
 import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.StaffCsvHelper;
@@ -48,7 +49,7 @@ public class PharmacistUI {
     /**
      * Manages password changes for the pharmacist.
      */
-    private static PasswordManager passwordManager = new PasswordManager();
+    private static IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Displays the main menu for the pharmacist and processes user input.

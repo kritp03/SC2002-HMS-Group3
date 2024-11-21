@@ -5,6 +5,7 @@ import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.utils.SessionManager;
 import HMS.src.utils.ValidationHelper;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PatientManager {
     private final MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
     private final AvailabilityCsvHelper availabilityCsvHelper = new AvailabilityCsvHelper();
     private final AppointmentCsvHelper appointmentCsvHelper = new AppointmentCsvHelper();
+    private static StaffCsvHelper staffCsvHelper = new StaffCsvHelper();
     private final Scanner scanner = new Scanner(System.in);
 
     /**
@@ -183,6 +185,22 @@ public class PatientManager {
         System.out.println("\nContact information updated successfully!");
         displayPatientInfo(); // Display updated patient info
     }
+
+    /**
+     * Gets the dr name by its ID.
+     * @param doctorID The ID of the medicine
+     * @return The doctor name if found, null otherwise
+     */
+    public static String getDrNameByID(String doctorID) {
+        List<String[]> staff = staffCsvHelper.readCSV();
+        for (int i = 1; i < staff.size(); i++) {
+            if (staff.get(i)[0].equalsIgnoreCase(doctorID)) {
+                return staff.get(i)[1];
+            }
+        }
+        return null;
+    }
+
     /**
      * Displays available appointment slots for scheduling.
      */
@@ -195,7 +213,7 @@ public class PatientManager {
         }
     
         System.out.println("+----------+----------------------+---------------+-------------+");
-        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor ID", "Date", "Time Slot");
+        System.out.format("| %-8s | %-20s | %-12s | %-11s |\n", "Slot No.", "Doctor Name", "Date", "Time Slot");
         System.out.println("+----------+----------------------+---------------+-------------+");
     
         int slotNumber = 1; // Initialize slot number
@@ -203,7 +221,7 @@ public class PatientManager {
             String[] row = availabilityData.get(i);
             if (row.length >= 3) { // Ensure row has at least doctorID, date, and time
                 System.out.format("| %-8d | %-20s | %-12s | %-11s |\n", 
-                                  slotNumber++, row[0], row[1], row[2]);
+                                  slotNumber++, getDrNameByID(row[0]), row[1], row[2]);
             }
         }
     

@@ -1,4 +1,4 @@
-package HMS.src.authorisation;
+package HMS.src.archive;
 
 public class AuthorizationManager {
 

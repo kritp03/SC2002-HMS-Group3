@@ -2,12 +2,16 @@ package HMS.src.ui;
 
 import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
+import HMS.src.io.PatientCsvHelper;
 import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+import java.util.List;
 
 /**
- * The PatientUI class provides an interface for patients to manage their appointments,
+ * The PatientUI class provides an interface for patients to manage their
+ * appointments,
  * view medical records, and update personal information.
  */
 public class PatientUI {
@@ -20,61 +24,85 @@ public class PatientUI {
     /**
      * Instance of PasswordManager for resetting patient passwords.
      */
-    private static final PasswordManager passwordManager = new PasswordManager();
+    private static final IPasswordManager passwordManager = new PasswordManager();
 
     /**
-     * Displays the main menu for the patient and handles user inputs for various options.
+     * Displays the main menu for the patient and handles user inputs for various
+     * options.
      */
-    public static void displayOptions() throws Exception{
-    System.out.println("=====================================");
-    System.out.println("|                Menu                |");
-    System.out.println("|          Welcome Patient!          |");
-    System.out.println("=====================================");
+    public static void displayOptions() throws Exception {
+        String patientName = getLoggedInPatientName(); // Retrieve the logged-in patient's name
 
-    boolean quit = false;
-    do {
-        int patientChoice = validateIntRange(
-                """
-                Please select an option:
-                1. View Medical Record
-                2. Update Personal Information
-                3. View Available Appointment Slots
-                4. Schedule an Appointment
-                5. Reschedule an Appointment
-                6. Cancel an Appointment
-                7. View Scheduled Appointments
-                8. View Past Appointment Outcome Records
-                9. Reset Password
-                10. Logout
-                """,
-                1, 10);
-        System.out.println();
+        System.out.println("=====================================");
+        System.out.printf("|          Hello %s!          |\n", patientName); // Display name
+        System.out.println("=====================================");
 
-        switch (patientChoice) {
-            case 1 -> viewMedicalRecords();
-            case 2 -> updatePersonalInformation();
-            case 3 -> viewAvailableSlots();
-            case 4 -> scheduleAppointment();
-            case 5 -> rescheduleAppointment();
-            case 6 -> cancelAppointment();
-            case 7 -> viewScheduledAppointments();
-            case 8 -> viewPastAppointmentOutcomeRecords();
-            case 9 -> passwordManager.changePassword();
-            case 10 -> {
-                System.out.println("Logging out...\nRedirecting to Main Menu...");
-                quit = true; // Exit loop
-                SessionManager.logoutUser();
-                App.main(null); // Redirect to main menu
-                return; // Explicitly exit the method after redirection
+        boolean quit = false;
+        do {
+            int patientChoice = validateIntRange(
+                    """
+                            Please select an option:
+                            1. View Medical Record
+                            2. Update Personal Information
+                            3. View Available Appointment Slots
+                            4. Schedule an Appointment
+                            5. Reschedule an Appointment
+                            6. Cancel an Appointment
+                            7. View Scheduled Appointments
+                            8. View Past Appointment Outcome Records
+                            9. Reset Password
+                            10. Logout
+                            """,
+                    1, 10);
+            System.out.println();
+
+            switch (patientChoice) {
+                case 1 -> viewMedicalRecords();
+                case 2 -> updatePersonalInformation();
+                case 3 -> viewAvailableSlots();
+                case 4 -> scheduleAppointment();
+                case 5 -> rescheduleAppointment();
+                case 6 -> cancelAppointment();
+                case 7 -> viewScheduledAppointments();
+                case 8 -> viewPastAppointmentOutcomeRecords();
+                case 9 -> passwordManager.changePassword();
+                case 10 -> {
+                    System.out.println("Logging out...\nRedirecting to Main Menu...");
+                    quit = true; // Exit loop
+                    SessionManager.logoutUser();
+                    App.main(null); // Redirect to main menu
+                    return; // Explicitly exit the method after redirection
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
             }
-            default -> System.out.println("Invalid choice. Please try again.");
-        }
-    } while (!quit);
-}
+        } while (!quit);
+    }
 
+    /**
+     * Retrieves the logged-in patient's name.
+     * 
+     * @return the patient's name if logged in, or "Patient" if not logged in.
+     */
+    private static String getLoggedInPatientName() {
+        if (!SessionManager.isUserLoggedIn() || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            return "Patient"; // Default to "Patient" if no one is logged in
+        }
+
+        String patientID = SessionManager.getCurrentUserID(); // Retrieve logged-in patient's ID
+        List<String[]> patients = new PatientCsvHelper().readCSV(); // Read from Patient_List.csv
+
+        for (String[] patient : patients) {
+            if (patient.length > 1 && patient[0].equalsIgnoreCase(patientID)) {
+                return patient[1]; // Return the patient's name
+            }
+        }
+
+        return "Patient"; // Fallback if no match is found
+    }
 
     /**
      * Retrieves the current patient's ID from the session.
+     * 
      * @return the patient ID if logged in
      */
     private static String getPatientID() {
@@ -122,7 +150,7 @@ public class PatientUI {
             return;
         }
 
-        System.out.println("Updating " + patientID +"'s Personal Information");
+        System.out.println("Updating " + patientID + "'s Personal Information");
         patientManager.updatePatientContactInfo();
     }
 
@@ -223,6 +251,7 @@ public class PatientUI {
 
     /**
      * Entry point for the PatientUI.
+     * 
      * @param args Command-line arguments
      */
     public static void main(String[] args) {
@@ -234,4 +263,3 @@ public class PatientUI {
         }
     }
 }
-

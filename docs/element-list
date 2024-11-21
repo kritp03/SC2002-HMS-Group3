@@ -1,0 +1,11 @@
+HMS.src.app
+HMS.src.appointment
+HMS.src.authorisation
+HMS.src.exceptions
+HMS.src.io
+HMS.src.medicalrecordsPDT
+HMS.src.medication
+HMS.src.prescription
+HMS.src.ui
+HMS.src.user
+HMS.src.utils

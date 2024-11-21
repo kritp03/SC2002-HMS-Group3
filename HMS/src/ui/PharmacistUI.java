@@ -1,14 +1,18 @@
 package HMS.src.ui;
 
+import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.ApptCsvHelper;
 import HMS.src.io.MedicationCsvHelper;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.medication.MedicationManager;
 import HMS.src.prescription.PrescriptionManager;
 import HMS.src.user.Gender;
 import HMS.src.user.Pharmacist;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.validateIntRange;
+import java.util.List;
 
 /**
  * The PharmacistUI class provides the user interface for pharmacists,
@@ -45,33 +49,33 @@ public class PharmacistUI {
     /**
      * Manages password changes for the pharmacist.
      */
-    private static PasswordManager passwordManager = new PasswordManager();
+    private static IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Displays the main menu for the pharmacist and processes user input.
      * Options include viewing appointment outcomes, updating prescription statuses,
      * managing medication inventory, and submitting replenishment requests.
      */
-    public static void displayOptions() {
-        System.out.println("=====================================");
-        System.out.println("|                Menu                |");
-        System.out.println("|         Welcome Pharmacist!        |");
-        System.out.println("=====================================");
+    public static void displayOptions() throws Exception{
+        String pharmacistName = getLoggedInPharmacistName(); // Retrieve the logged-in pharmacist's name
 
+        System.out.println("=====================================");
+        System.out.printf("|         Welcome %s!         |\n", pharmacistName); // Display name
+        System.out.println("=====================================");
 
         boolean quit = false;
         do {
             int pharmacistChoice = validateIntRange(
-                    """
-                    Please select option:
-                    1. View Appointment Outcome Record
-                    2. Update Prescription Status
-                    3. View Medication Inventory
-                    4. Submit Replenishment Request
-                    5. Reset Password
-                    6. Logout
-                    """,
-                    1, 6);
+                """
+                Please select option:
+                1. View Appointment Outcome Record
+                2. Update Prescription Status
+                3. View Medication Inventory
+                4. Submit Replenishment Request
+                5. Reset Password
+                6. Logout
+                """,
+                1, 6);
             System.out.println();
 
             switch (pharmacistChoice) {
@@ -84,6 +88,8 @@ public class PharmacistUI {
                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
                     SessionManager.logoutUser();
+                    App.main(null); // Redirect to main menu
+                    return; // Explicitly exit the method after redirection
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -91,10 +97,37 @@ public class PharmacistUI {
     }
 
     /**
+    * Retrieves the logged-in pharmacist's name.
+    * @return the pharmacist's name if logged in, or "Pharmacist" if not logged in.
+    */
+    private static String getLoggedInPharmacistName() {
+        if (!SessionManager.isUserLoggedIn() || !"Pharmacist".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            return "Pharmacist"; // Default to "Pharmacist" if no one is logged in
+        }
+
+        String pharmacistID = SessionManager.getCurrentUserID(); // Retrieve logged-in pharmacist's ID
+        List<String[]> staff = new StaffCsvHelper().readCSV(); // Read from Staff_List.csv
+
+        for (String[] staffMember : staff) {
+            if (staffMember.length > 1 && staffMember[0].equalsIgnoreCase(pharmacistID)) {
+                return staffMember[1]; // Return the pharmacist's name
+            }
+        }
+
+        return "Pharmacist"; // Fallback if no match is found
+    }
+
+
+    /**
      * Entry point for the PharmacistUI.
      * @param args Command-line arguments
      */
     public static void main(String[] args) {
-        displayOptions();
+        try {
+            displayOptions();
+        } catch (Exception e) {
+            System.out.println("An error occurred in PatientUI: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

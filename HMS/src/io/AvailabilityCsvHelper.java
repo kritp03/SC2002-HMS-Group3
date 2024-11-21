@@ -55,7 +55,7 @@ public class AvailabilityCsvHelper extends BaseCsvHelper {
      */
     public void removeAvailability(String doctorID, String date) {
         List<String[]> entries = readEntries();
-        entries.removeIf(entry -> entry[0].equals(doctorID) && entry[1].equals(date));
+        entries.removeIf(entry -> entry[0].equalsIgnoreCase(doctorID) && entry[1].equals(date));
         writeEntries(entries);
     }
 
@@ -69,7 +69,7 @@ public class AvailabilityCsvHelper extends BaseCsvHelper {
         List<String[]> entries = readEntries();
         for (int i = 0; i < entries.size(); i++) {
             String[] entry = entries.get(i);
-            if (entry[0].equals(doctorID) && entry[1].equals(date)) {
+            if (entry[0].equalsIgnoreCase(doctorID) && entry[1].equals(date)) {
                 entries.set(i, newEntry);
                 break;
             }
@@ -83,7 +83,7 @@ public class AvailabilityCsvHelper extends BaseCsvHelper {
      * @return A list of String arrays containing availability data for the doctor.
      */
     public List<String[]> getAvailabilityByDoctor(String doctorID) {
-        return getEntriesByFilter(entry -> entry[0].equals(doctorID));
+        return getEntriesByFilter(entry -> entry[0].equalsIgnoreCase(doctorID));
     }
 }
 

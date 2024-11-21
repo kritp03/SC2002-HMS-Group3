@@ -1,5 +1,5 @@
 Medicine ID,Medicine Name,Initial Stock,Low Stock Level Alert,Stock Left,Type
-M001,Paracetamol,100,20,182,Tablet
+M001,Paracetamol,100,20,181,Tablet
 M002,Ibuprofen,50,9,5,Tablet
 M003,Amoxicillin,75,10,150,Bottle
 M004,Aspirin,150,30,150,Tablet

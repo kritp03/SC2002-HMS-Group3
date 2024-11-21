@@ -1,14 +1,17 @@
 package HMS.src.ui;
 
+import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.medication.DosageForm;
 import HMS.src.medication.Medication;
 import HMS.src.user.*;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
 import static HMS.src.utils.ValidationHelper.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The AdminUI class provides an interface for administrators to manage staff,
@@ -23,20 +26,31 @@ public class AdminUI {
     /**
      * Instance of PasswordManager for resetting administrator passwords.
      */
-    private static PasswordManager passwordManager = new PasswordManager();
+    private static IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Displays the main menu for the administrator.
      */
-    public static void displayOptions() {
+    public static void displayOptions() throws Exception{
+        String adminName = getLoggedInAdminName(); // Retrieve the logged-in admin's name
+
         System.out.println("=====================================");
-        System.out.println("|                Menu               |");
-        System.out.println("|           Welcome Admin!          |");
+        System.out.printf("|           Welcome %s!          |\n", adminName); // Display name
         System.out.println("=====================================");
 
         boolean quit = false;
         do {
-            int adminChoice = validateIntRange("\nPlease select an option: \n1. Manage Hospital Staff\n2. View Appointments\n3. Manage Medication Inventory\n4. Approve Replenishment Requests\n5. Reset Password\n6. Logout\n", 1, 6);
+            int adminChoice = validateIntRange(
+                """
+                Please select an option:
+                1. Manage Hospital Staff
+                2. View Appointments
+                3. Manage Medication Inventory
+                4. Approve Replenishment Requests
+                5. Reset Password
+                6. Logout
+                """,
+                1, 6);
             InputScanner.getInstance().nextLine();
             System.out.println();
 
@@ -50,11 +64,35 @@ public class AdminUI {
                     System.out.println("Logging out...\nRedirecting to Main Menu...\n");
                     quit = true;
                     SessionManager.logoutUser();
+                    App.main(null); // Redirect to main menu
+                    return; // Explicitly exit the method after redirection
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (!quit);
+            }
+
+    /**
+    * Retrieves the logged-in admin's name.
+    * @return the admin's name if logged in, or "Admin" if not logged in.
+    */
+    private static String getLoggedInAdminName() {
+        if (!SessionManager.isUserLoggedIn() || !"Administrator".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            return "Admin"; // Default to "Admin" if no one is logged in
+        }
+
+        String adminID = SessionManager.getCurrentUserID(); // Retrieve logged-in admin's ID
+        List<String[]> staff = new StaffCsvHelper().readCSV(); // Read from Staff_List.csv
+
+        for (String[] staffMember : staff) {
+            if (staffMember.length > 1 && staffMember[0].equalsIgnoreCase(adminID)) {
+                return staffMember[1]; // Return the admin's name
+            }
+        }
+
+        return "Admin"; // Fallback if no match is found
     }
+
 
     /**
      * Manages staff-related operations such as adding, removing, and viewing staff members.
@@ -279,7 +317,8 @@ public class AdminUI {
         } while (!choice.equals("A") && !choice.equals("R"));
 
         boolean approve = choice.equals("A");
-        admin.approveReplenishmentRequest(requestID, approve);
+        String adminID = SessionManager.getCurrentUserID();
+        admin.approveReplenishmentRequest(requestID, approve, adminID);
     }
 
     /**
@@ -287,6 +326,11 @@ public class AdminUI {
      * @param args Command-line arguments
      */
     public static void main(String[] args) {
-        displayOptions();
+        try {
+            displayOptions();
+        } catch (Exception e) {
+            System.out.println("An error occurred in PatientUI: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

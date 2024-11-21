@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"HMS.src.app"},{"l":"HMS.src.appointment"},{"l":"HMS.src.authorisation"},{"l":"HMS.src.exceptions"},{"l":"HMS.src.io"},{"l":"HMS.src.medicalrecordsPDT"},{"l":"HMS.src.medication"},{"l":"HMS.src.prescription"},{"l":"HMS.src.ui"},{"l":"HMS.src.user"},{"l":"HMS.src.utils"}];updateSearchResults();

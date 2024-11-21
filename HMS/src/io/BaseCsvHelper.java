@@ -109,7 +109,7 @@ public abstract class BaseCsvHelper {
     public String[] getEntryById(String id) {
         List<String[]> entries = readEntries();
         return entries.stream()
-                      .filter(e -> e[0].equals(id))
+                      .filter(e -> e[0].equalsIgnoreCase(id))
                       .findFirst()
                       .orElse(null);
     }

@@ -17,6 +17,8 @@ public class PrescriptionManager {
     private final MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper(); // Helper for managing medications in CSV
     private static StaffCsvHelper staffCsvHelper = new StaffCsvHelper();
 
+    List<String[]> prescriptionRecords = prescriptionCsvHelper.readCSV();
+
     /**
      * Runs the prescription update process, allowing the user to view and modify
      * prescriptions.

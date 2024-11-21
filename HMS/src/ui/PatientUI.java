@@ -6,7 +6,7 @@ import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.utils.ValidationHelper;
 import java.util.List;
 
 /**
@@ -27,6 +27,11 @@ public class PatientUI {
     private static final IPasswordManager passwordManager = new PasswordManager();
 
     /**
+     * Helper class for validating user input.
+     */
+    private static ValidationHelper validationHelper = new ValidationHelper();
+
+    /**
      * Displays the main menu for the patient and handles user inputs for various
      * options.
      */
@@ -39,7 +44,7 @@ public class PatientUI {
 
         boolean quit = false;
         do {
-            int patientChoice = validateIntRange(
+            int patientChoice = validationHelper.validateIntRange(
                     """
                             Please select an option:
                             1. View Medical Record

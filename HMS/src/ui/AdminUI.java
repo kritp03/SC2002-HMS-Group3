@@ -9,7 +9,7 @@ import HMS.src.medication.Medication;
 import HMS.src.user.*;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.*;
+import HMS.src.utils.ValidationHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +28,12 @@ public class AdminUI {
      */
     private static IPasswordManager passwordManager = new PasswordManager();
 
+    
+    /**
+     * Helper class for validating user input.
+     */
+    private static ValidationHelper validationHelper = new ValidationHelper();
+
     /**
      * Displays the main menu for the administrator.
      */
@@ -40,7 +46,7 @@ public class AdminUI {
 
         boolean quit = false;
         do {
-            int adminChoice = validateIntRange(
+            int adminChoice = validationHelper.validateIntRange(
                 """
                 Please select an option:
                 1. Manage Hospital Staff
@@ -100,7 +106,7 @@ public class AdminUI {
     private static void manageStaff() {
         boolean back = false;
         do {
-            int staffChoice = validateIntRange("\nStaff Management:\n1. Add Staff\n2. Remove Staff\n3. View All Staff\n4. Back to Main Menu\n", 1, 4);
+            int staffChoice = validationHelper.validateIntRange("\nStaff Management:\n1. Add Staff\n2. Remove Staff\n3. View All Staff\n4. Back to Main Menu\n", 1, 4);
             InputScanner.getInstance().nextLine();
 
             switch (staffChoice) {
@@ -119,15 +125,15 @@ public class AdminUI {
     private static void addStaff() {
         System.out.println("\nAdding a New Staff Member");
         
-        String name = validateString("Enter Name: ");
-        String email = validateEmail("Enter Email: ");
-        int age = validateAge("Enter Age: ");
+        String name = validationHelper.validateString("Enter Name: ");
+        String email = validationHelper.validateEmail("Enter Email: ");
+        int age = validationHelper.validateAge("Enter Age: ");
         InputScanner.getInstance().nextLine();
         
         Gender gender = null;
         while (gender == null) {
             try {
-                gender = Gender.valueOf(validateString("Enter Gender (MALE, FEMALE, OTHERS): ").toUpperCase());
+                gender = Gender.valueOf(validationHelper.validateString("Enter Gender (MALE, FEMALE, OTHERS): ").toUpperCase());
             } catch (IllegalArgumentException e) {
                 System.out.println("Invalid gender. Please try again.");
             }
@@ -136,7 +142,7 @@ public class AdminUI {
         Role role = null;
         while (role == null) {
             try {
-                String roleInput = validateString("Enter Role (DOCTOR, PHARMACIST): ").toUpperCase();
+                String roleInput = validationHelper.validateString("Enter Role (DOCTOR, PHARMACIST): ").toUpperCase();
                 if (roleInput.equals("DOCTOR") || roleInput.equals("PHARMACIST")) {
                     role = Role.valueOf(roleInput);
                 } else {
@@ -162,7 +168,7 @@ public class AdminUI {
      */
     private static void removeStaff() {
         System.out.println("\nRemoving a Staff Member");
-        String staffID = validateString("Enter the ID of the Staff Member to remove: ");
+        String staffID = validationHelper.validateString("Enter the ID of the Staff Member to remove: ");
         admin.removeStaff(staffID);
     }
 
@@ -172,7 +178,7 @@ public class AdminUI {
     private static void manageMedicationInventory() {
         boolean back = false;
         do {
-            int inventoryChoice = validateIntRange("\nMedication Inventory:\n1. View Inventory\n2. Add Medication\n3. Remove Medication\n4. Update Stock Level\n5. Update Low Stock Alert\n6. Back to Main Menu\n", 1, 6);
+            int inventoryChoice = validationHelper.validateIntRange("\nMedication Inventory:\n1. View Inventory\n2. Add Medication\n3. Remove Medication\n4. Update Stock Level\n5. Update Low Stock Alert\n6. Back to Main Menu\n", 1, 6);
             InputScanner.getInstance().nextLine();
 
             switch (inventoryChoice) {
@@ -193,7 +199,7 @@ public class AdminUI {
     private static void addMedication() {
         System.out.println("\nAdding a New Medication");
 
-        String rawName = validateString("Enter Medication Name: ");
+        String rawName = validationHelper.validateString("Enter Medication Name: ");
         
         String[] words = rawName.trim().split("\\s+");
         StringBuilder nameBuilder = new StringBuilder();
@@ -213,15 +219,15 @@ public class AdminUI {
         DosageForm dosageForm = null;
         while (dosageForm == null) {
             try {
-                dosageForm = DosageForm.valueOf(validateString("Enter Dosage Form (TABLET, CAPSULE, LIQUID, INJECTION, CREAM, INHALER, SUPPOSITORY): ").toUpperCase());
+                dosageForm = DosageForm.valueOf(validationHelper.validateString("Enter Dosage Form (TABLET, CAPSULE, LIQUID, INJECTION, CREAM, INHALER, SUPPOSITORY): ").toUpperCase());
             } catch (IllegalArgumentException e) {
                 System.out.println("Invalid dosage form. Please try again.");
             }
         }
 
-        int concentration = validateInt("Enter Concentration (mg): ");
-        int initialStock = validateInt("Enter Initial Stock: ");
-        int lowStockThreshold = validateInt("Enter Low Stock Threshold: ");
+        int concentration = validationHelper.validateInt("Enter Concentration (mg): ");
+        int initialStock = validationHelper.validateInt("Enter Initial Stock: ");
+        int lowStockThreshold = validationHelper.validateInt("Enter Low Stock Threshold: ");
         InputScanner.getInstance().nextLine();
 
         Medication medication = new Medication("", name, dosageForm, concentration, initialStock, lowStockThreshold);
@@ -234,7 +240,7 @@ public class AdminUI {
     private static void removeMedication() {
         System.out.println("\nRemoving a Medication");
         
-        String medicineID = validateString("\nEnter ID of Medication to remove: ").toUpperCase();
+        String medicineID = validationHelper.validateString("\nEnter ID of Medication to remove: ").toUpperCase();
         admin.removeMedication(medicineID);
     }
 
@@ -244,8 +250,8 @@ public class AdminUI {
     private static void updateMedicationStock() {
         System.out.println("\nUpdating Medication Stock");
 
-        String medicineID = validateString("Enter ID of Medication to Update: ");
-        int newStock = validateInt("Enter New Stock Level: ");
+        String medicineID = validationHelper.validateString("Enter ID of Medication to Update: ");
+        int newStock = validationHelper.validateInt("Enter New Stock Level: ");
         InputScanner.getInstance().nextLine();
 
         admin.updateMedicationStock(medicineID, newStock);
@@ -257,8 +263,8 @@ public class AdminUI {
     private static void updateLowStockAlert() {
         System.out.println("\nUpdating Low Stock Alert");
 
-        String medicineID = validateString("Enter ID of Medication to Update: ");
-        int newThreshold = validateInt("Enter New Low Stock Alert Threshold: ");
+        String medicineID = validationHelper.validateString("Enter ID of Medication to Update: ");
+        int newThreshold = validationHelper.validateInt("Enter New Low Stock Alert Threshold: ");
         InputScanner.getInstance().nextLine();
 
         admin.updateLowStockAlert(medicineID, newThreshold);
@@ -294,7 +300,7 @@ public class AdminUI {
         boolean validRequest = false;
         String requestID;
         do {
-            requestID = validateString("\nEnter Request ID to process: ").toUpperCase();
+            requestID = validationHelper.validateString("\nEnter Request ID to process: ").toUpperCase();
             if (requestID.trim().isEmpty()) {
                 System.out.println("Request ID cannot be empty. Please try again.");
                 continue;
@@ -310,7 +316,7 @@ public class AdminUI {
 
         String choice;
         do {
-            choice = validateString("Approve or Reject? (A/R): ").toUpperCase();
+            choice = validationHelper.validateString("Approve or Reject? (A/R): ").toUpperCase();
             if (!choice.equals("A") && !choice.equals("R")) {
                 System.out.println("Invalid choice. Please enter 'A' to approve or 'R' to reject.");
             }

@@ -6,8 +6,9 @@ import HMS.src.io.PasswordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.io.StaffCsvHelper;
 import HMS.src.utils.SessionManager;
-import static HMS.src.utils.ValidationHelper.validateIntRange;
+import HMS.src.utils.ValidationHelper;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +47,11 @@ public class PickerUI {
      * Manager for password hashing and authentication.
      */
     private IPasswordManager passwordManager = new PasswordManager();
+
+    /**
+     * Helper class for validating user input.
+     */
+    private ValidationHelper validationHelper = new ValidationHelper();
 
     /**
      * Set to store all valid user IDs for authentication.
@@ -103,7 +109,7 @@ public class PickerUI {
         System.out.println("\nRoles");
         System.out.println("=====");
         System.out.println("1. Doctor\n2. Patient\n3. Pharmacist\n4. Admin");
-        return validateIntRange("Please select your role (1-4): ", 1, 4);
+        return validationHelper.validateIntRange("Please select your role (1-4): ", 1, 4);
     }
 
     /**
@@ -121,15 +127,26 @@ public class PickerUI {
      * 
      * @return A hashed password string.
      */
-    // public String getUserPassword() {
-    //     return passwordManager.hashPassword(passwordManager.getPassword("Please enter your password: "));
-    // }
 
+    /**
+     * Prompts the user to enter their password, hashes it, and masks the input.
+     * 
+     * @return A hashed password string.
+     */
     public String getUserPassword() {
-        System.out.print("Please enter your password: ");
-        String inputPassword = scanner.nextLine();
-        System.out.println("hashedpw: " + passwordManager.hashPassword(inputPassword));
-        return passwordManager.hashPassword(inputPassword);
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("No console available. Please run from a command line that supports password masking.");
+            return null; // Or handle more gracefully
+        } else {
+            char[] passwordArray = console.readPassword("Please enter your password: ");
+            if (passwordArray == null) {
+                System.out.println("No password entered.");
+                return null; // Or handle more gracefully
+            }
+            String inputPassword = new String(passwordArray);
+            return passwordManager.hashPassword(inputPassword);
+        }
     }
     /**
      * Authenticates the user by verifying their ID and hashed password against
@@ -143,11 +160,11 @@ public class PickerUI {
     private boolean authenticateUser(String id, String password, String expectedRole) {
         List<String[]> allUsers = loadAllUserDetails();
         for (String[] user : allUsers) {
-            if (user[0].equalsIgnoreCase(id) && passwordManager.authenticate(id, user[2])) {
-                return user[1].equalsIgnoreCase(expectedRole);
+            if (user[0].equalsIgnoreCase(id) && password.equals(user[2]) && user[1].equalsIgnoreCase(expectedRole)) {
+                return true;
             }
         }
-        return false; // Return false if no matching ID is found or role does not match.
+        return false;
     }
 
     /**

@@ -283,15 +283,15 @@ public class AdminUI {
         }
 
         System.out.println("\nPending Replenishment Requests:");
-        String line = "+----------+------------------+----------+------------------+";
+        String line = "+------------+------------------+----------+------------------+";
         System.out.println(line);
-        System.out.format("| %-8s | %-16s | %-8s | %-16s |%n", 
+        System.out.format("| %-10s | %-16s | %-8s | %-16s |%n", 
             "Request ID", "Medicine Name", "Amount", "Date Requested");
         System.out.println(line);
 
         List<String> validRequestIds = new ArrayList<>();
         for (String[] request : requests) {
-            System.out.format("| %-8s | %-16s | %-8s | %-16s |%n",
+            System.out.format("| %-10s | %-16s | %-8s | %-16s |%n",
                 request[0], request[1], request[2], request[3]);
             validRequestIds.add(request[0]);
         }

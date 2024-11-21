@@ -15,6 +15,8 @@ public class PrescriptionManager {
     private final PrescriptionCsvHelper prescriptionCsvHelper = new PrescriptionCsvHelper(); // Helper for managing prescriptions in CSV
     private final MedicationCsvHelper medicationCsvHelper = new MedicationCsvHelper(); // Helper for managing medications in CSV
 
+    List<String[]> prescriptionRecords = prescriptionCsvHelper.readCSV();
+
     /**
      * Runs the prescription update process, allowing the user to view and modify
      * prescriptions.
@@ -162,6 +164,27 @@ public class PrescriptionManager {
         }
         System.out.println(
                 "+----------------+----------------+---------+----------+----------------+------------------+--------------+----------------+----------------+");
+    }
+
+    // Helper method to find the next available Record ID
+    public static String getNextRecordID(List<String[]> prescriptionRecords) {
+        int highestRecordID = 0;
+    
+        // Iterate over all records and find the highest Record ID that starts with "PR"
+        for (String[] record : prescriptionRecords) {
+            if (record.length > 0 && record[0].startsWith("PR")) {
+                try {
+                    // Get numeric part after "PR" and find the highest number
+                    int recordID = Integer.parseInt(record[0].substring(2)); 
+                    highestRecordID = Math.max(highestRecordID, recordID);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing RecordID: " + record[0]);
+                }
+            }
+        }
+    
+        // Return the next Record ID as "PR" followed by the incremented number
+        return "PR" + String.format("%03d", highestRecordID + 1);
     }
 
     /**

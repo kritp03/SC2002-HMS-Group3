@@ -1,4 +1,7 @@
-﻿PrescriptionID,Medicine Name,Dosage,Status,Patient Name,Requested By,Date of Request,Date of Approval,Approved By
-1,Ibuprofen,5mg,DISPENSED,Charlie White,John Smith,2024-11-12,2024-11-16,P001
-2,Ibuprofen,2mg,DISPENSED,Charlie White,John Smith,2024-11-13,2024-11-13,Mark Lee
-3,Amoxillin,3mg,CANCELLED,Charlie White,John Smith,2024-11-13,2024-11-13,
+﻿PrescriptionID,Medicine Name,Status,Patient Name,Requested By,Date of Request,Date of Approval,Approved By
+PR001,Ibuprofen,DISPENSED,Charlie White,John Smith,2024-11-12,2024-11-16,P001
+PR002,Ibuprofen,DISPENSED,Charlie White,John Smith,2024-11-13,2024-11-13,Mark Lee
+PR003,Amoxillin,CANCELLED,Charlie White,John Smith,2024-11-13,2024-11-13,
+PR004,spine meds,PENDING,,,2024-11-12,,
+PR005,N/A,,,,,,
+PR006,paracetamol,PENDING,P1002,D001,2024-11-21,,

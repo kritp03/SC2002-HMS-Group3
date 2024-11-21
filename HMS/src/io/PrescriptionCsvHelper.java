@@ -52,6 +52,15 @@ public class PrescriptionCsvHelper extends BaseCsvHelper{
         writeEntries(prescriptions);
     }
     
+
+    /**
+     * Adds new prescription to the CSV file.
+     * @param newEntry
+     */
+    public void addNewPrescription(String[] newEntry) {
+        addEntry(newEntry);
+    }
+
     /**
      * Utilizes the base class method to write an entries to the CSV file.
      * @param prescriptions A List of String arrays where each array represents a prescription entry.

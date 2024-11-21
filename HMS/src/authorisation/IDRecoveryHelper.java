@@ -8,7 +8,7 @@ import HMS.src.io.PasswordCsvHelper;
  */
 public class IDRecoveryHelper {
     private StaffCsvHelper staffHelper;
-    private PasswordManager passwordManager;
+    private IPasswordManager passwordManager;
     private PasswordCsvHelper passwordHelper;
 
     public IDRecoveryHelper() {

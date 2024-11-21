@@ -3,6 +3,7 @@ package HMS.src.user;
 import HMS.src.appointment.Appointment;
 import HMS.src.appointment.AppointmentStatus;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.AppointmentCsvHelper;
 import HMS.src.io.MedicationCsvHelper;
 import HMS.src.io.PasswordCsvHelper;
@@ -112,7 +113,8 @@ public class AdministratorManager {
         staffHelper.updateMedications(currentStaff);
 
         String defaultPassword = "password";
-        String hashedPassword = new PasswordManager().hashPassword(defaultPassword);
+        IPasswordManager passwordManager = new PasswordManager();
+        String hashedPassword = passwordManager.hashPassword(defaultPassword);
         String[] passwordEntry = {staffId, hashedPassword};
         passwordHelper.addEntry(passwordEntry);
 

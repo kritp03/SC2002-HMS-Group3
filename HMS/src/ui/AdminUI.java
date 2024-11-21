@@ -2,6 +2,7 @@ package HMS.src.ui;
 
 import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.StaffCsvHelper;
 import HMS.src.medication.DosageForm;
 import HMS.src.medication.Medication;
@@ -25,7 +26,7 @@ public class AdminUI {
     /**
      * Instance of PasswordManager for resetting administrator passwords.
      */
-    private static PasswordManager passwordManager = new PasswordManager();
+    private static IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Displays the main menu for the administrator.

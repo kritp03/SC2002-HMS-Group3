@@ -2,6 +2,7 @@ package HMS.src.ui;
 
 import HMS.src.app.App;
 import HMS.src.authorisation.PasswordManager;
+import HMS.src.authorisation.IPasswordManager;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.user.PatientManager;
 import HMS.src.utils.SessionManager;
@@ -23,7 +24,7 @@ public class PatientUI {
     /**
      * Instance of PasswordManager for resetting patient passwords.
      */
-    private static final PasswordManager passwordManager = new PasswordManager();
+    private static final IPasswordManager passwordManager = new PasswordManager();
 
     /**
      * Displays the main menu for the patient and handles user inputs for various

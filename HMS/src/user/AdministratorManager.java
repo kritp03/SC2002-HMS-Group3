@@ -15,19 +15,67 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The AdministratorManager class handles all administrative operations in the Hospital Management System.
+ * This includes managing staff, medication inventory, appointments, and replenishment requests.
+ */
 public class AdministratorManager {
+    /**
+     * Helper class for managing staff data in CSV format
+     */
     private StaffCsvHelper staffHelper = new StaffCsvHelper();
+    
+    /**
+     * Helper class for managing medication data in CSV format
+     */
     private MedicationCsvHelper medHelper = new MedicationCsvHelper();
+    
+    /**
+     * Helper class for managing replenishment requests in CSV format
+     */
     private ReplReqCsvHelper replReqHelper = new ReplReqCsvHelper();
+    
+    /**
+     * Helper class for managing appointment data in CSV format
+     */
     private AppointmentCsvHelper apptHelper = new AppointmentCsvHelper();
+    
+    /**
+     * Manager class for medication-related operations
+     */
     private MedicationManager medicationManager = new MedicationManager();
+    
+    /**
+     * Helper class for managing password data in CSV format
+     */
     private PasswordCsvHelper passwordHelper = new PasswordCsvHelper();
 
+    /**
+     * ANSI color code for red text
+     */
     private static final String ANSI_RED = "\u001B[31m";
+    
+    /**
+     * ANSI color code for green text
+     */
     private static final String ANSI_GREEN = "\u001B[32m";
+    
+    /**
+     * ANSI color code for yellow text
+     */
     private static final String ANSI_YELLOW = "\u001B[33m";
+    
+    /**
+     * ANSI color code to reset text color
+     */
     private static final String ANSI_RESET = "\u001B[0m";
 
+    /**
+     * Adds a new staff member to the system.
+     * Automatically generates a unique staff ID based on their role (D for Doctor, P for Pharmacist).
+     * 
+     * @param staff The staff member to add to the system
+     */
     public void addStaff(User staff) {
         List<String[]> currentStaff = staffHelper.readCSV();
         
@@ -81,6 +129,11 @@ public class AdministratorManager {
         System.out.println("Please ask the staff member to change their password upon first login.");
     }
 
+    /**
+     * Removes a staff member from the system.
+     * 
+     * @param staffID The ID of the staff member to remove
+     */
     public void removeStaff(String staffID) {
         List<String[]> currentStaff = staffHelper.readCSV();
         boolean removed = false;
@@ -108,6 +161,9 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Displays a list of all staff members in the system.
+     */
     public void viewStaff() {
         List<String[]> staff = staffHelper.readCSV();
         if (staff.isEmpty()) {
@@ -157,6 +213,12 @@ public class AdministratorManager {
         System.out.println(line);
     }
 
+    /**
+     * Returns a colored representation of a staff member's role.
+     * 
+     * @param role The role to color
+     * @return The colored role
+     */
     private String colorCodeRole(String role) {
         String coloredRole;
         switch (role.toUpperCase()) {
@@ -172,6 +234,11 @@ public class AdministratorManager {
         return coloredRole;
     }
 
+    /**
+     * Adds a new medication to the inventory.
+     * 
+     * @param medication The medication to add
+     */
     public void addMedication(Medication medication) {
         List<String[]> currentMeds = medHelper.readCSV();
         
@@ -201,6 +268,12 @@ public class AdministratorManager {
         System.out.println("Medication added: " + medication.getName() + " (ID: " + medID + ")");
     }
 
+    /**
+     * Updates the stock level of a medication in the inventory.
+     * 
+     * @param medicineID The ID of the medication to update
+     * @param newStock The new stock level
+     */
     public void updateMedicationStock(String medicineID, int newStock) {
         String medicineName = medicationManager.getMedicineNameByID(medicineID);
         if (medicineName != null) {
@@ -212,6 +285,12 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Updates the low stock alert threshold for a medication in the inventory.
+     * 
+     * @param medicineID The ID of the medication to update
+     * @param newThreshold The new low stock alert threshold
+     */
     public void updateLowStockAlert(String medicineID, int newThreshold) {
         String medicineName = medicationManager.getMedicineNameByID(medicineID);
         if (medicineName != null) {
@@ -223,6 +302,9 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Displays the current medication inventory.
+     */
     public void viewMedicationInventory() {
         List<String[]> meds = medHelper.readCSV();
         if (meds.isEmpty()) {
@@ -256,6 +338,14 @@ public class AdministratorManager {
         System.out.println(line);
     }
 
+    /**
+     * Determines the stock status of a medication based on its initial stock, low stock alert, and current stock level.
+     * 
+     * @param initialStock The initial stock level of the medication
+     * @param lowStockAlert The low stock alert threshold of the medication
+     * @param stockLeft The current stock level of the medication
+     * @return The stock status of the medication
+     */
     private String determineStockStatus(int initialStock, int lowStockAlert, int stockLeft) {
         int highThreshold = (int) (lowStockAlert + 0.2 * initialStock);
         if (stockLeft > highThreshold) {
@@ -267,6 +357,13 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Approves or rejects a replenishment request.
+     * 
+     * @param requestID The ID of the request to approve or reject
+     * @param approve Whether to approve or reject the request
+     * @param admin The administrator approving or rejecting the request
+     */
     public void approveReplenishmentRequest(String requestID, boolean approve, Administrator admin) {
         List<String[]> requests = replReqHelper.readCSV();
         boolean found = false;
@@ -304,6 +401,11 @@ public class AdministratorManager {
         System.out.println("Request " + requestID + " has been " + status.toLowerCase() + ".");
     }
 
+    /**
+     * Retrieves a list of all pending replenishment requests.
+     * 
+     * @return The list of pending replenishment requests
+     */
     public List<String[]> getPendingReplenishmentRequests() {
         List<String[]> allRequests = replReqHelper.readCSV();
         List<String[]> pendingRequests = new ArrayList<>();
@@ -318,6 +420,9 @@ public class AdministratorManager {
         return pendingRequests;
     }
 
+    /**
+     * Displays a list of all appointments in the system.
+     */
     public void viewAppointments() {
         List<String[]> appointments = apptHelper.readCSV();
         if (appointments.isEmpty()) {
@@ -344,7 +449,8 @@ public class AdministratorManager {
     }
 
     /**
-     * Pads a colored string to a specific width, accounting for ANSI color codes
+     * Pads a colored string to a specific width, accounting for ANSI color codes.
+     * 
      * @param str The colored string containing ANSI codes
      * @param width The desired width of the visible text
      * @return The padded string with proper spacing
@@ -361,14 +467,19 @@ public class AdministratorManager {
         }
     }
 
+    /**
+     * Displays a list of scheduled appointments.
+     * 
+     * @param appointments The list of appointments to display
+     */
     public void viewScheduledAppointments(List<Appointment> appointments) {
         viewAppointments();
     }
 
     /**
      * Removes a medication from the inventory.
-     *
-     * @param medicineID The ID of the medication to remove.
+     * 
+     * @param medicineID The ID of the medication to remove
      */
     public void removeMedication(String medicineID) {
         List<String[]> currentMeds = medHelper.readCSV();

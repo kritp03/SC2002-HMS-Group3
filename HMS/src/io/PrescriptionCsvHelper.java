@@ -86,5 +86,13 @@ public class PrescriptionCsvHelper extends BaseCsvHelper{
         updateEntry(prescriptionID, updatedPrescription);
     }
 
+    /**
+     * Adds new prescription to the CSV file.
+     * @param newEntry
+     */
+    public void addNewPrescription(String[] newEntry) {
+        addEntry(newEntry);
+    }
+
 
 }

@@ -32,17 +32,6 @@ public class MedicationManager {
      * Fetches all medicine names from the CSV file.
      * @return A set of all medicine names in the inventory.
      */
-    // public Set<String> getAllMedicineNames() {
-    //     List<String[]> data = medCsvHelper.readCSV();
-    //     Set<String> medicineNames = new HashSet<>();
-    //     for (int i = 1; i < data.size(); i++) {
-    //         if (data.get(i).length > 0) {
-    //             medicineNames.add(data.get(i)[0].toLowerCase());
-    //         }
-    //     }
-    //     return medicineNames;
-    // }
-
     public Map<String, String> getAllMedicineNames() {
     List<String[]> data = medCsvHelper.readCSV();
     Map<String, String> medicineDetails = new HashMap<>();

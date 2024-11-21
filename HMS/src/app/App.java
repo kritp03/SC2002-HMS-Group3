@@ -35,7 +35,7 @@ public class App {
                 System.out.println("==================================");
                 
                 // Prompt the user to select an option
-                choice = validateIntRange("Please select an option: \n1. Login\n2. Forgot ID?\n3. Exit\n", 1, 3);
+                choice = validateIntRange("Please select an option: \n1. Login\n2. Forget ID\n3. Exit\n", 1, 3);
                 System.out.println();
 
                 // Process the user's choice

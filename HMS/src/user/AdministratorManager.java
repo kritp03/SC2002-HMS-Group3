@@ -390,7 +390,7 @@ public class AdministratorManager {
      * @param approve    Boolean flag indicating whether the request is approved or rejected.
      * @param admin      The administrator approving or rejecting the request.
      */
-    public void approveReplenishmentRequest(String requestID, boolean approve, Administrator admin) {
+    public void approveReplenishmentRequest(String requestID, boolean approve, String adminID) {
         List<String[]> requests = replReqHelper.readCSV();
         boolean found = false;
         String[] targetRequest = null;
@@ -423,7 +423,8 @@ public class AdministratorManager {
             updateMedicationStock(medicineID, currentStock + requestAmount);
         }
 
-        replReqHelper.updateRequest(requestID, status, admin.getName(), LocalDate.now().toString());
+        String adminName = getAdminNameByID(adminID);
+        replReqHelper.updateRequest(requestID, status, adminName, LocalDate.now().toString());
         System.out.println("Request " + requestID + " has been " + status.toLowerCase() + ".");
     }
     /**
@@ -527,5 +528,22 @@ public class AdministratorManager {
         } else if (!found) {
             System.out.println("Medication not found with ID: " + medicineID);
         }
+    }
+
+    /**
+     * Gets the administrator's name by their ID.
+     * 
+     * @param adminID The ID of the administrator
+     * @return The administrator's name if found, null otherwise
+     */
+    public String getAdminNameByID(String adminID) {
+        List<String[]> staff = staffHelper.readCSV();
+        for (String[] staffMember : staff) {
+            if (staffMember[0].equalsIgnoreCase(adminID) && 
+                staffMember[2].equalsIgnoreCase("Administrator")) {
+                return staffMember[1];
+            }
+        }
+        return null;
     }
 }

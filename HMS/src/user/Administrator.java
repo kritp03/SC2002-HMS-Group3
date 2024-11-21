@@ -135,8 +135,8 @@ public class Administrator extends User {
      * @param requestID The ID of the replenishment request.
      * @param approve true to approve, false to reject.
      */
-    public void approveReplenishmentRequest(String requestID, boolean approve) {
-        manager.approveReplenishmentRequest(requestID, approve, this);
+    public void approveReplenishmentRequest(String requestID, boolean approve, String adminID) {
+        manager.approveReplenishmentRequest(requestID, approve, adminID);
     }
 
     /**

@@ -72,24 +72,58 @@ public class PatientManager {
     
         boolean recordFound = false;
         System.out.println("Medical Records for Patient ID: " + patientID);
-        System.out.println("================================================================");
     
+        // Define column headers
+        String[] headers = {"Record ID", "Diagnosis", "Treatment Plan", "Doctor ID"};
+    
+        // Determine column widths dynamically
+        int[] columnWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length(); // Start with header length
+        }
         for (String[] record : medicalRecords) {
-            // Check if the record belongs to the patient by comparing PatientID
             if (record.length >= 5 && record[3].equalsIgnoreCase(patientID)) {
-                System.out.println("Record ID: " + record[0]);
-                System.out.println("Diagnosis: " + (record[1].isEmpty() ? "N/A" : record[1]));
-                System.out.println("Treatment Plan: " + (record[2].isEmpty() ? "N/A" : record[2]));
-                System.out.println("Doctor ID: " + record[4]); // Display the doctor ID
-                System.out.println("----------------------------------------------------------------");
+                for (int i = 0; i < headers.length; i++) {
+                    String value = (i < record.length) ? record[i] : "N/A";
+                    columnWidths[i] = Math.max(columnWidths[i], value.length());
+                }
                 recordFound = true;
             }
         }
     
+        // If no records found, print a message and return
         if (!recordFound) {
             System.out.println("No medical records found for Patient ID: " + patientID);
+            return;
         }
+    
+        // Print header
+        StringBuilder separator = new StringBuilder("+");
+        for (int width : columnWidths) {
+            separator.append("-".repeat(width + 2)).append("+");
+        }
+        System.out.println(separator);
+        System.out.print("|");
+        for (int i = 0; i < headers.length; i++) {
+            System.out.printf(" %-"+columnWidths[i]+"s |", headers[i]);
+        }
+        System.out.println();
+        System.out.println(separator);
+    
+        // Print rows
+        for (String[] record : medicalRecords) {
+            if (record.length >= 5 && record[3].equalsIgnoreCase(patientID)) {
+                System.out.print("|");
+                System.out.printf(" %-"+columnWidths[0]+"s |", record[0]); // Record ID
+                System.out.printf(" %-"+columnWidths[1]+"s |", record[1].isEmpty() ? "N/A" : record[1]); // Diagnosis
+                System.out.printf(" %-"+columnWidths[2]+"s |", record[2].isEmpty() ? "N/A" : record[2]); // Treatment Plan
+                System.out.printf(" %-"+columnWidths[3]+"s |", record[4]); // Doctor ID
+                System.out.println();
+            }
+        }
+        System.out.println(separator);
     }
+    
     /**
      * Displays both the patient's information and their medical records.
      */

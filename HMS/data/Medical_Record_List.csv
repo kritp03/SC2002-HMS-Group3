@@ -12,3 +12,5 @@ R010,pes c,panadol,B+,P1002,D001
 R011,fever,paracetamol,B+,P1002,D001
 R012,fever,rest,A+,P1001,D001
 R013,fever,rest,B+,P1002,D001
+R014,Cancer,Chemo,P1001,D001
+R015,,ok,P1001,D001

@@ -1,4 +1,4 @@
-ApptID,Patient ID,Dr ID,Date of Appt,Appt Time,Service,Medicine Name,Status,Notes
+﻿ApptID,Patient ID,Dr ID,Date of Appt,Appt Time,Service,Medicine Name,Status,Notes
 AP001,P1001,D001,2024-12-01,12:00,ns checkup,,PENDING,pes b
 AP002,P1001,D001,2024-12-01,12:00,ns,,PENDING,pes a
 AP003,P1002,D001,2024-9-9,0900,consult,pk,PENDING,no
@@ -8,3 +8,5 @@ AP006,P1001,D001,2024-12-20,14:00,ns checkup,none,PENDING,none
 AP011,P1002,D001,2024-09-09,09:00,ns checkup,panadol,PENDING,idk
 AP012,P1002,D001,2024-11-01,10:00,consult,paracetamol,PENDING,
 AP013,P1001,D001,2024-12-01,14:00,consult,paracetamol,PENDING,none
+AP016,P1001,D001,2024-11-01,10:00,consult,stay at home,PENDING,Paracetomol
+AP015,P1001,D001,2024-12-20,14:00,consult,rest,PENDING,pana

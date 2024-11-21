@@ -1,6 +1,5 @@
 package HMS.src.medicalrecordsPDT;
 
-import HMS.src.archive.Database;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,17 +59,6 @@ public class MedicalRecordManager {
         } else {
             System.out.println("No medical record found for patient ID: " + patientID);
         }
-    }
-
-    /**
-     * Initializes medical records for all patients without existing records.
-     * Pulls patient data from the Database class.
-     */
-    public static void initializeMedicalRecordsForPatients() {
-        for (String patientID : Database.getPatientData().keySet()) {
-            records.putIfAbsent(patientID, new ArrayList<>());
-        }
-        System.out.println("Medical records initialized for patients.");
     }
 
     /**

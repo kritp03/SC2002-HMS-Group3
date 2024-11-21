@@ -1,6 +1,7 @@
 package HMS.src.utils;
 
 import HMS.src.exceptions.InvalidValueException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -8,9 +9,28 @@ import java.util.InputMismatchException;
 
 /**
  * Utility class for input validation.
- * Provides methods to validate various types of user inputs, including integers, strings, booleans, and dates.
+ * Implements various validation strategies while adhering to the Open-Closed Principle.
  */
-public class ValidationHelper {
+public class ValidationHelper implements IValidator<String, Object> {
+    private static ValidationHelper instance;
+    private final InputScanner sc;
+
+    public ValidationHelper() {
+        sc = InputScanner.getInstance();
+    }
+
+    public static ValidationHelper getInstance() {
+        if (instance == null) {
+            instance = new ValidationHelper();
+        }
+        return instance;
+    }
+
+    @Override
+    public Object validate(String input, String prompt) {
+        // This method is not directly used as we have specialized validation methods
+        throw new UnsupportedOperationException("Please use specific validation methods");
+    }
 
     /**
      * Validates and returns a positive integer input from the user.
@@ -18,8 +38,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return A valid positive integer entered by the user.
      */
-    public static int validateInt(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public int validateInt(String msg) {
         boolean success = false;
         int input = 0;
         do {
@@ -47,8 +66,7 @@ public class ValidationHelper {
      * @param end   The end of the valid range (inclusive).
      * @return A valid integer within the specified range.
      */
-    public static int validateIntRange(String msg, int start, int end) {
-        InputScanner sc = InputScanner.getInstance();
+    public int validateIntRange(String msg, int start, int end) {
         boolean success = false;
         int input = 0;
         do {
@@ -73,8 +91,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return A valid non-empty string entered by the user.
      */
-    public static String validateString(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public String validateString(String msg) {
         String input;
         do {
             System.out.print(msg);
@@ -92,8 +109,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return {@code true} if the user inputs "Y", {@code false} if the user inputs "N".
      */
-    public static boolean validateBoolean(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public boolean validateBoolean(String msg) {
         String input;
         do {
             System.out.print(msg + " (Y/N): ");
@@ -114,8 +130,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return A valid {@link LocalDate} entered by the user.
      */
-    public static LocalDate validateDate(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public LocalDate validateDate(String msg) {
         LocalDate date = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         boolean success = false;
@@ -140,8 +155,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return A valid email address entered by the user.
      */
-    public static String validateEmail(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public String validateEmail(String msg) {
         String email;
         boolean isValid = false;
 
@@ -172,8 +186,7 @@ public class ValidationHelper {
      * @param msg The message to prompt the user for input.
      * @return A valid age between 18 and 100.
      */
-    public static int validateAge(String msg) {
-        InputScanner sc = InputScanner.getInstance();
+    public int validateAge(String msg) {
         boolean success = false;
         int age = 0;
         do {

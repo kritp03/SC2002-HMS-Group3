@@ -21,6 +21,7 @@ public class PatientManager {
     private final AvailabilityCsvHelper availabilityCsvHelper = new AvailabilityCsvHelper();
     private final AppointmentCsvHelper appointmentCsvHelper = new AppointmentCsvHelper();
     private static StaffCsvHelper staffCsvHelper = new StaffCsvHelper();
+    private final ValidationHelper validationHelper = new ValidationHelper();
     private final Scanner scanner = new Scanner(System.in);
 
     /**
@@ -442,7 +443,7 @@ public class PatientManager {
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
 
         // Get valid slot number using ValidationHelper
-        int slotNumber = ValidationHelper.validateIntRange("Enter the slot number of the appointment you wish to cancel: ", 1, patientAppointments.size());
+        int slotNumber = validationHelper.validateIntRange("Enter the slot number of the appointment you wish to cancel: ", 1, patientAppointments.size());
 
         // Get the appointment to cancel
         String[] canceledAppointment = patientAppointments.get(slotNumber - 1); // Adjust for 0-based index
@@ -497,7 +498,7 @@ public class PatientManager {
         }
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+");
 
-        int selectedSlot = ValidationHelper.validateIntRange("Enter the slot number of the appointment to reschedule: ", 1, patientAppointments.size());
+        int selectedSlot = validationHelper.validateIntRange("Enter the slot number of the appointment to reschedule: ", 1, patientAppointments.size());
         return selectedSlot;
     }
     /**

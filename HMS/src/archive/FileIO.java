@@ -1,4 +1,4 @@
-package HMS.src.io;
+package HMS.src.archive;
 
 import HMS.src.medication.*;
 import HMS.src.user.*;

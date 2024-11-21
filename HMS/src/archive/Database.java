@@ -1,7 +1,6 @@
 package HMS.src.archive;
 
 import HMS.src.appointment.Appointment;
-import HMS.src.io.FileIO;
 import HMS.src.io.MedicalRecordCsvHelper;
 import HMS.src.io.PatientCsvHelper;
 import HMS.src.medicalrecordsPDT.MedicalEntry;

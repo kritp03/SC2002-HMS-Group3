@@ -151,6 +151,7 @@ public class MedicationManager {
         String requestID = getNextRequestId();
         String status = "PENDING"; // Default status for new requests
         String approvedBy = ""; // Default approver status
+        String approveDate = ""; // Default approve date
 
         displayReplReqSummary(new ReplenishmentRequest(requestID, medicineName, amount, LocalDate.now()));
 
@@ -164,7 +165,8 @@ public class MedicationManager {
                 Integer.toString(amount),
                 LocalDate.now().toString(),
                 status,
-                approvedBy
+                approvedBy,
+                approveDate
             };
 
             replReqCsvHelper.addReplReq(replReq); 

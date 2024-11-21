@@ -61,8 +61,9 @@ public class App {
         } while (choice != 3);
 
         // Close the scanner before exiting
-        sc.close();
+        // sc.close();
     }
+    
 
     /**
      * Handles the forgot ID functionality.

@@ -1,10 +1,10 @@
 ﻿PrescriptionID,Medicine Name,Status,Patient Name,Requested By,Date of Request,Date of Approval,Approved By
-PR001,Ibuprofen,DISPENSED,Charlie White,John Smith,2024-11-12,2024-11-16,Mark Lee
+PR001,Ibuprofen,DISPENSED,Charlie White,John Smith,2024-11-12,2024-11-21,Mark Lee
 PR003,Ibuprofen,DISPENSED,Charlie White,John Smith,2024-11-13,2024-11-13,Mark Lee
 PR002,Amoxillin,CANCELLED,Charlie White,John Smith,2024-11-13,2024-11-13,
 PR004,panadol,DISPENSED,Charlie White,John Smith,2024-11-21,2024-11-21,Mark Lee
 PR005,paracetamol,DISPENSED,Charlie White,John Smith,2024-11-21,2024-11-21,Mark Lee
 PR006,paracetamol,DISPENSED,Charlie White,John Smith,2024-11-21,2024-11-21,Mark Lee
 PR007,paracetamol,DISPENSED,Bob Stone,John Smith,2024-11-21,2024-11-21,Mark Lee
-PR008,stay at home,PENDING,Alice Brown,John Smith,2024-11-21,,
+PR008,stay at home,DISPENSED,Alice Brown,John Smith,2024-11-21,2024-11-21,Mark Lee
 PR009,rest,PENDING,Alice Brown,John Smith,2024-11-21,,

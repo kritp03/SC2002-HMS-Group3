@@ -10,7 +10,10 @@ import HMS.src.utils.ValidationHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * The PatientManager class provides functionalities for managing patient-related operations, 
+ * including viewing and updating patient information, managing appointments, and accessing medical records.
+ */
 public class PatientManager {
     private final PatientCsvHelper patientCsvHelper = new PatientCsvHelper();
     private final MedicalRecordCsvHelper medicalRecordCsvHelper = new MedicalRecordCsvHelper();
@@ -18,6 +21,12 @@ public class PatientManager {
     private final AppointmentCsvHelper appointmentCsvHelper = new AppointmentCsvHelper();
     private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Retrieves the current patient's ID from the session.
+     *
+     * @return The patient ID of the logged-in patient.
+     * @throws IllegalStateException if no patient is logged in.
+     */
     private String getPatientID() {
         String patientID = SessionManager.getCurrentUserID();
         if (patientID == null || !"Patient".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
@@ -25,7 +34,9 @@ public class PatientManager {
         }
         return patientID;
     }
-
+    /**
+     * Displays the patient's information, such as name, date of birth, gender, and contact details.
+     */
     public void displayPatientInfo() {
         String patientID = getPatientID(); // Fetch patientID dynamically
         List<String[]> patients = patientCsvHelper.readCSV();
@@ -52,7 +63,9 @@ public class PatientManager {
             System.out.println("No patient found with ID: " + patientID);
         }
     }
-
+    /**
+     * Displays the medical records for the currently logged-in patient.
+     */
     public void displayMedicalRecords() {
         String patientID = getPatientID(); // Fetch patientID dynamically
         List<String[]> medicalRecords = medicalRecordCsvHelper.readCSV();
@@ -77,8 +90,9 @@ public class PatientManager {
             System.out.println("No medical records found for Patient ID: " + patientID);
         }
     }
-    
-
+    /**
+     * Displays both the patient's information and their medical records.
+     */
     public void showPatientAndRecords() {
         try {
             displayPatientInfo();
@@ -87,7 +101,10 @@ public class PatientManager {
             System.out.println(e.getMessage());
         }
     }
-
+    /**
+     * Allows the patient to update their contact information, including email, phone number, 
+     * next of kin name, and next of kin phone number.
+     */
     public void updatePatientContactInfo() {
         String patientID = getPatientID();
         List<String[]> patients = patientCsvHelper.readCSV();
@@ -166,8 +183,9 @@ public class PatientManager {
         System.out.println("\nContact information updated successfully!");
         displayPatientInfo(); // Display updated patient info
     }
-    
-
+    /**
+     * Displays available appointment slots for scheduling.
+     */
     public void viewAvailableSlots() {
         List<String[]> availabilityData = availabilityCsvHelper.readCSV();
     
@@ -191,8 +209,11 @@ public class PatientManager {
     
         System.out.println("+----------+----------------------+---------------+-------------+\n");
     }
-    
-
+    /**
+     * Allows the patient to schedule an appointment by selecting an available slot.
+     *
+     * @param patientID The ID of the logged-in patient.
+     */
     public void scheduleAppointment(String patientID) {
         List<String[]> availabilityData = availabilityCsvHelper.readCSV();
     
@@ -282,9 +303,11 @@ public class PatientManager {
         // Return the next ID in the format "AP###"
         return "AP" + String.format("%03d", maxID + 1);
     }
-    
-    
-
+    /**
+     * Displays all scheduled appointments for the currently logged-in patient.
+     *
+     * @param patientID The ID of the logged-in patient.
+     */
     public void viewScheduledAppointments(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
 
@@ -331,7 +354,10 @@ public class PatientManager {
 
         System.out.println("+----------+------------+----------------------+---------------+-------------+-------------+\n");
     }
-
+    /**
+     * Allows the patient to cancel one of their scheduled appointments.
+     * The canceled slot is added back to the availability list.
+     */
     public void cancelAppointment() {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
         List<String[]> availabilitySlots = availabilityCsvHelper.readCSV();
@@ -385,6 +411,12 @@ public class PatientManager {
         System.out.println("Appointment " + canceledAppointment[0] + " has been successfully canceled.");
     }
 
+    /**
+     * Retrieves the slot number of an appointment the patient wishes to reschedule.
+     *
+     * @param patientID The ID of the logged-in patient.
+     * @return The slot number of the appointment to be rescheduled, or -1 if no appointments are found.
+     */
     public int getAppointmentToReschedule(String patientID) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
         List<String[]> patientAppointments = new ArrayList<>();
@@ -416,7 +448,14 @@ public class PatientManager {
         int selectedSlot = ValidationHelper.validateIntRange("Enter the slot number of the appointment to reschedule: ", 1, patientAppointments.size());
         return selectedSlot;
     }
-
+    /**
+     * Reschedules an appointment for the patient by canceling the selected appointment 
+     * and adding it back to the availability list.
+     *
+     * @param patientID The ID of the logged-in patient.
+     * @param selectedSlot The slot number of the appointment to reschedule.
+     * @return true if the appointment was successfully rescheduled, false otherwise.
+     */
     public boolean rescheduleAppointment(String patientID, int selectedSlot) {
         List<String[]> appointments = appointmentCsvHelper.readCSV();
         List<String[]> patientAppointments = new ArrayList<>();
@@ -455,8 +494,11 @@ public class PatientManager {
         System.out.println("Appointment " + appointmentToReschedule[0] + " has been successfully canceled and added back to available slots.");
         return true;
     }
-    
-
+    /**
+     * Displays the outcomes of past appointments for the currently logged-in patient.
+     *
+     * @param patientID The ID of the logged-in patient.
+     */
     public void viewPastAppointmentOutcomes(String patientID) {
         ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
         List<String[]> outcomeData = apptOutcomeHelper.readCSV();

@@ -10,48 +10,40 @@ import HMS.src.io.ReplReqCsvHelper;
 import HMS.src.io.StaffCsvHelper;
 import HMS.src.medication.Medication;
 import HMS.src.medication.MedicationManager;
-import HMS.src.medication.ReplenishmentRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The AdministratorManager class handles all administrative operations in the Hospital Management System.
- * This includes managing staff, medication inventory, appointments, and replenishment requests.
+ * The AdministratorManager class handles operations related to administrative tasks in the hospital management system.
+ * These include adding and removing staff, viewing staff details, and managing credentials.
+ * The class interacts with various CSV helper classes to perform data manipulation and storage.
  */
 public class AdministratorManager {
     /**
-     * Helper class for managing staff data in CSV format
+     * Helper for managing staff information stored in the staff CSV.
      */
     private StaffCsvHelper staffHelper = new StaffCsvHelper();
-    
     /**
-     * Helper class for managing medication data in CSV format
+     * Helper for managing medication information stored in the medication CSV.
      */
     private MedicationCsvHelper medHelper = new MedicationCsvHelper();
-    
     /**
-     * Helper class for managing replenishment requests in CSV format
+     * Helper for managing replenishment requests stored in the replenishment request CSV.
      */
     private ReplReqCsvHelper replReqHelper = new ReplReqCsvHelper();
-    
     /**
-     * Helper class for managing appointment data in CSV format
+     * Manager for handling medication-related operations.
      */
     private AppointmentCsvHelper apptHelper = new AppointmentCsvHelper();
-    
-    /**
-     * Manager class for medication-related operations
-     */
+
     private MedicationManager medicationManager = new MedicationManager();
-    
     /**
-     * Helper class for managing password data in CSV format
+     * Helper for managing passwords stored in the password CSV.
      */
     private PasswordCsvHelper passwordHelper = new PasswordCsvHelper();
-
     /**
-     * ANSI color code for red text
+     * ANSI color codes for terminal text formatting.
      */
     private static final String ANSI_RED = "\u001B[31m";
     
@@ -69,12 +61,12 @@ public class AdministratorManager {
      * ANSI color code to reset text color
      */
     private static final String ANSI_RESET = "\u001B[0m";
-
     /**
      * Adds a new staff member to the system.
-     * Automatically generates a unique staff ID based on their role (D for Doctor, P for Pharmacist).
+     * Generates a unique staff ID based on the staff role and ensures the staff entry is added to the staff CSV.
+     * A default password is also set for the new staff member.
      * 
-     * @param staff The staff member to add to the system
+     * @param staff The staff member to be added, represented as a {@link User} object.
      */
     public void addStaff(User staff) {
         List<String[]> currentStaff = staffHelper.readCSV();
@@ -128,12 +120,11 @@ public class AdministratorManager {
         System.out.println("Default password set to: " + defaultPassword);
         System.out.println("Please ask the staff member to change their password upon first login.");
     }
-
     /**
-     * Removes a staff member from the system.
-     * Also removes their corresponding password entry from the password list.
+     * Removes a staff member from the system based on their staff ID.
+     * Administrators cannot be removed from the system.
      * 
-     * @param staffID The ID of the staff member to remove
+     * @param staffID The ID of the staff member to be removed.
      */
     public void removeStaff(String staffID) {
         List<String[]> currentStaff = staffHelper.readCSV();
@@ -182,9 +173,10 @@ public class AdministratorManager {
             System.out.println("Staff member removed with ID: " + staffID);
         }
     }
-
     /**
-     * Displays a list of all staff members in the system.
+     * Displays a list of all doctors and pharmacists in the system.
+     * The list is sorted by role, name, gender, and age, in that order.
+     * The role is color-coded for better visibility.
      */
     public void viewStaff() {
         List<String[]> staff = staffHelper.readCSV();
@@ -234,12 +226,11 @@ public class AdministratorManager {
         }
         System.out.println(line);
     }
-
     /**
-     * Returns a colored representation of a staff member's role.
+     * Helper method to assign ANSI color codes to roles for terminal display.
      * 
-     * @param role The role to color
-     * @return The colored role
+     * @param role The role of the staff member (e.g., "Doctor", "Pharmacist").
+     * @return A string representing the role, color-coded for terminal display.
      */
     private String colorCodeRole(String role) {
         String coloredRole;
@@ -255,11 +246,11 @@ public class AdministratorManager {
         }
         return coloredRole;
     }
-
     /**
      * Adds a new medication to the inventory.
-     * 
-     * @param medication The medication to add
+     * Ensures the medication name is unique and assigns a new medication ID.
+     *
+     * @param medication The medication object containing details like name, stock, low threshold, and dosage form.
      */
     public void addMedication(Medication medication) {
         List<String[]> currentMeds = medHelper.readCSV();
@@ -303,12 +294,11 @@ public class AdministratorManager {
         medHelper.updateMedications(currentMeds);
         System.out.println("Medication added: " + medication.getName() + " (ID: " + medID + ")");
     }
-
     /**
-     * Updates the stock level of a medication in the inventory.
-     * 
-     * @param medicineID The ID of the medication to update
-     * @param newStock The new stock level
+     * Updates the stock of a specific medication in the inventory.
+     *
+     * @param medicineID The ID of the medication to update.
+     * @param newStock   The new stock level to be set for the medication.
      */
     public void updateMedicationStock(String medicineID, int newStock) {
         String medicineName = medicationManager.getMedicineNameByID(medicineID);
@@ -320,12 +310,11 @@ public class AdministratorManager {
             System.out.println("Medicine ID not found: " + medicineID + ". Please enter a valid ID.");
         }
     }
-
     /**
-     * Updates the low stock alert threshold for a medication in the inventory.
-     * 
-     * @param medicineID The ID of the medication to update
-     * @param newThreshold The new low stock alert threshold
+     * Updates the low-stock alert threshold for a specific medication.
+     *
+     * @param medicineID    The ID of the medication to update.
+     * @param newThreshold  The new threshold value to trigger low-stock alerts.
      */
     public void updateLowStockAlert(String medicineID, int newThreshold) {
         String medicineName = medicationManager.getMedicineNameByID(medicineID);
@@ -337,9 +326,9 @@ public class AdministratorManager {
             System.out.println("Medicine ID not found: " + medicineID + ". Please enter a valid ID.");
         }
     }
-
     /**
-     * Displays the current medication inventory.
+     * Displays the current medication inventory in a tabular format.
+     * Includes details like medication ID, name, stock levels, low stock alerts, and status.
      */
     public void viewMedicationInventory() {
         List<String[]> meds = medHelper.readCSV();
@@ -373,14 +362,13 @@ public class AdministratorManager {
         }
         System.out.println(line);
     }
-
     /**
-     * Determines the stock status of a medication based on its initial stock, low stock alert, and current stock level.
-     * 
-     * @param initialStock The initial stock level of the medication
-     * @param lowStockAlert The low stock alert threshold of the medication
-     * @param stockLeft The current stock level of the medication
-     * @return The stock status of the medication
+     * Determines the stock status (High, Moderate, Low) based on stock levels and thresholds.
+     *
+     * @param initialStock   The initial stock level of the medication.
+     * @param lowStockAlert  The low-stock alert threshold for the medication.
+     * @param stockLeft      The current stock level of the medication.
+     * @return A string representing the stock status, color-coded for terminal display.
      */
     private String determineStockStatus(int initialStock, int lowStockAlert, int stockLeft) {
         int highThreshold = (int) (lowStockAlert + 0.2 * initialStock);
@@ -392,13 +380,13 @@ public class AdministratorManager {
             return ANSI_RED + "Low" + ANSI_RESET;
         }
     }
-
     /**
-     * Approves or rejects a replenishment request.
-     * 
-     * @param requestID The ID of the request to approve or reject
-     * @param approve Whether to approve or reject the request
-     * @param admin The administrator approving or rejecting the request
+     * Approves or rejects a replenishment request for a specific medication.
+     * If approved, updates the stock level in the inventory.
+     *
+     * @param requestID  The ID of the replenishment request.
+     * @param approve    Boolean flag indicating whether the request is approved or rejected.
+     * @param admin      The administrator approving or rejecting the request.
      */
     public void approveReplenishmentRequest(String requestID, boolean approve, Administrator admin) {
         List<String[]> requests = replReqHelper.readCSV();
@@ -436,11 +424,10 @@ public class AdministratorManager {
         replReqHelper.updateRequest(requestID, status, admin.getName(), LocalDate.now().toString());
         System.out.println("Request " + requestID + " has been " + status.toLowerCase() + ".");
     }
-
     /**
-     * Retrieves a list of all pending replenishment requests.
-     * 
-     * @return The list of pending replenishment requests
+     * Retrieves a list of pending replenishment requests.
+     *
+     * @return A list of string arrays, each representing a pending replenishment request.
      */
     public List<String[]> getPendingReplenishmentRequests() {
         List<String[]> allRequests = replReqHelper.readCSV();
@@ -455,9 +442,9 @@ public class AdministratorManager {
         
         return pendingRequests;
     }
-
     /**
-     * Displays a list of all appointments in the system.
+     * Displays all appointments in the system in a tabular format.
+     * Includes details like appointment ID, patient ID, doctor ID, date, time, status, and outcome.
      */
     public void viewAppointments() {
         List<String[]> appointments = apptHelper.readCSV();

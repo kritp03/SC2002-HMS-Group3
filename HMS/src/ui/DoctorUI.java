@@ -5,6 +5,7 @@ import HMS.src.appointment.SlotManager;
 import HMS.src.authorisation.PasswordManager;
 import HMS.src.io.AvailabilityCsvHelper;
 import HMS.src.io.MedicalRecordCsvHelper;
+import HMS.src.io.StaffCsvHelper;
 import HMS.src.user.DoctorManager;
 import HMS.src.utils.InputScanner;
 import HMS.src.utils.SessionManager;
@@ -30,35 +31,28 @@ public class DoctorUI {
      */
 
     public static void displayOptions() throws Exception {
+        String doctorName = getLoggedInDoctorName(); // Retrieve the logged-in doctor's name
+
         System.out.println("=====================================");
-        System.out.println("|                Menu                |");
-        System.out.println("|           Welcome Doctor!          |");
+        System.out.printf("|          Hello %s!          |\n", doctorName); // Display name
         System.out.println("=====================================");
 
         boolean quit = false;
-
         do {
-            // Check if the user is still logged in
-            if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
-                System.out.println("You are not logged in. Redirecting to Main Menu...");
-                quit = true;
-                App.main(null); // Redirect to main menu
-                return; // Exit the method to stop further execution
-            }
-
-            int doctorChoice = validateIntRange("""
-                    Please select an option:
-                    1. View Patient Medical Record
-                    2. Update Patient Medical Records
-                    3. View Personal Schedule
-                    4. Set Availability for Appointments
-                    5. Accept/Decline Appointment Requests
-                    6. View Upcoming Appointments
-                    7. Record Appointment Outcome
-                    8. Change Password
-                    9. Logout
-                    Enter your choice: """,
-                    1, 10);
+            int doctorChoice = validateIntRange(
+                """
+                Please select an option:
+                1. View Patient Medical Record
+                2. Update Patient Medical Records
+                3. View Personal Schedule
+                4. Set Availability for Appointments
+                5. Accept/Decline Appointment Requests
+                6. View Upcoming Appointments
+                7. Record Appointment Outcome
+                8. Reset Password
+                9. Logout
+                """,
+                1, 9);
             System.out.println();
 
             switch (doctorChoice) {
@@ -71,16 +65,37 @@ public class DoctorUI {
                 case 7 -> recordAppointmentOutcome();
                 case 8 -> passwordManager.changePassword();
                 case 9 -> {
-                    System.out.println("Logging out...\nRedirecting to Main Menu...\n");
-                    quit = true;
+                    System.out.println("Logging out...\nRedirecting to Main Menu...");
+                    quit = true; // Exit loop
                     SessionManager.logoutUser();
                     App.main(null); // Redirect to main menu
-                    return; // Exit the method after logging out
+                    return; // Explicitly exit the method after redirection
                 }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
-        } while (!quit);
+                } while (!quit);
     }
+
+    /**
+    * Retrieves the logged-in doctor's name.
+    * @return the doctor's name if logged in, or "Doctor" if not logged in.
+    */
+    private static String getLoggedInDoctorName() {
+        if (!SessionManager.isUserLoggedIn() || !"Doctor".equalsIgnoreCase(SessionManager.getCurrentUserRole())) {
+            return "Doctor"; // Default to "Doctor" if no one is logged in
+        }
+
+        String doctorID = SessionManager.getCurrentUserID(); // Retrieve logged-in doctor's ID
+        List<String[]> staff = new StaffCsvHelper().readCSV(); // Read from Staff_List.csv
+
+        for (String[] staffMember : staff) {
+            if (staffMember.length > 1 && staffMember[0].equalsIgnoreCase(doctorID)) {
+            return staffMember[1]; // Return the doctor's name
+            }
+        }
+        return "Doctor"; // Fallback if no match is found
+    }
+
     /**
      * Retrieves the current doctor's ID from the session.
      * @return the doctor ID if logged in

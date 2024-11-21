@@ -92,55 +92,81 @@ public class PatientManager {
         String patientID = getPatientID();
         List<String[]> patients = patientCsvHelper.readCSV();
         String[] patientToUpdate = null;
-
+    
         for (String[] patient : patients) {
             if (patient.length > 0 && patient[0].equalsIgnoreCase(patientID)) {
                 patientToUpdate = patient;
                 break;
             }
         }
-
+    
         if (patientToUpdate == null) {
             System.out.println("No patient found with ID: " + patientID);
             return;
         }
-
+    
         System.out.println("Current email: " + patientToUpdate[5]);
         System.out.println("Current phone number: " + patientToUpdate[6]);
-
-        System.out.print("Do you want to update email (E) or phone number (P)? ");
+        System.out.println("Current next of kin name: " + patientToUpdate[8]);
+        System.out.println("Current next of kin phone number: " + patientToUpdate[9]);
+    
+        System.out.print("What would you like to update? (E: Email, P: Phone, N: Next of Kin Name, K: Next of Kin Phone): ");
         String choice = scanner.nextLine().trim().toUpperCase();
-
-        if (!choice.equals("E") && !choice.equals("P")) {
-            System.out.println("Invalid choice. Please enter 'E' for email or 'P' for phone number.");
+    
+        if (!choice.equals("E") && !choice.equals("P") && !choice.equals("N") && !choice.equals("K")) {
+            System.out.println("Invalid choice. Please enter 'E' for email, 'P' for phone, 'N' for next of kin name, or 'K' for next of kin phone.");
             return;
         }
-
+    
         String newContactInfo = "";
         boolean validInput = false;
+    
         while (!validInput) {
             if (choice.equals("E")) {
                 System.out.print("Enter new email: ");
-            } else {
+                newContactInfo = scanner.nextLine().trim();
+                if (newContactInfo.matches("^(.+)@(.+)\\.(.+)$")) {
+                    validInput = true;
+                    patientToUpdate[5] = newContactInfo;
+                } else {
+                    System.out.println("Invalid email format. Please try again.");
+                }
+            } else if (choice.equals("P")) {
                 System.out.print("Enter new phone number: ");
-            }
-            newContactInfo = scanner.nextLine().trim();
-            if (choice.equals("E") && newContactInfo.matches("^(.+)@(.+)\\.(.+)$")) {
-                validInput = true;
-                patientToUpdate[5] = newContactInfo;
-            } else if (choice.equals("P") && newContactInfo.matches("^[8|9]\\d{7}$")) {
-                validInput = true;
-                patientToUpdate[6] = newContactInfo;
-            } else {
-                System.out.println("Invalid. Please provide a valid input.");
+                newContactInfo = scanner.nextLine().trim();
+                if (newContactInfo.matches("^[8|9]\\d{7}$")) {
+                    validInput = true;
+                    patientToUpdate[6] = newContactInfo;
+                } else {
+                    System.out.println("Invalid phone number. It must start with 8 or 9 and have 8 digits. Please try again.");
+                }
+            } else if (choice.equals("N")) {
+                System.out.print("Enter new next of kin name: ");
+                newContactInfo = scanner.nextLine().trim();
+                if (!newContactInfo.isEmpty()) {
+                    validInput = true;
+                    patientToUpdate[8] = newContactInfo;
+                } else {
+                    System.out.println("Name cannot be empty. Please try again.");
+                }
+            } else if (choice.equals("K")) {
+                System.out.print("Enter new next of kin phone number: ");
+                newContactInfo = scanner.nextLine().trim();
+                if (newContactInfo.matches("^[8|9]\\d{7}$")) {
+                    validInput = true;
+                    patientToUpdate[9] = newContactInfo;
+                } else {
+                    System.out.println("Invalid phone number. It must start with 8 or 9 and have 8 digits. Please try again.");
+                }
             }
         }
-
+    
         patientCsvHelper.updateEntry(patientID, patientToUpdate); // Update the entry in CSV
-
+    
         System.out.println("\nContact information updated successfully!");
         displayPatientInfo(); // Display updated patient info
     }
+    
 
     public void viewAvailableSlots() {
         List<String[]> availabilityData = availabilityCsvHelper.readCSV();

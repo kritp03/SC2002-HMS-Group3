@@ -502,48 +502,47 @@ public class PatientManager {
     public void viewPastAppointmentOutcomes(String patientID) {
         ApptCsvHelper apptOutcomeHelper = new ApptCsvHelper();
         List<String[]> outcomeData = apptOutcomeHelper.readCSV();
-
+    
         // Filter outcomes belonging to the patient
         List<String[]> patientOutcomes = new ArrayList<>();
         for (String[] record : outcomeData) {
-            if (record.length >= 2 && record[1].equalsIgnoreCase(patientID)) 
-            {
+            if (record.length >= 2 && record[1].equalsIgnoreCase(patientID)) {
                 patientOutcomes.add(record);
             }
         }
-
+    
         // If no outcomes found, print a message and return
         if (patientOutcomes.isEmpty()) {
             System.out.println("No past appointment outcomes found for patient ID: " + patientID);
             return;
         }
-
-    // Define column headers
+    
+        // Define column headers (excluding "Status")
         String[] headers = {
             "Appt ID", "Patient ID", "Dr ID", "Date", "Time", 
-            "Service", "Medicine Name", "Dosage", "Notes"
+            "Service", "Medicine Name", "Notes"
         };
-
+    
         // Determine column widths dynamically
         int[] columnWidths = new int[headers.length];
         for (int i = 0; i < headers.length; i++) {
             columnWidths[i] = headers[i].length(); // Start with header length
         }
         for (String[] record : patientOutcomes) {
-            for (int i = 0; i < record.length; i++) {
-            columnWidths[i] = Math.max(columnWidths[i], record[i].length());
+            for (int i = 0; i < headers.length; i++) { // Adjust for reduced headers
+                // Skip the "Status" column (index 7 in the original CSV)
+                if (i < 7) {
+                    columnWidths[i] = Math.max(columnWidths[i], record[i].length());
+                } else {
+                    columnWidths[i] = Math.max(columnWidths[i], record[i + 1].length());
+                }
             }
         }
-
-        // Adjust column widths for empty values
-        for (int i = 0; i < columnWidths.length; i++) {
-            columnWidths[i] = Math.max(columnWidths[i], 2); // Minimum width for "-"
-        }
-
+    
         // Print header
         StringBuilder separator = new StringBuilder("+");
         for (int width : columnWidths) {
-        separator.append("-".repeat(width + 2)).append("+");
+            separator.append("-".repeat(width + 2)).append("+");
         }
         System.out.println(separator);
         System.out.print("|");
@@ -552,16 +551,22 @@ public class PatientManager {
         }
         System.out.println();
         System.out.println(separator);
-
-        // Print rows
+    
+        // Print rows (excluding "Status")
         for (String[] record : patientOutcomes) {
             System.out.print("|");
             for (int i = 0; i < headers.length; i++) {
-                String value = i < record.length ? record[i] : "-";
+                String value;
+                if (i < 7) { // Before "Status" column
+                    value = record[i];
+                } else { // After "Status" column
+                    value = record[i + 1];
+                }
                 System.out.printf(" %-"+columnWidths[i]+"s |", value.isEmpty() ? "-" : value);
             }
             System.out.println();
         }
         System.out.println(separator);
     }
+    
 }
